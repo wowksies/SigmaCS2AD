@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,9 +12,11 @@
   --red: #ff1a1a;
   --red-dark: #b80000;
   --red-glow: rgba(255,26,26,0.45);
+  --discord: #5865F2;
+  --discord-dark: #4752c4;
+  --discord-glow: rgba(88,101,242,0.45);
   --bg: #0a0a0a;
   --surface: #0f0f0f;
-  --surface2: #141414;
   --border: rgba(255,255,255,0.07);
   --border-red: rgba(255,26,26,0.22);
   --text: #f5f5f5;
@@ -29,7 +30,6 @@
 html { scroll-behavior: smooth; }
 body { background: var(--bg); color: var(--text); font-family: var(--font-b); overflow-x: hidden; }
 
-/* ─── CANVAS & OVERLAY ─── */
 #cvs { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 .glow-overlay {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -60,20 +60,25 @@ nav {
   transition: color 0.2s;
 }
 .nav-links a:hover { color: var(--text); }
-.nav-cta {
-  background: linear-gradient(135deg, var(--red), var(--red-dark));
-  color: #fff !important; padding: 8px 20px; border-radius: 6px;
+.nav-discord {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--discord);
+  color: #fff !important; padding: 8px 18px; border-radius: 6px;
   font-weight: 700 !important; font-size: 0.76rem !important;
-  letter-spacing: 0.12em !important;
+  letter-spacing: 0.1em !important;
   transition: box-shadow 0.25s, transform 0.2s !important;
 }
-.nav-cta:hover { box-shadow: 0 0 22px var(--red-glow); transform: translateY(-1px); color: #fff !important; }
+.nav-discord:hover {
+  box-shadow: 0 0 22px var(--discord-glow);
+  transform: translateY(-1px); color: #fff !important;
+}
+.nav-discord svg { width: 15px; height: 15px; fill: #fff; flex-shrink: 0; }
 
 /* ─── HERO ─── */
 #hero {
   min-height: 100vh; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  text-align: center; padding: 100px 24px 60px;
+  text-align: center; padding: 100px 24px 80px;
 }
 .badge {
   display: inline-flex; align-items: center; gap: 7px;
@@ -105,10 +110,11 @@ nav {
 }
 .hero-desc {
   max-width: 420px; color: var(--muted); font-size: 0.92rem;
-  line-height: 1.7; margin: 0 auto 32px;
+  line-height: 1.7; margin: 0 auto 36px;
 }
-.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 44px; }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
+/* ─── BUTTONS ─── */
 .btn-fill {
   position: relative; overflow: hidden;
   background: linear-gradient(135deg, #ff2020, #a80000);
@@ -116,6 +122,7 @@ nav {
   font-weight: 700; font-size: 0.82rem; letter-spacing: 0.1em;
   text-transform: uppercase; text-decoration: none; border: none; cursor: pointer;
   transition: box-shadow 0.25s, transform 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
 }
 .btn-fill::after {
   content: ''; position: absolute; top: 0; left: -100%; width: 55%; height: 100%;
@@ -125,35 +132,40 @@ nav {
 .btn-fill:hover::after { left: 160%; }
 .btn-fill:hover { box-shadow: 0 0 28px var(--red-glow), 0 0 70px rgba(255,26,26,0.18); transform: translateY(-2px); }
 
+.btn-discord {
+  position: relative; overflow: hidden;
+  background: var(--discord);
+  color: #fff; padding: 13px 30px; border-radius: 7px;
+  font-weight: 700; font-size: 0.82rem; letter-spacing: 0.1em;
+  text-transform: uppercase; text-decoration: none; border: none; cursor: pointer;
+  transition: box-shadow 0.25s, transform 0.2s;
+  display: inline-flex; align-items: center; gap: 9px;
+}
+.btn-discord::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 55%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
+  transition: left 0.48s;
+}
+.btn-discord:hover::after { left: 160%; }
+.btn-discord:hover {
+  box-shadow: 0 0 28px var(--discord-glow), 0 0 70px rgba(88,101,242,0.18);
+  transform: translateY(-2px);
+  background: #4a55e0;
+}
+.btn-discord svg { width: 18px; height: 18px; fill: #fff; flex-shrink: 0; }
+
 .btn-outline {
   background: transparent; color: var(--text); padding: 13px 30px; border-radius: 7px;
   font-weight: 600; font-size: 0.82rem; letter-spacing: 0.1em;
   text-transform: uppercase; text-decoration: none;
   border: 1px solid rgba(255,255,255,0.16); cursor: pointer;
   transition: border-color 0.22s, color 0.22s, transform 0.2s;
+  display: inline-flex; align-items: center;
 }
 .btn-outline:hover { border-color: var(--red); color: var(--red); transform: translateY(-2px); }
 
-.hero-preview {
-  width: 100%; max-width: 820px; aspect-ratio: 16/9;
-  border-radius: 12px; background: var(--surface);
-  border: 1px solid var(--border-red); overflow: hidden; position: relative;
-  display: flex; align-items: center; justify-content: center;
-  animation: glow-pulse 3.2s ease-in-out infinite;
-}
-@keyframes glow-pulse {
-  0%,100% { box-shadow: 0 0 18px rgba(255,26,26,0.18); }
-  50%      { box-shadow: 0 0 48px rgba(255,26,26,0.38), 0 0 90px rgba(255,26,26,0.12); }
-}
-.hero-preview::before, .hero-preview::after {
-  content: ''; position: absolute; width: 24px; height: 24px;
-  border-color: var(--red); border-style: solid; opacity: 0.55;
-}
-.hero-preview::before { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
-.hero-preview::after  { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
-.ph { display: flex; flex-direction: column; align-items: center; gap: 10px; pointer-events: none; }
-.ph svg { width: 38px; height: 38px; opacity: 0.18; stroke: currentColor; fill: none; }
-.ph span { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+/* Discord inline icon for hero */
+.discord-icon-lg { width: 22px; height: 22px; fill: #fff; }
 
 /* ─── SECTIONS ─── */
 section { padding: 72px 24px; }
@@ -233,15 +245,25 @@ section { padding: 72px 24px; }
 .price-list li { display: flex; align-items: center; gap: 9px; font-size: 0.83rem; color: var(--muted); }
 .price-list li::before { content: '✓'; color: var(--red); font-weight: 700; font-size: 0.8rem; flex-shrink: 0; text-shadow: 0 0 8px var(--red-glow); }
 .btn-price {
-  display: block; width: 100%; padding: 12px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 12px; border-radius: 7px;
   text-align: center; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.1em;
   text-transform: uppercase; text-decoration: none; border: none; cursor: pointer;
-  transition: box-shadow 0.22s, transform 0.18s, border-color 0.22s, color 0.22s;
+  transition: box-shadow 0.22s, transform 0.18s, border-color 0.22s, color 0.22s, background 0.22s;
 }
-.btn-price-fill { background: linear-gradient(135deg, var(--red), var(--red-dark)); color: #fff; }
-.btn-price-fill:hover { box-shadow: 0 0 26px var(--red-glow); transform: translateY(-1px); }
-.btn-price-out { background: transparent; color: var(--text); border: 1px solid rgba(255,255,255,0.13); }
-.btn-price-out:hover { border-color: var(--red); color: var(--red); }
+.btn-price svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+.btn-price-discord {
+  background: var(--discord); color: #fff;
+}
+.btn-price-discord:hover { box-shadow: 0 0 26px var(--discord-glow); transform: translateY(-1px); background: #4a55e0; }
+.btn-price-discord-out {
+  background: transparent; color: var(--discord);
+  border: 1px solid rgba(88,101,242,0.35);
+}
+.btn-price-discord-out:hover {
+  border-color: var(--discord); background: rgba(88,101,242,0.08);
+  box-shadow: 0 0 20px rgba(88,101,242,0.15);
+}
 
 /* ─── CTA ─── */
 #cta {
@@ -258,22 +280,57 @@ section { padding: 72px 24px; }
   letter-spacing: -0.01em; line-height: 1.1; margin-bottom: 16px;
 }
 .cta-title .r { color: var(--red); text-shadow: 0 0 40px rgba(255,26,26,0.5); }
-.cta-desc { max-width: 400px; margin: 0 auto 32px; color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
-.btn-cta {
-  display: inline-block; position: relative; overflow: hidden;
-  background: linear-gradient(135deg, #ff2020, #a80000);
-  color: #fff; padding: 16px 46px; border-radius: 9px;
+.cta-desc { max-width: 420px; margin: 0 auto 32px; color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+.cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+.btn-cta-main {
+  display: inline-flex; align-items: center; gap: 9px;
+  position: relative; overflow: hidden;
+  background: var(--discord);
+  color: #fff; padding: 16px 40px; border-radius: 9px;
   font-weight: 700; font-size: 0.88rem; letter-spacing: 0.12em;
   text-transform: uppercase; text-decoration: none; border: none; cursor: pointer;
-  transition: box-shadow 0.28s, transform 0.2s;
+  transition: box-shadow 0.28s, transform 0.2s, background 0.2s;
 }
-.btn-cta::after {
+.btn-cta-main::after {
   content: ''; position: absolute; top: 0; left: -100%; width: 55%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
   transition: left 0.5s;
 }
-.btn-cta:hover::after { left: 160%; }
-.btn-cta:hover { box-shadow: 0 0 44px var(--red-glow), 0 0 100px rgba(255,26,26,0.18); transform: translateY(-3px); }
+.btn-cta-main:hover::after { left: 160%; }
+.btn-cta-main:hover {
+  box-shadow: 0 0 44px var(--discord-glow), 0 0 100px rgba(88,101,242,0.18);
+  transform: translateY(-3px); background: #4a55e0;
+}
+.btn-cta-main svg { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
+
+.btn-cta-sec {
+  display: inline-flex; align-items: center;
+  background: transparent; color: var(--text);
+  padding: 16px 36px; border-radius: 9px;
+  font-weight: 600; font-size: 0.88rem; letter-spacing: 0.1em;
+  text-transform: uppercase; text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.14); cursor: pointer;
+  transition: border-color 0.22s, color 0.22s, transform 0.2s;
+}
+.btn-cta-sec:hover { border-color: var(--red); color: var(--red); transform: translateY(-2px); }
+
+/* ─── DISCORD CALLOUT ─── */
+.discord-callout {
+  max-width: var(--max); margin: 0 auto;
+  background: linear-gradient(135deg, rgba(88,101,242,0.1) 0%, rgba(88,101,242,0.04) 100%);
+  border: 1px solid rgba(88,101,242,0.25);
+  border-radius: 16px; padding: 36px 40px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  flex-wrap: wrap;
+}
+.discord-callout-left { display: flex; align-items: center; gap: 18px; }
+.discord-callout-left svg { width: 40px; height: 40px; fill: var(--discord); flex-shrink: 0; }
+.discord-callout-text h3 {
+  font-family: var(--font-d); font-size: 1rem; font-weight: 700;
+  letter-spacing: 0.06em; margin-bottom: 5px;
+}
+.discord-callout-text p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
 
 /* ─── FOOTER ─── */
 footer {
@@ -293,6 +350,8 @@ footer {
 @media (max-width: 860px) {
   nav { padding: 0 20px; }
   .features-grid, .pricing-grid, .videos-grid { grid-template-columns: 1fr; }
+  .discord-callout { flex-direction: column; text-align: center; }
+  .discord-callout-left { flex-direction: column; }
 }
 @media (max-width: 560px) {
   .nav-links { display: none; }
@@ -312,7 +371,10 @@ footer {
     <li><a href="#features">Features</a></li>
     <li><a href="#showcase">Media</a></li>
     <li><a href="#pricing">Pricing</a></li>
-    <li><a href="#cta" class="nav-cta">Get Access</a></li>
+    <li><a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="nav-discord">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+      Join Discord
+    </a></li>
   </ul>
 </nav>
 
@@ -331,19 +393,14 @@ footer {
   </h1>
 
   <p class="tagline reveal d2">Precision. Power. Dominance.</p>
-  <p class="hero-desc reveal d3">The most advanced Counter-Strike 2 enhancement suite ever built. Engineered for players who demand the edge.</p>
+  <p class="hero-desc reveal d3">The most advanced Counter-Strike 2 enhancement suite ever built. Join our Discord to purchase, get support, and stay updated.</p>
 
   <div class="hero-btns reveal d4">
-    <a href="#pricing" class="btn-fill">Purchase Now</a>
+    <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-discord">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+      Join Discord to Buy
+    </a>
     <a href="#features" class="btn-outline">Learn More</a>
-  </div>
-
-  <div class="hero-preview reveal d5">
-    <!-- Swap in your screenshot: remove .ph and add <img src="your.jpg" style="width:100%;height:100%;object-fit:cover"> -->
-    <div class="ph">
-      <svg viewBox="0 0 24 24" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-      <span>Cheat Preview Image</span>
-    </div>
   </div>
 </section>
 
@@ -413,20 +470,12 @@ footer {
     <h2 class="sec-title reveal d1">Visual Showcase</h2>
     <div class="videos-grid">
       <div class="vid-wrap reveal d1">
-        <iframe
-          src="https://www.youtube.com/embed/kTHrS-ZnMJo"
-          title="SIGMA CS2 — Showcase 1"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen>
-        </iframe>
+        <iframe src="https://www.youtube.com/embed/kTHrS-ZnMJo" title="SIGMA CS2 — Showcase 1"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
       <div class="vid-wrap reveal d2">
-        <iframe
-          src="https://www.youtube.com/embed/Hb5v8hj8ThM"
-          title="SIGMA CS2 — Showcase 2"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen>
-        </iframe>
+        <iframe src="https://www.youtube.com/embed/Hb5v8hj8ThM" title="SIGMA CS2 — Showcase 2"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
     </div>
   </div>
@@ -437,6 +486,7 @@ footer {
   <div class="section-inner" style="text-align:center;">
     <span class="sec-label reveal">Plans</span>
     <h2 class="sec-title reveal d1">Choose Your Access</h2>
+    <p class="reveal d2" style="color:var(--muted);font-size:0.88rem;margin-top:-28px;margin-bottom:44px;">All plans purchased directly through our Discord server.</p>
   </div>
   <div class="section-inner">
     <div class="pricing-grid">
@@ -451,7 +501,10 @@ footer {
           <li>Skin Changer</li>
           <li>Basic Support</li>
         </ul>
-        <a href="#" class="btn-price btn-price-out">Get Started</a>
+        <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-price btn-price-discord-out">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+          Buy on Discord
+        </a>
       </div>
 
       <div class="price-card hot reveal d1">
@@ -467,7 +520,10 @@ footer {
           <li>Instant Updates</li>
           <li>Config Sharing</li>
         </ul>
-        <a href="#" class="btn-price btn-price-fill">Get Monthly</a>
+        <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-price btn-price-discord">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+          Buy on Discord
+        </a>
       </div>
 
       <div class="price-card reveal d2">
@@ -483,9 +539,27 @@ footer {
           <li>Config Sharing</li>
           <li>Early Beta Features</li>
         </ul>
-        <a href="#" class="btn-price btn-price-out">Go Lifetime</a>
+        <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-price btn-price-discord-out">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+          Buy on Discord
+        </a>
       </div>
 
+    </div>
+
+    <!-- Discord callout banner -->
+    <div class="discord-callout reveal" style="margin-top: 48px;">
+      <div class="discord-callout-left">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+        <div class="discord-callout-text">
+          <h3>Purchase via Discord</h3>
+          <p>Join our server to buy, get your key, receive support, and stay updated on every release.</p>
+        </div>
+      </div>
+      <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-discord" style="flex-shrink:0;">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+        Join Now
+      </a>
     </div>
   </div>
 </section>
@@ -493,8 +567,14 @@ footer {
 <!-- CTA -->
 <section id="cta">
   <h2 class="cta-title reveal">Ready to Go <span class="r">Sigma?</span></h2>
-  <p class="cta-desc reveal d1">Stop losing. Start dominating. The most powerful CS2 suite is one click away.</p>
-  <a href="#pricing" class="btn-cta reveal d2">Purchase Sigma CS2</a>
+  <p class="cta-desc reveal d1">Stop losing. Start dominating. Join the Discord, grab your key, and be in-game in minutes.</p>
+  <div class="cta-btns reveal d2">
+    <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-cta-main">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+      Join Discord & Purchase
+    </a>
+    <a href="#features" class="btn-cta-sec">View Features</a>
+  </div>
 </section>
 
 </main>
@@ -502,7 +582,6 @@ footer {
 <footer>© 2026 SIGMA CS2. All rights reserved.</footer>
 
 <script>
-// ─── PARTICLES ───
 const cvs = document.getElementById('cvs');
 const ctx = cvs.getContext('2d');
 let W, H;
@@ -571,7 +650,6 @@ function links() {
   requestAnimationFrame(loop);
 })();
 
-// ─── SCROLL REVEAL ───
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }

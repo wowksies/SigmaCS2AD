@@ -112,7 +112,7 @@ section { padding: 72px 24px; }
 ════════════════════════ */
 #pricing { background: var(--surface); }
 
-.pricing-skeleton { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+.pricing-skeleton { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
 .skel-card { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 30px 24px; }
 .skel-line { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; margin-bottom: 12px; }
 .skel-line.h1 { height: 12px; width: 50%; }
@@ -123,7 +123,7 @@ section { padding: 72px 24px; }
 .skel-line.btn { height: 44px; width: 100%; margin-top: 8px; }
 @keyframes shimmer { to { background-position: -200% 0; } }
 
-.pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; align-items: start; }
+.pricing-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; align-items: start; }
 .price-card { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 30px 24px; position: relative; transition: transform 0.28s, box-shadow 0.28s; display: flex; flex-direction: column; }
 .price-card:hover { transform: translateY(-6px); }
 .price-card.hot { border-color: var(--border-red); box-shadow: 0 0 44px rgba(255,26,26,0.13), 0 0 90px rgba(255,26,26,0.05); background: linear-gradient(160deg, rgba(255,26,26,0.04) 0%, var(--bg) 60%); }
@@ -238,7 +238,7 @@ footer { text-align: center; padding: 24px; border-top: 1px solid var(--border);
 
 @media (max-width: 860px) {
   nav { padding: 0 20px; }
-  .features-grid, .pricing-grid, .videos-grid, .pricing-skeleton { grid-template-columns: 1fr; }
+  .features-grid, .pricing-grid, .videos-grid, .pricing-skeleton { grid-template-columns: 1fr 1fr; }
   .cheat-window { width: 55%; min-width: 200px; }
   .gw-grid { grid-template-columns: 1fr 1fr; }
 }
@@ -285,7 +285,7 @@ footer { text-align: center; padding: 24px; border-top: 1px solid var(--border);
           <input type="email" class="form-input" id="emailInput" placeholder="you@example.com" autocomplete="email" inputmode="email">
         </div>
 
-        <div>
+        <div id="gwSection">
           <span class="gw-label">Payment method</span>
           <div class="gw-grid" id="gwGrid">
             <!-- populated from API or fallback -->
@@ -489,13 +489,13 @@ footer { text-align: center; padding: 24px; border-top: 1px solid var(--border);
 
 <script>
 /* ════════════════════════════════════
-   ⚠️  REPLACE THIS KEY after regenerating in SellAuth
-       Dashboard → Account → API Access
+   ⚠️  REPLACE SA_KEY after regenerating:
+       SellAuth Dashboard → Account → API Access
 ════════════════════════════════════ */
-const SA_KEY    = '5569146|rjcsYLuvxx7JH8Urj9cw4VTGM5NBwllAuzYkqiHiaa07cdf3'; // ← REPLACE ME
-const SA_SHOP   = '219036';   // numeric shop ID
-const SA_BASE   = 'https://api.sellauth.com/v1';
-const SA_HDR    = { 'Authorization': `Bearer ${SA_KEY}`, 'Content-Type': 'application/json', 'Accept': 'application/json' };
+const SA_KEY  = '5569146|rjcsYLuvxx7JH8Urj9cw4VTGM5NBwllAuzYkqiHiaa07cdf3'; // ← paste new key after regenerating
+const SA_SHOP = '219036';  // your numeric shop ID (from SellAuth dashboard)
+const SA_BASE = 'https://api.sellauth.com/v1';
+const SA_HDR  = { 'Authorization': `Bearer ${SA_KEY}`, 'Content-Type': 'application/json', 'Accept': 'application/json' };
 
 /* ── PARTICLES ── */
 const cvs=document.getElementById('cvs'),ctx=cvs.getContext('2d');
@@ -536,89 +536,80 @@ setTimeout(()=>document.querySelectorAll('#hero .reveal').forEach(el=>el.classLi
 })();
 
 /* ══════════════════════════════════════
-   SELLAUTH — load products + checkout
+   SELLAUTH — variants + PayPal checkout
 ══════════════════════════════════════ */
 
-/* Gateway display config */
-const GW_META = {
-  paypal:    { label: 'PayPal',    icon: '🅿' },
-  stripe:    { label: 'Card',      icon: '💳' },
-  cashapp:   { label: 'CashApp',   icon: '💸' },
-  bitcoin:   { label: 'Bitcoin',   icon: '₿'  },
-  litecoin:  { label: 'Litecoin',  icon: '◎'  },
-  ethereum:  { label: 'Ethereum',  icon: 'Ξ'  },
-  sellix:    { label: 'Sellix',    icon: '🔒' },
-};
-const FALLBACK_GW = ['paypal','stripe','cashapp','bitcoin'];
+let activeVariant = null; // { productId, variantId, price, cur, name, period, stock }
 
-let activeProduct = null;
-let activeGateway = null;
-
-/* ── Build gateway buttons ── */
-function buildGateways(gateways) {
-  const grid = document.getElementById('gwGrid');
-  grid.innerHTML = '';
-  const list = (gateways && gateways.length) ? gateways : FALLBACK_GW;
-  list.forEach((gw, i) => {
-    const key = (typeof gw === 'string' ? gw : gw.name || gw).toLowerCase();
-    const meta = GW_META[key] || { label: key, icon: '💰' };
-    const btn = document.createElement('button');
-    btn.className = 'gw-btn' + (i === 0 ? ' active' : '');
-    btn.dataset.gw = key;
-    btn.innerHTML = `<span>${meta.icon}</span> ${meta.label}`;
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.gw-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeGateway = key;
-    });
-    grid.appendChild(btn);
-    if (i === 0) activeGateway = key;
-  });
+/* ── PERIOD label from variant name ── */
+function parsePeriod(name) {
+  const n = (name || '').toLowerCase();
+  if (n.includes('lifetime') || n.includes('life')) return 'Lifetime';
+  if (n.includes('month'))  return 'Monthly';
+  if (n.includes('2 week') || n.includes('2week')) return '2 Weeks';
+  if (n.includes('week'))   return '1 Week';
+  if (n.includes('day'))    return 'Daily';
+  return name || 'Access';
 }
 
-/* ── Render pricing cards ── */
-function renderProducts(products) {
-  const wrap = document.getElementById('pricingWrap');
-  const hot = Math.floor(products.length / 2);
+/* ── "Most popular" index for N variants ── */
+function hotIndex(n) {
+  if (n <= 1) return 0;
+  if (n === 2) return 0;
+  if (n === 3) return 1;
+  if (n === 4) return 2; // Month in [1wk, 2wk, month, lifetime]
+  return Math.floor(n / 2);
+}
 
+/* ── Feature list common to all plans ── */
+const FEATURES = ['Full Aimbot Access','ESP / Wallhack','Radar Hack','Skin Changer','Instant Updates','Undetected Engine','24/7 Support'];
+
+/* ── Render variants as pricing cards ── */
+function renderVariants(productId, variants, productGateways) {
+  const wrap = document.getElementById('pricingWrap');
+  const hi   = hotIndex(variants.length);
+
+  // build 4-column grid if 4 variants, else 3-col
+  const cols = variants.length === 4 ? 4 : variants.length >= 3 ? 3 : variants.length;
   const grid = document.createElement('div');
   grid.className = 'pricing-grid';
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
-  products.forEach((p, i) => {
-    const isHot = i === hot && products.length > 1;
-    const price = parseFloat(p.price || p.variants?.[0]?.price || 0);
-    const cur = p.currency_symbol || p.currency || '€';
-    const name = p.name || 'Sigma CS2';
-    const nameLow = name.toLowerCase();
-    const period = nameLow.includes('life') ? 'Lifetime' : nameLow.includes('month') ? 'Monthly' : nameLow.includes('week') ? 'Weekly' : nameLow.includes('day') ? 'Daily' : 'Access';
-    const stock = p.stock;
-    const inStock = stock === null || stock === undefined || stock > 0;
+  variants.forEach((v, i) => {
+    const isHot    = i === hi;
+    const price    = parseFloat(v.price || 0);
+    const cur      = v.currency_symbol || '$';
+    const period   = parsePeriod(v.title || v.name);
+    const stock    = v.stock;
+    const inStock  = stock === null || stock === undefined || stock > 0;
     const lowStock = typeof stock === 'number' && stock > 0 && stock <= 5;
 
-    // Parse description lines as features
-    const rawDesc = (p.description || '').replace(/<[^>]+>/g,'').trim();
-    const lines = rawDesc.split('\n').map(l => l.replace(/^[-•*✓]\s*/,'')).filter(l=>l.length>2).slice(0,7);
-    const featureHTML = lines.length
-      ? lines.map(l=>`<li>${l}</li>`).join('')
-      : `<li>Full Aimbot Access</li><li>ESP / Wallhack</li><li>Radar Hack</li><li>Skin Changer</li><li>Support</li>`;
+    // show more features for higher tiers
+    const feats = i === 0 ? FEATURES.slice(0,5) : i === 1 ? FEATURES.slice(0,6) : FEATURES;
+    const featureHTML = feats.map(f => `<li>${f}</li>`).join('');
+
+    const origPrice = v.compare_at_price || v.original_price;
+    const origHTML  = origPrice ? `<del style="font-size:.9rem;color:var(--dim);font-weight:400"> ${cur}${parseFloat(origPrice).toFixed(2)}</del>` : '';
 
     const stockHTML = !inStock
       ? `<div class="price-stock out">Out of stock</div>`
       : lowStock
         ? `<div class="price-stock low">Only ${stock} left!</div>`
-        : `<div class="price-stock">${stock !== null && stock !== undefined ? stock + ' in stock' : 'In stock'}</div>`;
+        : '';
 
+    const delayClass = i===1?' d1':i===2?' d2':i===3?' d3':'';
     const card = document.createElement('div');
-    card.className = `price-card reveal${i===1?' d1':i===2?' d2':''}${isHot?' hot':''}`;
+    card.className = `price-card reveal${delayClass}${isHot?' hot':''}`;
     card.innerHTML = `
       ${isHot ? '<div class="pop-badge">Most Popular</div>' : ''}
       <span class="price-period">${period}</span>
-      <div class="price-name">${name}</div>
-      <div class="price-amount"><sup>${cur}</sup>${price.toFixed(2)}</div>
+      <div class="price-amount"><sup>${cur}</sup>${price.toFixed(2)}${origHTML}</div>
       ${stockHTML}
       <ul class="price-list">${featureHTML}</ul>
       <button class="btn-buy ${isHot ? 'btn-buy-fill' : 'btn-buy-out'}" ${!inStock ? 'disabled' : ''}
-        data-id="${p.id}" data-price="${price.toFixed(2)}" data-cur="${cur}" data-name="${name}" data-period="${period}">
+        data-pid="${productId}" data-vid="${v.id}"
+        data-price="${price.toFixed(2)}" data-cur="${cur}"
+        data-name="Sigma CS2 — ${period}" data-period="${period}">
         ${inStock ? 'Buy Now' : 'Out of Stock'}
       </button>
     `;
@@ -628,72 +619,78 @@ function renderProducts(products) {
   wrap.innerHTML = '';
   wrap.appendChild(grid);
   grid.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
   grid.querySelectorAll('.btn-buy:not(:disabled)').forEach(btn => {
-    btn.addEventListener('click', () => openModal({
-      id:     btn.dataset.id,
-      price:  btn.dataset.price,
-      cur:    btn.dataset.cur,
-      name:   btn.dataset.name,
-      period: btn.dataset.period
-    }));
+    btn.addEventListener('click', () => {
+      activeVariant = {
+        productId: btn.dataset.pid,
+        variantId:  btn.dataset.vid,
+        price:      btn.dataset.price,
+        cur:        btn.dataset.cur,
+        name:       btn.dataset.name,
+        period:     btn.dataset.period,
+      };
+      openModal(activeVariant, productGateways);
+    });
   });
 }
 
-/* ── Fallback static pricing ── */
+/* ── Fallback static cards (from screenshot data) ── */
 function renderFallback() {
   const wrap = document.getElementById('pricingWrap');
-  wrap.innerHTML = `
-    <div class="pricing-grid">
-      <div class="price-card reveal">
-        <span class="price-period">Weekly</span>
-        <div class="price-amount"><sup>€</sup>4.99</div>
-        <ul class="price-list"><li>Full Aimbot Access</li><li>ESP / Wallhack</li><li>Radar Hack</li><li>Skin Changer</li><li>Support</li></ul>
-        <button class="btn-buy btn-buy-out" onclick="openModal({id:'weekly',price:'4.99',cur:'€',name:'Sigma CS2 Weekly',period:'Weekly'})">Buy Now</button>
-      </div>
-      <div class="price-card hot reveal d1">
-        <div class="pop-badge">Most Popular</div>
-        <span class="price-period">Monthly</span>
-        <div class="price-amount"><sup>€</sup>14.99</div>
-        <ul class="price-list"><li>Full Aimbot Access</li><li>ESP / Wallhack</li><li>Radar Hack</li><li>Skin Changer</li><li>Priority Support</li><li>Instant Updates</li><li>Config Sharing</li></ul>
-        <button class="btn-buy btn-buy-fill" onclick="openModal({id:'monthly',price:'14.99',cur:'€',name:'Sigma CS2 Monthly',period:'Monthly'})">Buy Now</button>
-      </div>
-      <div class="price-card reveal d2">
-        <span class="price-period">Lifetime</span>
-        <div class="price-amount"><sup>€</sup>29.99</div>
-        <ul class="price-list"><li>Full Aimbot Access</li><li>ESP / Wallhack</li><li>Radar Hack</li><li>Skin Changer</li><li>VIP Support</li><li>Instant Updates</li><li>Config Sharing</li><li>Early Beta</li></ul>
-        <button class="btn-buy btn-buy-out" onclick="openModal({id:'lifetime',price:'29.99',cur:'€',name:'Sigma CS2 Lifetime',period:'Lifetime'})">Buy Now</button>
-      </div>
-    </div>
-    <p style="text-align:center;margin-top:18px;font-size:0.76rem;color:var(--dim)">
-      Could not load live pricing. <a style="color:var(--red);cursor:pointer" onclick="loadProducts()">Retry</a>
-    </p>
-  `;
-  wrap.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+  const variants = [
+    { id:'v1', title:'1 Week',   price:'3.00',  compare:'5.00',  stock:10 },
+    { id:'v2', title:'2 Weeks',  price:'7.00',  compare:'10.00', stock:10 },
+    { id:'v3', title:'Month',    price:'12.00', compare:'15.00', stock:10 },
+    { id:'v4', title:'LIFETIME', price:'30.00', compare:'40.00', stock:10 },
+  ];
+  renderVariants('fallback', variants, ['paypal']);
+  wrap.querySelector('p') && wrap.querySelector('p').remove();
+  const note = document.createElement('p');
+  note.style.cssText = 'text-align:center;margin-top:18px;font-size:0.76rem;color:var(--dim)';
+  note.innerHTML = `Live pricing unavailable. <a style="color:var(--red);cursor:pointer" onclick="loadProducts()">Retry</a>`;
+  wrap.appendChild(note);
 }
 
-/* ── Fetch products ── */
+/* ── Fetch product + variants ── */
 async function loadProducts() {
-  document.getElementById('pricingWrap').innerHTML = `<div class="pricing-skeleton" id="pricingSkeleton">
-    <div class="skel-card"><div class="skel-line h1"></div><div class="skel-line h2"></div><div class="skel-line h3"></div><div class="skel-line h4"></div><div class="skel-line h5"></div><div class="skel-line btn"></div></div>
-    <div class="skel-card"><div class="skel-line h1"></div><div class="skel-line h2"></div><div class="skel-line h3"></div><div class="skel-line h4"></div><div class="skel-line h5"></div><div class="skel-line btn"></div></div>
-    <div class="skel-card"><div class="skel-line h1"></div><div class="skel-line h2"></div><div class="skel-line h3"></div><div class="skel-line h4"></div><div class="skel-line h5"></div><div class="skel-line btn"></div></div>
-  </div>`;
+  const skelHTML = Array(4).fill(`<div class="skel-card"><div class="skel-line h1"></div><div class="skel-line h2"></div><div class="skel-line h3"></div><div class="skel-line h4"></div><div class="skel-line h5"></div><div class="skel-line btn"></div></div>`).join('');
+  document.getElementById('pricingWrap').innerHTML = `<div class="pricing-skeleton" style="grid-template-columns:repeat(4,1fr)">${skelHTML}</div>`;
+
   try {
-    const res = await fetch(`${SA_BASE}/shops/${SA_SHOP}/products`, { headers: SA_HDR });
-    if (res.status === 429) throw new Error('Rate limited — try again shortly.');
-    if (!res.ok) throw new Error(`API error ${res.status}`);
-    const json = await res.json();
-    const prods = Array.isArray(json) ? json : json.data || json.products || [];
-    if (!prods.length) throw new Error('No products found');
-    renderProducts(prods);
+    // Step 1: get product list
+    const listRes = await fetch(`${SA_BASE}/shops/${SA_SHOP}/products`, { headers: SA_HDR });
+    if (!listRes.ok) throw new Error(`Products API ${listRes.status}`);
+    const listJson = await listRes.json();
+    const products = Array.isArray(listJson) ? listJson : listJson.data || listJson.products || [];
+    if (!products.length) throw new Error('No products');
+
+    const product = products[0]; // use first product (Sigma CS2)
+    const productId = product.id;
+
+    // Step 2: get full product detail (includes variants + gateways)
+    const detRes = await fetch(`${SA_BASE}/shops/${SA_SHOP}/products/${productId}`, { headers: SA_HDR });
+    if (!detRes.ok) throw new Error(`Product detail API ${detRes.status}`);
+    const det = await detRes.json();
+    const detail = det.data || det;
+
+    // Extract variants
+    const variants = detail.variants || detail.serials_variants || product.variants || [];
+    if (!variants.length) throw new Error('No variants found');
+
+    // Extract gateways — only show ones the shop actually has enabled
+    const gateways = detail.gateways || detail.payment_gateways || product.gateways || ['paypal'];
+
+    renderVariants(productId, variants, gateways);
+
   } catch (err) {
-    console.warn('SellAuth products error:', err.message);
+    console.warn('SellAuth load error:', err.message);
     renderFallback();
   }
 }
 
-/* ── Modal ── */
-const overlay = document.getElementById('modalOverlay');
+/* ══ MODAL ══ */
+const overlay  = document.getElementById('modalOverlay');
 const errorBar = document.getElementById('errorBar');
 
 function showView(id) {
@@ -701,14 +698,49 @@ function showView(id) {
   document.getElementById(id).classList.add('show');
 }
 
-function openModal(product) {
-  activeProduct = product;
-  document.getElementById('mpsAmount').textContent = `${product.cur}${parseFloat(product.price).toFixed(2)}`;
-  document.getElementById('mpsPeriod').textContent = product.period;
-  document.getElementById('modalProductSub').textContent = product.name;
+/* ── Build PayPal-only (or real) gateway buttons ── */
+const GW_ICONS = {
+  paypal:   '🅿 PayPal',
+  stripe:   '💳 Card',
+  cashapp:  '💸 CashApp',
+  bitcoin:  '₿ Bitcoin',
+  litecoin: '◎ Litecoin',
+  ethereum: 'Ξ Ethereum',
+};
+
+let activeGateway = 'paypal';
+
+function buildGatewayBtns(gateways) {
+  const grid = document.getElementById('gwGrid');
+  grid.innerHTML = '';
+  const list = Array.isArray(gateways) && gateways.length ? gateways : ['paypal'];
+  list.forEach((gw, i) => {
+    const key = (typeof gw === 'string' ? gw : gw.name || String(gw)).toLowerCase();
+    const label = GW_ICONS[key] || `💰 ${key}`;
+    const btn = document.createElement('button');
+    btn.className = 'gw-btn' + (i === 0 ? ' active' : '');
+    btn.dataset.gw = key;
+    btn.textContent = label;
+    btn.addEventListener('click', () => {
+      grid.querySelectorAll('.gw-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeGateway = key;
+    });
+    grid.appendChild(btn);
+    if (i === 0) activeGateway = key;
+  });
+  // If only 1 gateway, hide the label + grid (no choice to make)
+  const section = document.getElementById('gwSection');
+  if (section) section.style.display = list.length <= 1 ? 'none' : '';
+}
+
+function openModal(variant, gateways) {
+  document.getElementById('mpsAmount').textContent = `${variant.cur}${parseFloat(variant.price).toFixed(2)}`;
+  document.getElementById('mpsPeriod').textContent  = variant.period;
+  document.getElementById('modalProductSub').textContent = variant.name;
   document.getElementById('emailInput').value = '';
   errorBar.textContent = ''; errorBar.classList.remove('show');
-  buildGateways(null); // use fallback gateways; could also fetch from API
+  buildGatewayBtns(gateways);
   showView('viewForm');
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -725,19 +757,15 @@ document.getElementById('successClose').addEventListener('click', closeModal);
 overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
 
-/* ── Place order ── */
+/* ── Place order — correct SellAuth endpoint ── */
 document.getElementById('btnCheckout').addEventListener('click', async () => {
-  if (!activeProduct) return;
+  if (!activeVariant) return;
+
   const email = document.getElementById('emailInput').value.trim();
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     errorBar.textContent = 'Please enter a valid email address.';
     errorBar.classList.add('show');
     document.getElementById('emailInput').focus();
-    return;
-  }
-  if (!activeGateway) {
-    errorBar.textContent = 'Please select a payment method.';
-    errorBar.classList.add('show');
     return;
   }
 
@@ -748,29 +776,47 @@ document.getElementById('btnCheckout').addEventListener('click', async () => {
   showView('viewLoading');
 
   try {
-    const body = { email, gateway: activeGateway, quantity: 1 };
-    // Only include product_id if it's a real ID (not our fallback strings)
-    if (activeProduct.id && !['weekly','monthly','lifetime'].includes(activeProduct.id)) {
-      body.product_id = activeProduct.id;
+    /*
+      SellAuth correct order endpoint:
+      POST /v1/shops/{shopId}/products/{productId}/buy
+      Body: { email, gateway, variant_id, quantity }
+    */
+    const isFallback = activeVariant.productId === 'fallback';
+    let checkoutUrl;
+
+    if (isFallback) {
+      // Can't hit real API with fake IDs — redirect to SellAuth store directly
+      checkoutUrl = `https://sellauth.com/`;
+    } else {
+      const body = {
+        email,
+        gateway:    activeGateway,
+        variant_id: activeVariant.variantId,
+        quantity:   1
+      };
+
+      const res = await fetch(
+        `${SA_BASE}/shops/${SA_SHOP}/products/${activeVariant.productId}/buy`,
+        { method: 'POST', headers: SA_HDR, body: JSON.stringify(body) }
+      );
+
+      const json = await res.json();
+
+      if (res.status === 429) throw new Error('Too many requests — please wait a moment and try again.');
+      if (!res.ok) {
+        const msg = json.message || json.error || (json.errors && Object.values(json.errors).flat().join(' ')) || `Error ${res.status}`;
+        throw new Error(msg);
+      }
+
+      checkoutUrl = json.url || json.checkout_url || json.payment_url
+                 || json.invoice_url || json.data?.url || json.data?.checkout_url;
+
+      if (!checkoutUrl) throw new Error('No checkout URL returned. Please try again or contact support.');
     }
 
-    const res = await fetch(`${SA_BASE}/shops/${SA_SHOP}/orders`, {
-      method: 'POST',
-      headers: SA_HDR,
-      body: JSON.stringify(body)
-    });
-
-    const json = await res.json();
-
-    if (res.status === 429) throw new Error('Too many requests — please wait a moment and try again.');
-    if (!res.ok) throw new Error(json.message || json.error || `Error ${res.status}`);
-
-    const url = json.url || json.checkout_url || json.payment_url || json.data?.url || json.invoice_url;
-    if (!url) throw new Error('No checkout URL returned. Please try again.');
-
-    document.getElementById('directLink').href = url;
+    document.getElementById('directLink').href = checkoutUrl;
     showView('viewSuccess');
-    setTimeout(() => window.open(url, '_blank'), 700);
+    setTimeout(() => window.open(checkoutUrl, '_blank'), 700);
 
   } catch (err) {
     console.error('Order error:', err);

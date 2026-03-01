@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIGMA CS2 — Precision. Power. Dominance.</title>
+<title>SIGMA CS2 — Look Legit. Play Better.</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
   --red: #ff1a1a; --red-dark: #b80000; --red-glow: rgba(255,26,26,0.45);
-  --discord: #5865F2; --discord-dark: #4752c4; --discord-glow: rgba(88,101,242,0.45);
-  --bg: #0a0a0a; --surface: #0f0f0f; --border: rgba(255,255,255,0.07);
-  --border-red: rgba(255,26,26,0.22); --text: #f5f5f5; --muted: #707070; --dim: #3a3a3a;
+  --discord: #5865F2; --discord-glow: rgba(88,101,242,0.45);
+  --bg: #0a0a0a; --surface: #0f0f0f;
+  --border: rgba(255,255,255,0.07); --border-red: rgba(255,26,26,0.22);
+  --text: #f5f5f5; --muted: #707070; --dim: #3a3a3a;
   --font-d: 'Orbitron', monospace; --font-b: 'Inter', sans-serif; --max: 1080px;
 }
 html { scroll-behavior: smooth; }
@@ -25,57 +26,31 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-b); ov
 nav, main, footer { position: relative; z-index: 1; }
 
 /* ── NAV ── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; height: 62px;
-  display: flex; align-items: center; justify-content: space-between; padding: 0 40px;
-  background: rgba(10,10,10,0.88); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid var(--border); z-index: 100;
-}
+nav { position: fixed; top: 0; left: 0; right: 0; height: 62px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; background: rgba(10,10,10,0.88); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); z-index: 100; }
 .logo { font-family: var(--font-d); font-weight: 900; font-size: 1.05rem; letter-spacing: 0.15em; text-decoration: none; color: var(--text); user-select: none; }
 .logo em { color: var(--red); font-style: normal; text-shadow: 0 0 18px var(--red-glow); }
 .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
 .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s; }
 .nav-links a:hover { color: var(--text); }
-.nav-discord {
-  display: flex; align-items: center; gap: 7px; background: var(--discord);
-  color: #fff !important; padding: 8px 18px; border-radius: 6px;
-  font-weight: 700 !important; font-size: 0.76rem !important; letter-spacing: 0.1em !important;
-  transition: box-shadow 0.25s, transform 0.2s !important;
-}
-.nav-discord:hover { box-shadow: 0 0 22px var(--discord-glow); transform: translateY(-1px); color: #fff !important; }
-.nav-discord svg { width: 15px; height: 15px; fill: #fff; flex-shrink: 0; }
+.nav-buy { background: linear-gradient(135deg, var(--red), var(--red-dark)); color: #fff !important; padding: 8px 20px; border-radius: 6px; font-weight: 700 !important; transition: box-shadow 0.25s, transform 0.2s !important; }
+.nav-buy:hover { box-shadow: 0 0 22px var(--red-glow); transform: translateY(-1px); color: #fff !important; }
 
 /* ── HERO ── */
-#hero {
-  min-height: 100vh; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; text-align: center; padding: 100px 24px 80px;
-}
-.badge {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(255,26,26,0.07); border: 1px solid rgba(255,26,26,0.22);
-  border-radius: 100px; padding: 5px 14px; font-size: 0.72rem; font-weight: 500;
-  letter-spacing: 0.07em; color: #ff7070; margin-bottom: 28px; user-select: none;
-}
+#hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 24px 80px; }
+.badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,26,26,0.07); border: 1px solid rgba(255,26,26,0.22); border-radius: 100px; padding: 5px 14px; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.07em; color: #ff7070; margin-bottom: 28px; user-select: none; }
 .dot { width: 6px; height: 6px; background: var(--red); border-radius: 50%; box-shadow: 0 0 7px var(--red); animation: blink 1.8s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.45;transform:scale(1.6)} }
 .hero-title { font-family: var(--font-d); font-weight: 900; font-size: clamp(4rem, 13vw, 10rem); line-height: 0.88; letter-spacing: -0.01em; user-select: none; }
 .hero-title .cs2 { color: var(--red); text-shadow: 0 0 50px rgba(255,26,26,0.65), 0 0 120px rgba(255,26,26,0.25); display: block; }
 .tagline { font-family: var(--font-d); font-size: clamp(0.62rem, 1.6vw, 0.82rem); letter-spacing: 0.38em; text-transform: uppercase; color: var(--muted); margin: 18px 0 14px; }
-.hero-desc { max-width: 420px; color: var(--muted); font-size: 0.92rem; line-height: 1.7; margin: 0 auto 36px; }
+.hero-desc { max-width: 440px; color: var(--muted); font-size: 0.92rem; line-height: 1.7; margin: 0 auto 36px; }
 .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
 /* ── BUTTONS ── */
-.btn-discord {
-  position: relative; overflow: hidden; background: var(--discord);
-  color: #fff; padding: 13px 30px; border-radius: 7px; font-weight: 700; font-size: 0.82rem;
-  letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border: none; cursor: pointer;
-  transition: box-shadow 0.25s, transform 0.2s, background 0.2s;
-  display: inline-flex; align-items: center; gap: 9px;
-}
-.btn-discord::after { content: ''; position: absolute; top: 0; left: -100%; width: 55%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent); transition: left 0.48s; }
-.btn-discord:hover::after { left: 160%; }
-.btn-discord:hover { box-shadow: 0 0 28px var(--discord-glow); transform: translateY(-2px); background: #4a55e0; }
-.btn-discord svg { width: 18px; height: 18px; fill: #fff; flex-shrink: 0; }
+.btn-red { position: relative; overflow: hidden; background: linear-gradient(135deg, #ff2020, #a80000); color: #fff; padding: 13px 30px; border-radius: 7px; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border: none; cursor: pointer; transition: box-shadow 0.25s, transform 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+.btn-red::after { content: ''; position: absolute; top: 0; left: -100%; width: 55%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent); transition: left 0.48s; }
+.btn-red:hover::after { left: 160%; }
+.btn-red:hover { box-shadow: 0 0 28px var(--red-glow); transform: translateY(-2px); }
 .btn-outline { background: transparent; color: var(--text); padding: 13px 30px; border-radius: 7px; font-weight: 600; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border: 1px solid rgba(255,255,255,0.16); cursor: pointer; transition: border-color 0.22s, color 0.22s, transform 0.2s; display: inline-flex; align-items: center; }
 .btn-outline:hover { border-color: var(--red); color: var(--red); transform: translateY(-2px); }
 
@@ -97,145 +72,152 @@ section { padding: 72px 24px; }
 .feat-title { font-family: var(--font-d); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; margin-bottom: 8px; }
 .feat-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
 
-/* ══════════════════════════════════════
-   ── INTERACTIVE MENU SHOWCASE ──
-══════════════════════════════════════ */
+/* ── MENU SHOWCASE ── */
 #menu-showcase { background: var(--surface); padding: 72px 24px; }
-.menu-showcase-inner { max-width: var(--max); margin: 0 auto; }
-
-.menu-stage-wrap {
-  position: relative; width: 100%; border-radius: 16px; overflow: hidden;
-  border: 1px solid var(--border-red); box-shadow: 0 0 60px rgba(255,26,26,0.12);
-  user-select: none;
-  aspect-ratio: 16/9;
-  background: #000;
-}
-
-/* The CS2 background image fills the stage */
-.menu-bg {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; display: block; pointer-events: none;
-}
-
-/* Dark vignette so menu pops */
-.menu-stage-vignette {
-  position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  background: radial-gradient(ellipse 90% 90% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%);
-}
-
-/* Hint bar at bottom */
-.stage-hint {
-  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
-  z-index: 50; font-size: 0.65rem; color: rgba(255,255,255,0.35);
-  letter-spacing: 0.12em; text-transform: uppercase; pointer-events: none;
-  white-space: nowrap;
-}
-
-/* ── DRAGGABLE MENU WINDOW ── */
-.cheat-window {
-  position: absolute; z-index: 10;
-  top: 12%; left: 8%;
-  width: 38%; min-width: 260px; max-width: 420px;
-  background: rgba(10,10,12,0.92);
-  border: 1px solid rgba(255,26,26,0.35);
-  border-radius: 10px;
-  box-shadow: 0 8px 50px rgba(0,0,0,0.7), 0 0 30px rgba(255,26,26,0.1);
-  backdrop-filter: blur(8px);
-  font-family: var(--font-b);
-  cursor: default;
-  transition: box-shadow 0.2s;
-}
+.menu-stage-wrap { position: relative; width: 100%; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-red); box-shadow: 0 0 60px rgba(255,26,26,0.12); user-select: none; aspect-ratio: 16/9; background: #000; }
+.menu-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.menu-stage-vignette { position: absolute; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(ellipse 90% 90% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%); }
+.stage-hint { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 50; font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 0.12em; text-transform: uppercase; pointer-events: none; white-space: nowrap; }
+.cheat-window { position: absolute; z-index: 10; top: 12%; left: 8%; width: 38%; min-width: 260px; max-width: 420px; background: rgba(10,10,12,0.92); border: 1px solid rgba(255,26,26,0.35); border-radius: 10px; box-shadow: 0 8px 50px rgba(0,0,0,0.7), 0 0 30px rgba(255,26,26,0.1); backdrop-filter: blur(8px); cursor: default; transition: box-shadow 0.2s; }
 .cheat-window.dragging { box-shadow: 0 20px 80px rgba(0,0,0,0.85), 0 0 50px rgba(255,26,26,0.2); }
-
-/* Title bar */
-.cw-titlebar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 9px 12px 9px 14px;
-  background: rgba(255,26,26,0.08);
-  border-bottom: 1px solid rgba(255,26,26,0.2);
-  border-radius: 10px 10px 0 0;
-  cursor: grab;
-}
+.cw-titlebar { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px 9px 14px; background: rgba(255,26,26,0.08); border-bottom: 1px solid rgba(255,26,26,0.2); border-radius: 10px 10px 0 0; cursor: grab; }
 .cw-titlebar:active { cursor: grabbing; }
 .cw-title { font-family: var(--font-d); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; color: var(--red); text-transform: uppercase; }
 .cw-dots { display: flex; gap: 5px; }
 .cw-dot { width: 8px; height: 8px; border-radius: 50%; }
-.cw-dot.r { background: #ff5f56; } .cw-dot.y { background: #febc2e; } .cw-dot.g { background: #28c840; }
-
-/* Tab bar */
-.cw-tabs {
-  display: flex; padding: 0 6px; gap: 2px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  background: rgba(0,0,0,0.3); overflow-x: auto; scrollbar-width: none;
-}
+.cw-dot.r{background:#ff5f56} .cw-dot.y{background:#febc2e} .cw-dot.g{background:#28c840}
+.cw-tabs { display: flex; padding: 0 6px; gap: 2px; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.3); overflow-x: auto; scrollbar-width: none; }
 .cw-tabs::-webkit-scrollbar { display: none; }
-.cw-tab {
-  padding: 7px 10px; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--muted); cursor: pointer; white-space: nowrap;
-  border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
-  background: none; border-top: none; border-left: none; border-right: none;
-  font-family: var(--font-b);
-}
+.cw-tab { padding: 7px 10px; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; background: none; border-top: none; border-left: none; border-right: none; font-family: var(--font-b); }
 .cw-tab:hover { color: #ccc; }
 .cw-tab.active { color: var(--red); border-bottom-color: var(--red); }
-
-/* Panel content */
 .cw-panels { position: relative; }
 .cw-panel { display: none; }
 .cw-panel.active { display: block; }
-.cw-panel img {
-  width: 100%; display: block;
-  border-radius: 0 0 9px 9px;
-  pointer-events: none;
-}
+.cw-panel img { width: 100%; display: block; border-radius: 0 0 9px 9px; pointer-events: none; }
+.cw-panel-placeholder { padding: 32px 20px; text-align: center; color: var(--muted); font-size: 0.78rem; border-radius: 0 0 9px 9px; background: rgba(255,26,26,0.03); min-height: 160px; display: flex; align-items: center; justify-content: center; }
 
-/* Fallback if image fails */
-.cw-panel-placeholder {
-  padding: 32px 20px; text-align: center;
-  color: var(--muted); font-size: 0.78rem;
-  border-radius: 0 0 9px 9px;
-  background: rgba(255,26,26,0.03);
-  min-height: 160px; display: flex; align-items: center; justify-content: center;
-}
-
-/* ── VIDEO SHOWCASE ── */
+/* ── SHOWCASE ── */
 #showcase { background: var(--bg); }
+.vid-featured { border-radius: 14px; overflow: hidden; border: 1px solid var(--border-red); aspect-ratio: 16/9; background: #000; position: relative; margin-bottom: 18px; box-shadow: 0 0 40px rgba(255,26,26,0.1); transition: border-color 0.25s, box-shadow 0.25s; }
+.vid-featured:hover { border-color: rgba(255,26,26,0.5); box-shadow: 0 0 60px rgba(255,26,26,0.2); }
+.vid-featured iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
 .videos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.vid-wrap {
-  border-radius: 12px; overflow: hidden; border: 1px solid var(--border-red);
-  aspect-ratio: 16/9; background: #000; position: relative;
-  transition: border-color 0.25s, box-shadow 0.25s;
-}
+.vid-wrap { border-radius: 12px; overflow: hidden; border: 1px solid var(--border-red); aspect-ratio: 16/9; background: #000; position: relative; transition: border-color 0.25s, box-shadow 0.25s; }
 .vid-wrap:hover { border-color: rgba(255,26,26,0.5); box-shadow: 0 0 35px rgba(255,26,26,0.15); }
 .vid-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
 
-/* ── PRICING ── */
+/* ════════════════════════
+   PRICING + SELLAUTH
+════════════════════════ */
 #pricing { background: var(--surface); }
+
+.pricing-skeleton { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+.skel-card { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 30px 24px; }
+.skel-line { background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; margin-bottom: 12px; }
+.skel-line.h1 { height: 12px; width: 50%; }
+.skel-line.h2 { height: 44px; width: 70%; }
+.skel-line.h3 { height: 10px; width: 90%; }
+.skel-line.h4 { height: 10px; width: 75%; }
+.skel-line.h5 { height: 10px; width: 82%; }
+.skel-line.btn { height: 44px; width: 100%; margin-top: 8px; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
 .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; align-items: start; }
-.price-card { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 30px 24px; position: relative; transition: transform 0.28s, box-shadow 0.28s; cursor: default; }
+.price-card { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 30px 24px; position: relative; transition: transform 0.28s, box-shadow 0.28s; display: flex; flex-direction: column; }
 .price-card:hover { transform: translateY(-6px); }
 .price-card.hot { border-color: var(--border-red); box-shadow: 0 0 44px rgba(255,26,26,0.13), 0 0 90px rgba(255,26,26,0.05); background: linear-gradient(160deg, rgba(255,26,26,0.04) 0%, var(--bg) 60%); }
 .price-card.hot:hover { box-shadow: 0 18px 55px rgba(255,26,26,0.2); }
 .pop-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--red); color: #fff; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 4px 13px; border-radius: 100px; white-space: nowrap; box-shadow: 0 0 18px var(--red-glow); }
-.price-period { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 10px; }
-.price-amount { font-family: var(--font-d); font-size: 2.5rem; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 22px; }
+.price-period { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 8px; }
+.price-name { font-family: var(--font-d); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 12px; }
+.price-amount { font-family: var(--font-d); font-size: 2.5rem; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 6px; }
 .price-amount sup { font-size: 1.1rem; color: var(--muted); vertical-align: super; margin-right: 1px; }
-.price-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; }
-.price-list li { display: flex; align-items: center; gap: 9px; font-size: 0.83rem; color: var(--muted); }
-.price-list li::before { content: '✓'; color: var(--red); font-weight: 700; font-size: 0.8rem; flex-shrink: 0; text-shadow: 0 0 8px var(--red-glow); }
-.btn-price { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border-radius: 7px; text-align: center; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border: none; cursor: pointer; transition: box-shadow 0.22s, transform 0.18s, border-color 0.22s, color 0.22s, background 0.22s; }
-.btn-price svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
-.btn-price-discord { background: var(--discord); color: #fff; }
-.btn-price-discord:hover { box-shadow: 0 0 26px var(--discord-glow); transform: translateY(-1px); background: #4a55e0; }
-.btn-price-discord-out { background: transparent; color: var(--discord); border: 1px solid rgba(88,101,242,0.35); }
-.btn-price-discord-out:hover { border-color: var(--discord); background: rgba(88,101,242,0.08); }
+.price-stock { font-size: 0.72rem; color: var(--muted); margin-bottom: 18px; }
+.price-stock.low { color: #f97316; }
+.price-stock.out { color: #ef4444; }
+.price-list { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 24px; flex: 1; }
+.price-list li { display: flex; align-items: flex-start; gap: 9px; font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+.price-list li::before { content: '✓'; color: var(--red); font-weight: 700; font-size: 0.8rem; flex-shrink: 0; text-shadow: 0 0 8px var(--red-glow); margin-top: 1px; }
 
-/* Discord callout */
-.discord-callout { max-width: var(--max); margin: 48px auto 0; background: linear-gradient(135deg, rgba(88,101,242,0.1) 0%, rgba(88,101,242,0.04) 100%); border: 1px solid rgba(88,101,242,0.25); border-radius: 16px; padding: 32px 36px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-.discord-callout-left { display: flex; align-items: center; gap: 18px; }
-.discord-callout-left svg { width: 38px; height: 38px; fill: var(--discord); flex-shrink: 0; }
-.discord-callout-text h3 { font-family: var(--font-d); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 5px; }
-.discord-callout-text p { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+/* Buy button */
+.btn-buy { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer; transition: box-shadow 0.22s, transform 0.18s, opacity 0.2s; font-family: var(--font-b); margin-top: auto; position: relative; overflow: hidden; }
+.btn-buy::after { content: ''; position: absolute; top: 0; left: -100%; width: 55%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); transition: left 0.45s; }
+.btn-buy:not(:disabled):hover::after { left: 160%; }
+.btn-buy-fill { background: linear-gradient(135deg, var(--red), var(--red-dark)); color: #fff; }
+.btn-buy-fill:not(:disabled):hover { box-shadow: 0 0 26px var(--red-glow); transform: translateY(-1px); }
+.btn-buy-out { background: transparent; color: var(--text); border: 1px solid rgba(255,255,255,0.15) !important; }
+.btn-buy-out:not(:disabled):hover { border-color: var(--red) !important; color: var(--red); }
+.btn-buy:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.pricing-error { text-align: center; padding: 48px 24px; color: var(--muted); font-size: 0.88rem; }
+.pricing-error a { color: var(--red); text-decoration: none; cursor: pointer; }
+
+/* ════════════════════════
+   CHECKOUT MODAL
+════════════════════════ */
+.modal-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.22s; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: #111112; border: 1px solid rgba(255,26,26,0.3); border-radius: 18px; width: 100%; max-width: 440px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.85), 0 0 60px rgba(255,26,26,0.08); transform: translateY(18px) scale(0.98); transition: transform 0.25s, opacity 0.25s; }
+.modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+/* Modal header */
+.modal-hd { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; background: rgba(255,26,26,0.05); border-bottom: 1px solid rgba(255,255,255,0.06); }
+.modal-hd-left { display: flex; align-items: center; gap: 12px; }
+.modal-hd-icon { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,26,26,0.12); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.modal-hd-icon svg { width: 18px; height: 18px; stroke: var(--red); fill: none; stroke-width: 2; }
+.modal-hd-title { font-family: var(--font-d); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.1em; }
+.modal-hd-sub { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+.modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.5rem; line-height: 1; padding: 2px 6px; border-radius: 4px; transition: color 0.18s, background 0.18s; }
+.modal-close:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+
+/* Price strip */
+.modal-price-strip { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px 22px; background: rgba(255,26,26,0.04); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.mps-amount { font-family: var(--font-d); font-size: 2rem; font-weight: 900; color: var(--red); text-shadow: 0 0 20px var(--red-glow); }
+.mps-period { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+.modal-body { padding: 22px; }
+
+/* Form */
+.modal-error-bar { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 10px 14px; font-size: 0.8rem; color: #fca5a5; margin-bottom: 16px; display: none; }
+.modal-error-bar.show { display: block; }
+
+.form-row { margin-bottom: 14px; }
+.form-label { display: block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.form-input { width: 100%; padding: 11px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 8px; color: var(--text); font-size: 0.88rem; font-family: var(--font-b); outline: none; transition: border-color 0.18s, box-shadow 0.18s; }
+.form-input:focus { border-color: rgba(255,26,26,0.5); box-shadow: 0 0 0 3px rgba(255,26,26,0.07); }
+.form-input::placeholder { color: #444; }
+
+.gw-label { display: block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.gw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+.gw-btn { padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.09); background: rgba(255,255,255,0.03); color: var(--muted); font-size: 0.76rem; font-weight: 600; cursor: pointer; transition: all 0.18s; text-align: center; font-family: var(--font-b); letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.gw-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+.gw-btn.active { border-color: rgba(255,26,26,0.5); color: var(--text); background: rgba(255,26,26,0.07); }
+.gw-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.btn-checkout { width: 100%; padding: 14px; border-radius: 9px; background: linear-gradient(135deg, var(--red), var(--red-dark)); color: #fff; font-weight: 700; font-size: 0.88rem; letter-spacing: 0.12em; text-transform: uppercase; border: none; cursor: pointer; transition: box-shadow 0.25s, transform 0.2s, opacity 0.2s; font-family: var(--font-b); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-checkout::after { content: ''; position: absolute; top: 0; left: -100%; width: 55%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); transition: left 0.5s; }
+.btn-checkout:not(:disabled):hover::after { left: 160%; }
+.btn-checkout:not(:disabled):hover { box-shadow: 0 0 32px var(--red-glow); transform: translateY(-2px); }
+.btn-checkout:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-checkout .spinner-sm { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.modal-fine-print { text-align: center; font-size: 0.68rem; color: #444; margin-top: 12px; line-height: 1.5; }
+.modal-fine-print a { color: #666; }
+
+/* Modal success */
+.modal-success { padding: 36px 22px; text-align: center; }
+.ms-icon { font-size: 3rem; margin-bottom: 14px; }
+.ms-title { font-family: var(--font-d); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.08em; color: #4ade80; margin-bottom: 10px; }
+.ms-text { font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
+.ms-text a { color: var(--red); font-weight: 600; }
+.ms-close-btn { margin-top: 22px; display: inline-flex; align-items: center; padding: 11px 28px; border-radius: 8px; background: rgba(255,26,26,0.1); border: 1px solid rgba(255,26,26,0.25); color: var(--red); font-weight: 600; font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; font-family: var(--font-b); }
+.ms-close-btn:hover { background: rgba(255,26,26,0.18); }
+
+/* Modal states */
+.modal-view { display: none; }
+.modal-view.show { display: block; }
 
 /* ── CTA ── */
 #cta { text-align: center; padding: 90px 24px; position: relative; overflow: hidden; }
@@ -244,42 +226,105 @@ section { padding: 72px 24px; }
 .cta-title .r { color: var(--red); text-shadow: 0 0 40px rgba(255,26,26,0.5); }
 .cta-desc { max-width: 420px; margin: 0 auto 32px; color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
 .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-.btn-cta-main { display: inline-flex; align-items: center; gap: 9px; position: relative; overflow: hidden; background: var(--discord); color: #fff; padding: 16px 40px; border-radius: 9px; font-weight: 700; font-size: 0.88rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; border: none; cursor: pointer; transition: box-shadow 0.28s, transform 0.2s, background 0.2s; }
-.btn-cta-main::after { content: ''; position: absolute; top: 0; left: -100%; width: 55%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent); transition: left 0.5s; }
-.btn-cta-main:hover::after { left: 160%; }
-.btn-cta-main:hover { box-shadow: 0 0 44px var(--discord-glow); transform: translateY(-3px); background: #4a55e0; }
-.btn-cta-main svg { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
 .btn-cta-sec { display: inline-flex; align-items: center; background: transparent; color: var(--text); padding: 16px 36px; border-radius: 9px; font-weight: 600; font-size: 0.88rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border: 1px solid rgba(255,255,255,0.14); cursor: pointer; transition: border-color 0.22s, color 0.22s, transform 0.2s; }
 .btn-cta-sec:hover { border-color: var(--red); color: var(--red); transform: translateY(-2px); }
 
 footer { text-align: center; padding: 24px; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--dim); letter-spacing: 0.06em; }
 
-/* ── REVEAL ── */
+/* REVEAL */
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.65s ease, transform 0.65s ease; }
 .reveal.visible { opacity: 1; transform: none; }
 .d1{transition-delay:.08s} .d2{transition-delay:.16s} .d3{transition-delay:.24s} .d4{transition-delay:.32s} .d5{transition-delay:.4s}
 
-/* ── RESPONSIVE ── */
 @media (max-width: 860px) {
   nav { padding: 0 20px; }
-  .features-grid, .pricing-grid, .videos-grid { grid-template-columns: 1fr; }
-  .discord-callout { flex-direction: column; text-align: center; }
-  .discord-callout-left { flex-direction: column; }
+  .features-grid, .pricing-grid, .videos-grid, .pricing-skeleton { grid-template-columns: 1fr; }
   .cheat-window { width: 55%; min-width: 200px; }
+  .gw-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 560px) {
   .nav-links { display: none; }
   .hero-title { font-size: clamp(3.2rem, 20vw, 5rem); }
-  .cheat-window { width: 70%; }
+  .cheat-window { width: 72%; }
 }
 </style>
 </head>
 <body>
 
+<!-- ════════════ CHECKOUT MODAL ════════════ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+    <!-- Header -->
+    <div class="modal-hd">
+      <div class="modal-hd-left">
+        <div class="modal-hd-icon">
+          <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+        <div>
+          <div class="modal-hd-title" id="modalTitle">Secure Checkout</div>
+          <div class="modal-hd-sub" id="modalProductSub">Sigma CS2</div>
+        </div>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+    </div>
+
+    <!-- Price strip -->
+    <div class="modal-price-strip">
+      <div class="mps-amount" id="mpsAmount">€0.00</div>
+      <div class="mps-period" id="mpsPeriod">—</div>
+    </div>
+
+    <!-- Form view -->
+    <div class="modal-view show" id="viewForm">
+      <div class="modal-body">
+        <div class="modal-error-bar" id="errorBar"></div>
+
+        <div class="form-row">
+          <label class="form-label" for="emailInput">Email address</label>
+          <input type="email" class="form-input" id="emailInput" placeholder="you@example.com" autocomplete="email" inputmode="email">
+        </div>
+
+        <div>
+          <span class="gw-label">Payment method</span>
+          <div class="gw-grid" id="gwGrid">
+            <!-- populated from API or fallback -->
+          </div>
+        </div>
+
+        <button class="btn-checkout" id="btnCheckout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Complete Purchase
+        </button>
+        <p class="modal-fine-print">Powered by <strong>SellAuth</strong> · Secure & instant delivery<br>By purchasing you agree to our <a href="#">terms of service</a>.</p>
+      </div>
+    </div>
+
+    <!-- Loading view -->
+    <div class="modal-view" id="viewLoading">
+      <div style="text-align:center;padding:52px 22px;">
+        <div style="width:40px;height:40px;border:2px solid rgba(255,26,26,0.2);border-top-color:var(--red);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 18px;"></div>
+        <p style="color:var(--muted);font-size:0.84rem;letter-spacing:0.06em;">Creating your order…</p>
+      </div>
+    </div>
+
+    <!-- Success view -->
+    <div class="modal-view" id="viewSuccess">
+      <div class="modal-success">
+        <div class="ms-icon">🎯</div>
+        <div class="ms-title">Order Created!</div>
+        <p class="ms-text">You're being redirected to complete payment.<br>If nothing happens, <a id="directLink" href="#" target="_blank" rel="noopener">click here to pay</a>.</p>
+        <button class="ms-close-btn" id="successClose">Done</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ NAV ════════════ -->
 <canvas id="cvs"></canvas>
 <div class="glow-overlay"></div>
 
-<!-- NAV -->
 <nav>
   <a href="#" class="logo"><em>SIGMA</em> CS2</a>
   <ul class="nav-links">
@@ -287,10 +332,7 @@ footer { text-align: center; padding: 24px; border-top: 1px solid var(--border);
     <li><a href="#menu-showcase">Menu</a></li>
     <li><a href="#showcase">Media</a></li>
     <li><a href="#pricing">Pricing</a></li>
-    <li><a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="nav-discord">
-      <svg viewBox="0 0 24 24"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
-      Discord
-    </a></li>
+    <li><a href="#pricing" class="nav-buy">Buy Now</a></li>
   </ul>
 </nav>
 
@@ -300,13 +342,10 @@ footer { text-align: center; padding: 24px; border-top: 1px solid var(--border);
 <section id="hero">
   <div class="badge reveal"><span class="dot"></span>Undetected &bull; Updated Today</div>
   <h1 class="hero-title reveal d1">SIGMA<span class="cs2">CS2</span></h1>
-  <p class="tagline reveal d2">Precision. Power. Dominance.</p>
-  <p class="hero-desc reveal d3">The most advanced Counter-Strike 2 enhancement suite ever built. Join our Discord to purchase and get started in minutes.</p>
+  <p class="tagline reveal d2">Look Legit. Play Better.</p>
+  <p class="hero-desc reveal d3">The subtle CS2 enhancement built for everyday players. Not too obvious, not too expensive — just the edge you actually need.</p>
   <div class="hero-btns reveal d4">
-    <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-discord">
-      <svg viewBox="0 0 24 24"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
-      Join Discord to Buy
-    </a>
+    <a href="#pricing" class="btn-red">Get Sigma Now</a>
     <a href="#features" class="btn-outline">Explore Features</a>
   </div>
 </section>
@@ -315,71 +354,58 @@ footer { text-align: center; padding: 24px; border-top: 1px solid var(--border);
 <section id="features">
   <div class="section-inner">
     <span class="sec-label reveal">Why Sigma</span>
-    <h2 class="sec-title reveal d1">Engineered for Victory</h2>
+    <h2 class="sec-title reveal d1">Built Different</h2>
     <div class="features-grid">
       <div class="feat-card reveal">
         <div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg></div>
-        <div class="feat-title">Precision Aimbot</div>
-        <p class="feat-desc">Sub-ms target acquisition with configurable FOV, smoothing, and bone targeting. Human-like curves that bypass behavioral analysis.</p>
+        <div class="feat-title">Humanised Aimbot</div>
+        <p class="feat-desc">Smooth, natural aim with configurable FOV and reaction delay. Looks like skill, not a cheat.</p>
       </div>
       <div class="feat-card reveal d1">
         <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-        <div class="feat-title">Wallhack / ESP</div>
-        <p class="feat-desc">Full entity rendering through walls — players, weapons, grenades, bomb. Customizable colors, health bars, skeletons, and distance tags.</p>
+        <div class="feat-title">Subtle ESP</div>
+        <p class="feat-desc">Clean, minimal wallhack overlays. No flashy colours — just the info you need to make smart plays.</p>
       </div>
       <div class="feat-card reveal d2">
         <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <div class="feat-title">Undetected Engine</div>
-        <p class="feat-desc">Kernel-level driver with randomized signatures. Zero VAC detections since launch — we ship patches before Valve does.</p>
+        <p class="feat-desc">Kernel-level driver with randomised signatures. Zero VAC detections — updated before Valve patches.</p>
       </div>
       <div class="feat-card reveal d1">
         <div class="feat-icon"><svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>
         <div class="feat-title">Radar Hack</div>
-        <p class="feat-desc">Full-map enemy positions on your minimap in real time. See rotations before they happen and react before anyone else can.</p>
+        <p class="feat-desc">Full-map enemy positions on your minimap. Know where everyone is without giving yourself away.</p>
       </div>
       <div class="feat-card reveal d2">
         <div class="feat-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><line x1="12" y1="12" x2="12" y2="16"/></svg></div>
         <div class="feat-title">Skin Changer</div>
-        <p class="feat-desc">Apply any skin, knife, or glove locally. Preview StatTrak items and float values without spending a dollar on the market.</p>
+        <p class="feat-desc">Apply any skin, knife, or glove locally. Look premium without spending a cent on the market.</p>
       </div>
       <div class="feat-card reveal d3">
-        <div class="feat-icon"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.5 15a9 9 0 1 1-1.8-5.5L23 10"/></svg></div>
-        <div class="feat-title">Instant Updates</div>
-        <p class="feat-desc">Auto-updating loader detects CS2 patches and pushes a fixed build within hours. Never get caught on an outdated version.</p>
+        <div class="feat-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="feat-title">Affordable Plans</div>
+        <p class="feat-desc">Starting from €4.99/week. No overpriced subscriptions — premium features at a price that makes sense.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- INTERACTIVE MENU SHOWCASE -->
+<!-- MENU SHOWCASE -->
 <section id="menu-showcase">
-  <div class="menu-showcase-inner">
+  <div class="section-inner">
     <span class="sec-label reveal">Live Preview</span>
     <h2 class="sec-title reveal d1">Interactive Menu Demo</h2>
-    <p class="reveal d2" style="color:var(--muted);font-size:0.88rem;margin-top:-28px;margin-bottom:36px;">Drag the menu around. Switch tabs to explore each cheat module.</p>
-
+    <p class="reveal d2" style="color:var(--muted);font-size:0.88rem;margin-top:-28px;margin-bottom:36px;">Drag the menu around. Switch tabs to explore each module.</p>
     <div class="menu-stage-wrap reveal d3" id="stage">
-      <!-- CS2 game background -->
-      <img class="menu-bg" id="bgImg"
-        src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/background.webp"
-        alt="CS2 Background"
-        onerror="this.style.display='none'; document.getElementById('stage').style.background='linear-gradient(135deg,#0d1117 0%,#1a0505 100%)'">
-
+      <img class="menu-bg" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/background.webp" alt="CS2 Background" onerror="this.style.display='none';document.getElementById('stage').style.background='linear-gradient(135deg,#0d1117 0%,#1a0505 100%)'">
       <div class="menu-stage-vignette"></div>
-      <div class="stage-hint">⠿ Drag menu to reposition &nbsp;·&nbsp; Click tabs to switch modules</div>
-
-      <!-- Draggable cheat menu window -->
+      <div class="stage-hint">⠿ Drag to reposition &nbsp;·&nbsp; Click tabs to switch modules</div>
       <div class="cheat-window" id="cheatWin">
         <div class="cw-titlebar" id="dragHandle">
           <span class="cw-title">Σ Sigma CS2</span>
-          <div class="cw-dots">
-            <div class="cw-dot r"></div>
-            <div class="cw-dot y"></div>
-            <div class="cw-dot g"></div>
-          </div>
+          <div class="cw-dots"><div class="cw-dot r"></div><div class="cw-dot y"></div><div class="cw-dot g"></div></div>
         </div>
-
-        <div class="cw-tabs" id="cwTabs">
+        <div class="cw-tabs">
           <button class="cw-tab active" data-tab="aimbot">Aimbot</button>
           <button class="cw-tab" data-tab="esp">ESP</button>
           <button class="cw-tab" data-tab="visuals">Visuals</button>
@@ -387,54 +413,41 @@ footer { text-align: center; padding: 24px; border-top: 1px solid var(--border);
           <button class="cw-tab" data-tab="misc">Misc</button>
           <button class="cw-tab" data-tab="config">Config</button>
         </div>
-
         <div class="cw-panels">
-          <div class="cw-panel active" data-panel="aimbot">
-            <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/aimbot.webp" alt="Aimbot"
-              onerror="this.parentElement.innerHTML='<div class=\'cw-panel-placeholder\'>Aimbot Panel</div>'">
-          </div>
-          <div class="cw-panel" data-panel="esp">
-            <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/esp.webp" alt="ESP"
-              onerror="this.parentElement.innerHTML='<div class=\'cw-panel-placeholder\'>ESP Panel</div>'">
-          </div>
-          <div class="cw-panel" data-panel="visuals">
-            <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/visuals.webp" alt="Visuals"
-              onerror="this.parentElement.innerHTML='<div class=\'cw-panel-placeholder\'>Visuals Panel</div>'">
-          </div>
-          <div class="cw-panel" data-panel="triggerbot">
-            <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/triggerbot.webp" alt="Triggerbot"
-              onerror="this.parentElement.innerHTML='<div class=\'cw-panel-placeholder\'>Triggerbot Panel</div>'">
-          </div>
-          <div class="cw-panel" data-panel="misc">
-            <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/misc.webp" alt="Misc"
-              onerror="this.parentElement.innerHTML='<div class=\'cw-panel-placeholder\'>Misc Panel</div>'">
-          </div>
-          <div class="cw-panel" data-panel="config">
-            <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/config.webp" alt="Config"
-              onerror="this.parentElement.innerHTML='<div class=\'cw-panel-placeholder\'>Config Panel</div>'">
-          </div>
+          <div class="cw-panel active" data-panel="aimbot"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/aimbot.webp" alt="Aimbot" onerror="this.parentElement.innerHTML='<div class=cw-panel-placeholder>Aimbot</div>'"></div>
+          <div class="cw-panel" data-panel="esp"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/esp.webp" alt="ESP" onerror="this.parentElement.innerHTML='<div class=cw-panel-placeholder>ESP</div>'"></div>
+          <div class="cw-panel" data-panel="visuals"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/visuals.webp" alt="Visuals" onerror="this.parentElement.innerHTML='<div class=cw-panel-placeholder>Visuals</div>'"></div>
+          <div class="cw-panel" data-panel="triggerbot"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/triggerbot.webp" alt="Triggerbot" onerror="this.parentElement.innerHTML='<div class=cw-panel-placeholder>Triggerbot</div>'"></div>
+          <div class="cw-panel" data-panel="misc"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/misc.webp" alt="Misc" onerror="this.parentElement.innerHTML='<div class=cw-panel-placeholder>Misc</div>'"></div>
+          <div class="cw-panel" data-panel="config"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/config.webp" alt="Config" onerror="this.parentElement.innerHTML='<div class=cw-panel-placeholder>Config</div>'"></div>
         </div>
-      </div><!-- /cheat-window -->
-    </div><!-- /stage -->
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- VIDEO SHOWCASE -->
+<!-- SHOWCASE -->
 <section id="showcase">
   <div class="section-inner">
     <span class="sec-label reveal">In Action</span>
     <h2 class="sec-title reveal d1">Visual Showcase</h2>
+    <!-- Main featured video -->
+    <div class="vid-featured reveal d1">
+      <iframe src="https://www.youtube.com/embed/0YsEUi76DfY" title="SIGMA CS2 — Main Showcase"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <!-- Side videos -->
     <div class="videos-grid">
-      <div class="vid-wrap reveal d1">
-        <iframe src="https://www.youtube.com/embed/kTHrS-ZnMJo" title="SIGMA CS2 — Showcase 1"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-      </div>
       <div class="vid-wrap reveal d2">
-        <iframe src="https://www.youtube.com/embed/Hb5v8hj8ThM" title="SIGMA CS2 — Showcase 2"
+        <iframe src="https://www.youtube.com/embed/kTHrS-ZnMJo" title="SIGMA CS2 — Showcase 2"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
-      <div class="vid-wrap reveal d1" style="grid-column: 1 / -1; max-width: 640px; margin: 0 auto; width: 100%;">
-        <iframe src="https://www.youtube.com/embed/7ZrLjmIBJlY" title="SIGMA CS2 — Showcase 3"
+      <div class="vid-wrap reveal d3">
+        <iframe src="https://www.youtube.com/embed/Hb5v8hj8ThM" title="SIGMA CS2 — Showcase 3"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <div class="vid-wrap reveal d2" style="grid-column:1/-1;max-width:560px;margin:0 auto;width:100%">
+        <iframe src="https://www.youtube.com/embed/7ZrLjmIBJlY" title="SIGMA CS2 — Showcase 4"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
     </div>
@@ -443,65 +456,19 @@ footer { text-align: center; padding: 24px; border-top: 1px solid var(--border);
 
 <!-- PRICING -->
 <section id="pricing">
-  <div class="section-inner" style="text-align:center;">
+  <div class="section-inner" style="text-align:center">
     <span class="sec-label reveal">Plans</span>
     <h2 class="sec-title reveal d1">Choose Your Access</h2>
-    <p class="reveal d2" style="color:var(--muted);font-size:0.88rem;margin-top:-28px;margin-bottom:44px;">All plans purchased directly through our Discord server.</p>
+    <p class="reveal d2" style="color:var(--muted);font-size:0.88rem;margin-top:-28px;margin-bottom:44px">Instant delivery · Secure checkout · All plans include full suite access</p>
   </div>
   <div class="section-inner">
-    <div class="pricing-grid">
-      <div class="price-card reveal">
-        <span class="price-period">Weekly</span>
-        <div class="price-amount"><sup>€</sup>4.99</div>
-        <ul class="price-list">
-          <li>Full Aimbot Access</li><li>ESP / Wallhack</li><li>Radar Hack</li>
-          <li>Skin Changer</li><li>Basic Support</li>
-        </ul>
-        <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-price btn-price-discord-out">
-          <svg viewBox="0 0 24 24"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
-          Buy on Discord
-        </a>
+    <div id="pricingWrap">
+      <!-- skeleton -->
+      <div class="pricing-skeleton" id="pricingSkeleton">
+        <div class="skel-card"><div class="skel-line h1"></div><div class="skel-line h2"></div><div class="skel-line h3"></div><div class="skel-line h4"></div><div class="skel-line h5"></div><div class="skel-line btn"></div></div>
+        <div class="skel-card"><div class="skel-line h1"></div><div class="skel-line h2"></div><div class="skel-line h3"></div><div class="skel-line h4"></div><div class="skel-line h5"></div><div class="skel-line btn"></div></div>
+        <div class="skel-card"><div class="skel-line h1"></div><div class="skel-line h2"></div><div class="skel-line h3"></div><div class="skel-line h4"></div><div class="skel-line h5"></div><div class="skel-line btn"></div></div>
       </div>
-      <div class="price-card hot reveal d1">
-        <div class="pop-badge">Most Popular</div>
-        <span class="price-period">Monthly</span>
-        <div class="price-amount"><sup>€</sup>14.99</div>
-        <ul class="price-list">
-          <li>Full Aimbot Access</li><li>ESP / Wallhack</li><li>Radar Hack</li>
-          <li>Skin Changer</li><li>Priority Support</li><li>Instant Updates</li><li>Config Sharing</li>
-        </ul>
-        <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-price btn-price-discord">
-          <svg viewBox="0 0 24 24"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
-          Buy on Discord
-        </a>
-      </div>
-      <div class="price-card reveal d2">
-        <span class="price-period">Lifetime</span>
-        <div class="price-amount"><sup>€</sup>29.99</div>
-        <ul class="price-list">
-          <li>Full Aimbot Access</li><li>ESP / Wallhack</li><li>Radar Hack</li>
-          <li>Skin Changer</li><li>VIP Support</li><li>Instant Updates</li>
-          <li>Config Sharing</li><li>Early Beta Features</li>
-        </ul>
-        <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-price btn-price-discord-out">
-          <svg viewBox="0 0 24 24"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
-          Buy on Discord
-        </a>
-      </div>
-    </div>
-
-    <div class="discord-callout reveal">
-      <div class="discord-callout-left">
-        <svg viewBox="0 0 24 24"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
-        <div class="discord-callout-text">
-          <h3>Purchase via Discord</h3>
-          <p>Join our server to buy, receive your key, get support, and stay updated on every release.</p>
-        </div>
-      </div>
-      <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-discord" style="flex-shrink:0;">
-        <svg viewBox="0 0 24 24"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
-        Join Now
-      </a>
     </div>
   </div>
 </section>
@@ -509,158 +476,315 @@ footer { text-align: center; padding: 24px; border-top: 1px solid var(--border);
 <!-- CTA -->
 <section id="cta">
   <h2 class="cta-title reveal">Ready to Go <span class="r">Sigma?</span></h2>
-  <p class="cta-desc reveal d1">Stop losing. Start dominating. Join the Discord, grab your key, and be in-game in minutes.</p>
+  <p class="cta-desc reveal d1">Stop losing. Start playing smarter. Look legit, stay undetected, and win more.</p>
   <div class="cta-btns reveal d2">
-    <a href="https://discord.gg/N8TRC7WCRq" target="_blank" class="btn-cta-main">
-      <svg viewBox="0 0 24 24"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
-      Join Discord & Purchase
-    </a>
+    <a href="#pricing" class="btn-red" style="font-size:0.9rem;padding:16px 44px">Get Sigma Now</a>
     <a href="#features" class="btn-cta-sec">View Features</a>
   </div>
 </section>
 
 </main>
 
-<footer>© 2026 SIGMA CS2. All rights reserved.</footer>
+<footer>© 2026 SIGMA CS2. All rights reserved. &nbsp;·&nbsp; Secure checkout powered by SellAuth</footer>
 
 <script>
-/* ══ PARTICLES ══ */
-const cvs = document.getElementById('cvs');
-const ctx = cvs.getContext('2d');
-let W, H;
-const mouse = { x: -999, y: -999 };
-const COUNT = 75, LINK = 130, REP_R = 110, REP_F = 0.17;
-function resize() { W = cvs.width = innerWidth; H = cvs.height = innerHeight; }
-resize(); addEventListener('resize', resize);
-addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-class P {
-  constructor() { this.init(true); }
-  init(r) {
-    this.x = Math.random()*W; this.y = r ? Math.random()*H : (Math.random()>.5?-4:H+4);
-    this.vx=(Math.random()-.5)*.4; this.vy=(Math.random()-.5)*.4;
-    this.r=Math.random()*1.5+.5; this.a=Math.random()*.45+.15;
-  }
-  tick() {
-    const dx=this.x-mouse.x, dy=this.y-mouse.y, d=Math.sqrt(dx*dx+dy*dy);
-    if(d<REP_R&&d>0){const f=(REP_R-d)/REP_R; this.vx+=dx/d*f*REP_F; this.vy+=dy/d*f*REP_F;}
-    this.vx*=.978; this.vy*=.978;
-    const sp=Math.sqrt(this.vx*this.vx+this.vy*this.vy);
-    if(sp>1.8){this.vx=this.vx/sp*1.8; this.vy=this.vy/sp*1.8;}
-    this.x+=this.vx; this.y+=this.vy;
-    if(this.x<-8)this.x=W+8; if(this.x>W+8)this.x=-8;
-    if(this.y<-8)this.y=H+8; if(this.y>H+8)this.y=-8;
-  }
-  draw() {
-    ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(255,28,28,${this.a})`;
-    ctx.shadowBlur=5; ctx.shadowColor='rgba(255,20,20,.55)';
-    ctx.fill(); ctx.shadowBlur=0;
-  }
-}
-const pts = Array.from({length:COUNT},()=>new P());
-function links() {
-  for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
-    const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
-    if(d<LINK){ ctx.beginPath(); ctx.strokeStyle=`rgba(255,26,26,${(1-d/LINK)*.1})`; ctx.lineWidth=.5; ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); }
-  }
-}
-(function loop(){ ctx.clearRect(0,0,W,H); links(); pts.forEach(p=>{p.tick();p.draw();}); requestAnimationFrame(loop); })();
+/* ════════════════════════════════════
+   ⚠️  REPLACE THIS KEY after regenerating in SellAuth
+       Dashboard → Account → API Access
+════════════════════════════════════ */
+const SA_KEY    = '5569146|rjcsYLuvxx7JH8Urj9cw4VTGM5NBwllAuzYkqiHiaa07cdf3'; // ← REPLACE ME
+const SA_SHOP   = '219036';   // numeric shop ID
+const SA_BASE   = 'https://api.sellauth.com/v1';
+const SA_HDR    = { 'Authorization': `Bearer ${SA_KEY}`, 'Content-Type': 'application/json', 'Accept': 'application/json' };
 
-/* ══ SCROLL REVEAL ══ */
-const obs = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('visible'); obs.unobserve(e.target);} });
-},{threshold:0.1});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-setTimeout(()=>{ document.querySelectorAll('#hero .reveal').forEach(el=>el.classList.add('visible')); },80);
+/* ── PARTICLES ── */
+const cvs=document.getElementById('cvs'),ctx=cvs.getContext('2d');
+let W,H; const mouse={x:-999,y:-999};
+function resize(){W=cvs.width=innerWidth;H=cvs.height=innerHeight;}
+resize();addEventListener('resize',resize);
+addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+class P{constructor(){this.init(true);}init(r){this.x=Math.random()*W;this.y=r?Math.random()*H:(Math.random()>.5?-4:H+4);this.vx=(Math.random()-.5)*.4;this.vy=(Math.random()-.5)*.4;this.r=Math.random()*1.5+.5;this.a=Math.random()*.45+.15;}tick(){const dx=this.x-mouse.x,dy=this.y-mouse.y,d=Math.sqrt(dx*dx+dy*dy);if(d<110&&d>0){const f=(110-d)/110;this.vx+=dx/d*f*.17;this.vy+=dy/d*f*.17;}this.vx*=.978;this.vy*=.978;const sp=Math.sqrt(this.vx*this.vx+this.vy*this.vy);if(sp>1.8){this.vx=this.vx/sp*1.8;this.vy=this.vy/sp*1.8;}this.x+=this.vx;this.y+=this.vy;if(this.x<-8)this.x=W+8;if(this.x>W+8)this.x=-8;if(this.y<-8)this.y=H+8;if(this.y>H+8)this.y=-8;}draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,28,28,${this.a})`;ctx.shadowBlur=5;ctx.shadowColor='rgba(255,20,20,.55)';ctx.fill();ctx.shadowBlur=0;}}
+const pts=Array.from({length:75},()=>new P());
+function drawLinks(){for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){ctx.beginPath();ctx.strokeStyle=`rgba(255,26,26,${(1-d/130)*.1})`;ctx.lineWidth=.5;ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();}}}
+(function loop(){ctx.clearRect(0,0,W,H);drawLinks();pts.forEach(p=>{p.tick();p.draw();});requestAnimationFrame(loop);})();
 
-/* ══ DRAGGABLE CHEAT WINDOW ══ */
+/* ── SCROLL REVEAL ── */
+const revObs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');revObs.unobserve(x.target);}});},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+setTimeout(()=>document.querySelectorAll('#hero .reveal').forEach(el=>el.classList.add('visible')),80);
+
+/* ── DRAGGABLE MENU ── */
 (function(){
-  const win   = document.getElementById('cheatWin');
-  const handle = document.getElementById('dragHandle');
-  const stage  = document.getElementById('stage');
-  let dragging = false, ox = 0, oy = 0;
-
-  function pct(el, axis) {
-    const r = stage.getBoundingClientRect();
-    return axis === 'x' ? (el / r.width  * 100) : (el / r.height * 100);
-  }
-  function clamp(val, min, max) { return Math.min(Math.max(val, min), max); }
-
-  handle.addEventListener('mousedown', e => {
-    dragging = true;
-    win.classList.add('dragging');
-    const r = stage.getBoundingClientRect();
-    const wr = win.getBoundingClientRect();
-    ox = e.clientX - wr.left;
-    oy = e.clientY - wr.top;
-    e.preventDefault();
-  });
-  handle.addEventListener('touchstart', e => {
-    dragging = true;
-    win.classList.add('dragging');
-    const t = e.touches[0];
-    const r = stage.getBoundingClientRect();
-    const wr = win.getBoundingClientRect();
-    ox = t.clientX - wr.left;
-    oy = t.clientY - wr.top;
-  }, {passive:true});
-
-  function move(cx, cy) {
-    if (!dragging) return;
-    const r = stage.getBoundingClientRect();
-    const wr = win.getBoundingClientRect();
-    let nx = cx - r.left - ox;
-    let ny = cy - r.top  - oy;
-    const maxX = r.width  - wr.width;
-    const maxY = r.height - wr.height;
-    nx = clamp(nx, 0, maxX);
-    ny = clamp(ny, 0, maxY);
-    win.style.left = (nx / r.width  * 100) + '%';
-    win.style.top  = (ny / r.height * 100) + '%';
-  }
-
-  document.addEventListener('mousemove', e => move(e.clientX, e.clientY));
-  document.addEventListener('touchmove', e => {
-    const t = e.touches[0]; move(t.clientX, t.clientY);
-  }, {passive:true});
-
-  function stopDrag() { dragging = false; win.classList.remove('dragging'); }
-  document.addEventListener('mouseup', stopDrag);
-  document.addEventListener('touchend', stopDrag);
-
-  /* ── TAB SWITCHING ── */
-  const tabs   = document.querySelectorAll('.cw-tab');
-  const panels = document.querySelectorAll('.cw-panel');
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      const target = tab.dataset.tab;
-      tabs.forEach(t => t.classList.remove('active'));
-      panels.forEach(p => p.classList.remove('active'));
-      tab.classList.add('active');
-      document.querySelector(`.cw-panel[data-panel="${target}"]`).classList.add('active');
-    });
-  });
-
-  /* Auto-cycle tabs every 3.5s when not being interacted with */
-  let autoTimer;
-  let tabIndex = 0;
-  const tabList = Array.from(tabs);
-
-  function nextTab() {
-    tabIndex = (tabIndex + 1) % tabList.length;
-    tabList[tabIndex].click();
-  }
-
-  function resetTimer() {
-    clearInterval(autoTimer);
-    autoTimer = setInterval(nextTab, 3500);
-  }
-  resetTimer();
-
-  handle.addEventListener('mousedown', () => clearInterval(autoTimer));
-  tabs.forEach(t => t.addEventListener('click', () => { tabIndex = tabList.indexOf(t); resetTimer(); }));
+  const win=document.getElementById('cheatWin'),hnd=document.getElementById('dragHandle'),stg=document.getElementById('stage');
+  let drag=false,ox=0,oy=0;
+  function clamp(v,a,b){return Math.min(Math.max(v,a),b);}
+  hnd.addEventListener('mousedown',e=>{drag=true;win.classList.add('dragging');const wr=win.getBoundingClientRect();ox=e.clientX-wr.left;oy=e.clientY-wr.top;e.preventDefault();});
+  hnd.addEventListener('touchstart',e=>{drag=true;win.classList.add('dragging');const t=e.touches[0],wr=win.getBoundingClientRect();ox=t.clientX-wr.left;oy=t.clientY-wr.top;},{passive:true});
+  function mv(cx,cy){if(!drag)return;const r=stg.getBoundingClientRect(),wr=win.getBoundingClientRect();win.style.left=clamp(cx-r.left-ox,0,r.width-wr.width)/r.width*100+'%';win.style.top=clamp(cy-r.top-oy,0,r.height-wr.height)/r.height*100+'%';}
+  document.addEventListener('mousemove',e=>mv(e.clientX,e.clientY));
+  document.addEventListener('touchmove',e=>mv(e.touches[0].clientX,e.touches[0].clientY),{passive:true});
+  const stop=()=>{drag=false;win.classList.remove('dragging');};
+  document.addEventListener('mouseup',stop);document.addEventListener('touchend',stop);
+  const tabs=document.querySelectorAll('.cw-tab'),panels=document.querySelectorAll('.cw-panel');
+  let idx=0,timer;
+  const tl=Array.from(tabs);
+  function activate(t){tabs.forEach(x=>x.classList.remove('active'));panels.forEach(p=>p.classList.remove('active'));t.classList.add('active');document.querySelector(`.cw-panel[data-panel="${t.dataset.tab}"]`).classList.add('active');}
+  tabs.forEach(t=>t.addEventListener('click',()=>{idx=tl.indexOf(t);activate(t);reset();}));
+  function reset(){clearInterval(timer);timer=setInterval(()=>{idx=(idx+1)%tl.length;activate(tl[idx]);},3500);}
+  reset();
+  hnd.addEventListener('mousedown',()=>clearInterval(timer));
 })();
+
+/* ══════════════════════════════════════
+   SELLAUTH — load products + checkout
+══════════════════════════════════════ */
+
+/* Gateway display config */
+const GW_META = {
+  paypal:    { label: 'PayPal',    icon: '🅿' },
+  stripe:    { label: 'Card',      icon: '💳' },
+  cashapp:   { label: 'CashApp',   icon: '💸' },
+  bitcoin:   { label: 'Bitcoin',   icon: '₿'  },
+  litecoin:  { label: 'Litecoin',  icon: '◎'  },
+  ethereum:  { label: 'Ethereum',  icon: 'Ξ'  },
+  sellix:    { label: 'Sellix',    icon: '🔒' },
+};
+const FALLBACK_GW = ['paypal','stripe','cashapp','bitcoin'];
+
+let activeProduct = null;
+let activeGateway = null;
+
+/* ── Build gateway buttons ── */
+function buildGateways(gateways) {
+  const grid = document.getElementById('gwGrid');
+  grid.innerHTML = '';
+  const list = (gateways && gateways.length) ? gateways : FALLBACK_GW;
+  list.forEach((gw, i) => {
+    const key = (typeof gw === 'string' ? gw : gw.name || gw).toLowerCase();
+    const meta = GW_META[key] || { label: key, icon: '💰' };
+    const btn = document.createElement('button');
+    btn.className = 'gw-btn' + (i === 0 ? ' active' : '');
+    btn.dataset.gw = key;
+    btn.innerHTML = `<span>${meta.icon}</span> ${meta.label}`;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.gw-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeGateway = key;
+    });
+    grid.appendChild(btn);
+    if (i === 0) activeGateway = key;
+  });
+}
+
+/* ── Render pricing cards ── */
+function renderProducts(products) {
+  const wrap = document.getElementById('pricingWrap');
+  const hot = Math.floor(products.length / 2);
+
+  const grid = document.createElement('div');
+  grid.className = 'pricing-grid';
+
+  products.forEach((p, i) => {
+    const isHot = i === hot && products.length > 1;
+    const price = parseFloat(p.price || p.variants?.[0]?.price || 0);
+    const cur = p.currency_symbol || p.currency || '€';
+    const name = p.name || 'Sigma CS2';
+    const nameLow = name.toLowerCase();
+    const period = nameLow.includes('life') ? 'Lifetime' : nameLow.includes('month') ? 'Monthly' : nameLow.includes('week') ? 'Weekly' : nameLow.includes('day') ? 'Daily' : 'Access';
+    const stock = p.stock;
+    const inStock = stock === null || stock === undefined || stock > 0;
+    const lowStock = typeof stock === 'number' && stock > 0 && stock <= 5;
+
+    // Parse description lines as features
+    const rawDesc = (p.description || '').replace(/<[^>]+>/g,'').trim();
+    const lines = rawDesc.split('\n').map(l => l.replace(/^[-•*✓]\s*/,'')).filter(l=>l.length>2).slice(0,7);
+    const featureHTML = lines.length
+      ? lines.map(l=>`<li>${l}</li>`).join('')
+      : `<li>Full Aimbot Access</li><li>ESP / Wallhack</li><li>Radar Hack</li><li>Skin Changer</li><li>Support</li>`;
+
+    const stockHTML = !inStock
+      ? `<div class="price-stock out">Out of stock</div>`
+      : lowStock
+        ? `<div class="price-stock low">Only ${stock} left!</div>`
+        : `<div class="price-stock">${stock !== null && stock !== undefined ? stock + ' in stock' : 'In stock'}</div>`;
+
+    const card = document.createElement('div');
+    card.className = `price-card reveal${i===1?' d1':i===2?' d2':''}${isHot?' hot':''}`;
+    card.innerHTML = `
+      ${isHot ? '<div class="pop-badge">Most Popular</div>' : ''}
+      <span class="price-period">${period}</span>
+      <div class="price-name">${name}</div>
+      <div class="price-amount"><sup>${cur}</sup>${price.toFixed(2)}</div>
+      ${stockHTML}
+      <ul class="price-list">${featureHTML}</ul>
+      <button class="btn-buy ${isHot ? 'btn-buy-fill' : 'btn-buy-out'}" ${!inStock ? 'disabled' : ''}
+        data-id="${p.id}" data-price="${price.toFixed(2)}" data-cur="${cur}" data-name="${name}" data-period="${period}">
+        ${inStock ? 'Buy Now' : 'Out of Stock'}
+      </button>
+    `;
+    grid.appendChild(card);
+  });
+
+  wrap.innerHTML = '';
+  wrap.appendChild(grid);
+  grid.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+  grid.querySelectorAll('.btn-buy:not(:disabled)').forEach(btn => {
+    btn.addEventListener('click', () => openModal({
+      id:     btn.dataset.id,
+      price:  btn.dataset.price,
+      cur:    btn.dataset.cur,
+      name:   btn.dataset.name,
+      period: btn.dataset.period
+    }));
+  });
+}
+
+/* ── Fallback static pricing ── */
+function renderFallback() {
+  const wrap = document.getElementById('pricingWrap');
+  wrap.innerHTML = `
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <span class="price-period">Weekly</span>
+        <div class="price-amount"><sup>€</sup>4.99</div>
+        <ul class="price-list"><li>Full Aimbot Access</li><li>ESP / Wallhack</li><li>Radar Hack</li><li>Skin Changer</li><li>Support</li></ul>
+        <button class="btn-buy btn-buy-out" onclick="openModal({id:'weekly',price:'4.99',cur:'€',name:'Sigma CS2 Weekly',period:'Weekly'})">Buy Now</button>
+      </div>
+      <div class="price-card hot reveal d1">
+        <div class="pop-badge">Most Popular</div>
+        <span class="price-period">Monthly</span>
+        <div class="price-amount"><sup>€</sup>14.99</div>
+        <ul class="price-list"><li>Full Aimbot Access</li><li>ESP / Wallhack</li><li>Radar Hack</li><li>Skin Changer</li><li>Priority Support</li><li>Instant Updates</li><li>Config Sharing</li></ul>
+        <button class="btn-buy btn-buy-fill" onclick="openModal({id:'monthly',price:'14.99',cur:'€',name:'Sigma CS2 Monthly',period:'Monthly'})">Buy Now</button>
+      </div>
+      <div class="price-card reveal d2">
+        <span class="price-period">Lifetime</span>
+        <div class="price-amount"><sup>€</sup>29.99</div>
+        <ul class="price-list"><li>Full Aimbot Access</li><li>ESP / Wallhack</li><li>Radar Hack</li><li>Skin Changer</li><li>VIP Support</li><li>Instant Updates</li><li>Config Sharing</li><li>Early Beta</li></ul>
+        <button class="btn-buy btn-buy-out" onclick="openModal({id:'lifetime',price:'29.99',cur:'€',name:'Sigma CS2 Lifetime',period:'Lifetime'})">Buy Now</button>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:18px;font-size:0.76rem;color:var(--dim)">
+      Could not load live pricing. <a style="color:var(--red);cursor:pointer" onclick="loadProducts()">Retry</a>
+    </p>
+  `;
+  wrap.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+}
+
+/* ── Fetch products ── */
+async function loadProducts() {
+  document.getElementById('pricingWrap').innerHTML = `<div class="pricing-skeleton" id="pricingSkeleton">
+    <div class="skel-card"><div class="skel-line h1"></div><div class="skel-line h2"></div><div class="skel-line h3"></div><div class="skel-line h4"></div><div class="skel-line h5"></div><div class="skel-line btn"></div></div>
+    <div class="skel-card"><div class="skel-line h1"></div><div class="skel-line h2"></div><div class="skel-line h3"></div><div class="skel-line h4"></div><div class="skel-line h5"></div><div class="skel-line btn"></div></div>
+    <div class="skel-card"><div class="skel-line h1"></div><div class="skel-line h2"></div><div class="skel-line h3"></div><div class="skel-line h4"></div><div class="skel-line h5"></div><div class="skel-line btn"></div></div>
+  </div>`;
+  try {
+    const res = await fetch(`${SA_BASE}/shops/${SA_SHOP}/products`, { headers: SA_HDR });
+    if (res.status === 429) throw new Error('Rate limited — try again shortly.');
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    const json = await res.json();
+    const prods = Array.isArray(json) ? json : json.data || json.products || [];
+    if (!prods.length) throw new Error('No products found');
+    renderProducts(prods);
+  } catch (err) {
+    console.warn('SellAuth products error:', err.message);
+    renderFallback();
+  }
+}
+
+/* ── Modal ── */
+const overlay = document.getElementById('modalOverlay');
+const errorBar = document.getElementById('errorBar');
+
+function showView(id) {
+  document.querySelectorAll('.modal-view').forEach(v => v.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+}
+
+function openModal(product) {
+  activeProduct = product;
+  document.getElementById('mpsAmount').textContent = `${product.cur}${parseFloat(product.price).toFixed(2)}`;
+  document.getElementById('mpsPeriod').textContent = product.period;
+  document.getElementById('modalProductSub').textContent = product.name;
+  document.getElementById('emailInput').value = '';
+  errorBar.textContent = ''; errorBar.classList.remove('show');
+  buildGateways(null); // use fallback gateways; could also fetch from API
+  showView('viewForm');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('emailInput').focus(), 280);
+}
+
+function closeModal() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('successClose').addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+
+/* ── Place order ── */
+document.getElementById('btnCheckout').addEventListener('click', async () => {
+  if (!activeProduct) return;
+  const email = document.getElementById('emailInput').value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errorBar.textContent = 'Please enter a valid email address.';
+    errorBar.classList.add('show');
+    document.getElementById('emailInput').focus();
+    return;
+  }
+  if (!activeGateway) {
+    errorBar.textContent = 'Please select a payment method.';
+    errorBar.classList.add('show');
+    return;
+  }
+
+  errorBar.classList.remove('show');
+  const btn = document.getElementById('btnCheckout');
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner-sm"></div> Processing…`;
+  showView('viewLoading');
+
+  try {
+    const body = { email, gateway: activeGateway, quantity: 1 };
+    // Only include product_id if it's a real ID (not our fallback strings)
+    if (activeProduct.id && !['weekly','monthly','lifetime'].includes(activeProduct.id)) {
+      body.product_id = activeProduct.id;
+    }
+
+    const res = await fetch(`${SA_BASE}/shops/${SA_SHOP}/orders`, {
+      method: 'POST',
+      headers: SA_HDR,
+      body: JSON.stringify(body)
+    });
+
+    const json = await res.json();
+
+    if (res.status === 429) throw new Error('Too many requests — please wait a moment and try again.');
+    if (!res.ok) throw new Error(json.message || json.error || `Error ${res.status}`);
+
+    const url = json.url || json.checkout_url || json.payment_url || json.data?.url || json.invoice_url;
+    if (!url) throw new Error('No checkout URL returned. Please try again.');
+
+    document.getElementById('directLink').href = url;
+    showView('viewSuccess');
+    setTimeout(() => window.open(url, '_blank'), 700);
+
+  } catch (err) {
+    console.error('Order error:', err);
+    showView('viewForm');
+    errorBar.textContent = err.message || 'Something went wrong. Please try again.';
+    errorBar.classList.add('show');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Complete Purchase`;
+  }
+});
+
+// Init
+loadProducts();
 </script>
 </body>
 </html>

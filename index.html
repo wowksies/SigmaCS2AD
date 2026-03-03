@@ -35,7 +35,8 @@ body { background:var(--bg); color:var(--t); font-family:var(--fb); overflow-x:h
 .navbar {
   pointer-events:auto; height:72px; display:flex; align-items:center; justify-content:space-between;
   padding:0 52px; width:100%; max-width:1920px; border:1px solid rgba(255,255,255,0);
-  background:rgba(0,0,0,0); transition:all 0.42s cubic-bezier(0.4,0,0.2,1);
+  background:rgba(0,0,0,0); backdrop-filter:blur(0px); -webkit-backdrop-filter:blur(0px);
+  transition:all 0.42s cubic-bezier(0.4,0,0.2,1);
 }
 .navbar.scrolled {
   height:64px; width:960px; max-width:94vw; padding:0 28px; border:1px solid rgba(255,255,255,0.09);
@@ -43,27 +44,28 @@ body { background:var(--bg); color:var(--t); font-family:var(--fb); overflow-x:h
   -webkit-backdrop-filter:blur(20px) saturate(180%); margin-top:16px;
   box-shadow:0 2px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
 }
-.nav-logo { font-family:var(--fh); font-weight:800; font-size:1.05rem; letter-spacing:0.06em; text-decoration:none; color:var(--t); display:flex; align-items:center; gap:5px; }
+.nav-logo { font-family:var(--fh); font-weight:800; font-size:1.05rem; letter-spacing:0.06em; text-decoration:none; color:var(--t); display:flex; align-items:center; gap:5px; white-space:nowrap; }
 .nav-logo .s { color:var(--red); text-shadow:0 0 22px var(--redg); }
-.nav-links { display:flex; gap:2px; }
-.nav-link { color:var(--t2); text-decoration:none; font-size:0.82rem; font-weight:500; padding:7px 15px; border-radius:100px; transition:all 0.22s; }
+.nav-links { display:flex; align-items:center; gap:2px; }
+.nav-link { color:var(--t2); text-decoration:none; font-size:0.82rem; font-weight:500; letter-spacing:0.03em; padding:7px 15px; border-radius:100px; transition:all 0.22s; white-space:nowrap; }
 .nav-link:hover { color:var(--t); background:rgba(255,255,255,0.07); }
-.nav-cta { background:var(--red); color:#fff !important; padding:9px 22px; border-radius:100px; font-size:0.82rem; font-weight:600; text-decoration:none; transition:all 0.22s; }
+.nav-cta { background:var(--red); color:#fff !important; padding:9px 22px; border-radius:100px; font-size:0.82rem; font-weight:600; text-decoration:none; letter-spacing:0.04em; transition:all 0.22s; white-space:nowrap; }
 .nav-cta:hover { background:var(--red2); box-shadow:0 0 18px var(--redg); transform:scale(0.97); }
 
 /* ═══════════════════════════
    HERO
 ═══════════════════════════ */
 #hero { position:relative; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:140px 24px 80px; overflow:hidden; }
-#hero::before { content:''; position:absolute; inset:0; pointer-events:none; z-index:0; background-image:radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px); background-size:30px 30px; mask-image:radial-gradient(ellipse 75% 65% at 50% 40%, black 20%, transparent 80%); }
+#hero::before { content:''; position:absolute; inset:0; pointer-events:none; z-index:0; background-image:radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px); background-size:30px 30px; mask-image:radial-gradient(ellipse 75% 65% at 50% 40%, black 20%, transparent 80%); -webkit-mask-image:radial-gradient(ellipse 75% 65% at 50% 40%, black 20%, transparent 80%); }
 .glow-orb { position:absolute; bottom:-120px; left:50%; transform:translateX(-50%); width:700px; height:500px; pointer-events:none; z-index:0; background:radial-gradient(circle, rgba(232,41,28,0.22) 0%, rgba(232,41,28,0.1) 35%, transparent 70%); filter:blur(60px); animation:orbPulse 5s ease-in-out infinite; }
 @keyframes orbPulse { 0%,100%{opacity:.6;transform:translateX(-50%) scale(1);} 50%{opacity:1;transform:translateX(-50%) scale(1.12);} }
-.glow-orb2 { position:absolute; top:-60px; left:-80px; width:500px; height:500px; background:radial-gradient(circle, rgba(232,41,28,0.1) 0%, transparent 65%); filter:blur(80px); animation:orbPulse 7s 1s ease-in-out infinite; pointer-events:none; }
-#heroCanvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; mask-image:linear-gradient(to bottom, #000 0%, #000 65%, transparent 100%); }
+.glow-orb2 { position:absolute; top:-60px; left:-80px; width:500px; height:500px; pointer-events:none; z-index:0; background:radial-gradient(circle, rgba(232,41,28,0.1) 0%, transparent 65%); filter:blur(80px); animation:orbPulse 7s 1s ease-in-out infinite; }
+#heroCanvas { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%); -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%); }
 .hero-inner { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; }
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
-@keyframes fadeInUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:none} }
-.hero-badge  { animation:fadeIn   0.6s 0.0s ease-out both; display:inline-flex; align-items:center; gap:8px; background:rgba(232,41,28,0.07); border:1px solid rgba(232,41,28,0.2); border-radius:100px; padding:5px 16px 5px 10px; font-size:0.71rem; font-weight:600; text-transform:uppercase; color:#ff8070; margin-bottom:28px; }
+
+@keyframes fadeIn    { from{opacity:0} to{opacity:1} }
+@keyframes fadeInUp  { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:none} }
+.hero-badge  { animation:fadeIn   0.6s 0.0s ease-out both; display:inline-flex; align-items:center; gap:8px; background:rgba(232,41,28,0.07); border:1px solid rgba(232,41,28,0.2); border-radius:100px; padding:5px 16px 5px 10px; font-size:0.71rem; font-weight:600; letter-spacing:0.07em; text-transform:uppercase; color:#ff8070; margin-bottom:28px; }
 .badge-dot { width:6px; height:6px; background:var(--red); border-radius:50%; box-shadow:0 0 8px var(--red); animation:dotBlink 2s ease-in-out infinite; }
 @keyframes dotBlink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.7)} }
 .hero-h1     { animation:fadeInUp 0.8s 0.15s ease-out both; font-family:var(--fh); font-weight:800; font-size:clamp(4.5rem,14vw,11rem); line-height:0.88; letter-spacing:-0.025em; }
@@ -71,16 +73,11 @@ body { background:var(--bg); color:var(--t); font-family:var(--fb); overflow-x:h
 .hero-sub    { animation:fadeInUp 0.8s 0.28s ease-out both; font-family:var(--fh); font-size:clamp(0.62rem,1.4vw,0.8rem); letter-spacing:0.44em; text-transform:uppercase; color:var(--t3); margin:20px 0 16px; }
 .hero-desc   { animation:fadeInUp 0.8s 0.40s ease-out both; max-width:450px; color:var(--t2); font-size:0.98rem; line-height:1.78; margin:0 auto 36px; }
 .hero-btns   { animation:fadeInUp 0.8s 0.52s ease-out both; display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
-.hero-stats  { animation:fadeInUp 0.8s 0.70s ease-out both; display:flex; gap:0; margin-top:56px; padding-top:28px; border-top:1px solid var(--b); width:100%; max-width:520px; }
-.stat { flex:1; text-align:center; }
-.stat+.stat { border-left:1px solid var(--b); }
-.stat-n { font-family:var(--fh); font-size:1.65rem; font-weight:800; line-height:1; }
-.stat-l { font-size:0.7rem; color:var(--t3); letter-spacing:0.09em; text-transform:uppercase; margin-top:5px; }
 
 /* ═══════════════════════════
    BUTTONS
 ═══════════════════════════ */
-.btn { display:inline-flex; align-items:center; gap:8px; font-family:var(--fb); font-weight:600; font-size:0.88rem; text-decoration:none; border:none; cursor:pointer; border-radius:100px; padding:13px 30px; transition:all 0.22s; position:relative; overflow:hidden; white-space:nowrap; }
+.btn { display:inline-flex; align-items:center; gap:8px; font-family:var(--fb); font-weight:600; font-size:0.88rem; letter-spacing:0.03em; text-decoration:none; border:none; cursor:pointer; border-radius:100px; padding:13px 30px; transition:all 0.22s; position:relative; overflow:hidden; white-space:nowrap; }
 .btn::before { content:''; position:absolute; top:0; left:-100%; width:55%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent); transition:left 0.5s; }
 .btn:not(:disabled):hover::before { left:155%; }
 .btn-red { background:var(--red); color:#fff; }
@@ -103,26 +100,70 @@ section { padding:80px 24px; }
 .sd1{transition-delay:.08s}.sd2{transition-delay:.16s}.sd3{transition-delay:.24s}
 
 /* ═══════════════════════════
-   FEATURES (COMPACT GRID)
+   FEATURES
 ═══════════════════════════ */
 #features { background:var(--bg2); }
-.bento { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px; margin-top:50px; }
+.bento { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-top:50px; }
 .bc { background:var(--bg3); border:1px solid var(--b); border-radius:20px; padding:28px 26px; position:relative; overflow:hidden; transition:border-color .3s, box-shadow .3s, transform .3s; }
 .bc::after { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(232,41,28,.45),transparent); transform:scaleX(0); transform-origin:left; transition:transform .4s ease; }
 .bc:hover { border-color:var(--br); box-shadow:0 0 40px rgba(232,41,28,.06); transform:translateY(-4px); }
 .bc:hover::after { transform:scaleX(1); }
+.b1{grid-column:span 2}.b2{grid-column:span 2}.b3{grid-column:span 2}
+.b4{grid-column:span 3}.b5{grid-column:span 3}
+.b6{grid-column:span 6; background:linear-gradient(135deg,rgba(232,41,28,.05) 0%,transparent 55%);}
 .fi { width:44px; height:44px; border-radius:12px; background:rgba(232,41,28,.09); display:flex; align-items:center; justify-content:center; margin-bottom:18px; transition:background .25s; }
 .bc:hover .fi { background:rgba(232,41,28,.18); }
 .fi svg { width:20px; height:20px; stroke:var(--red); fill:none; stroke-width:1.8; }
 .ft { font-family:var(--fh); font-size:0.87rem; font-weight:700; letter-spacing:0.02em; margin-bottom:8px; }
 .fd { font-size:0.83rem; color:var(--t2); line-height:1.65; }
+.b6-inner { display:flex; align-items:center; gap:28px; }
+.b6-inner .fi { width:52px; height:52px; flex-shrink:0; }
+.b6-inner .fi svg { width:22px; height:22px; }
+
+/* ═══════════════════════════
+   MENU SHOWCASE
+═══════════════════════════ */
+#menu-showcase { background:var(--bg); }
+.stage { position:relative; aspect-ratio:16/9; border-radius:22px; overflow:hidden; border:1px solid var(--br); box-shadow:0 0 80px rgba(232,41,28,.09); margin-top:48px; background:#000; }
+.stage-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; }
+.stage-vig { position:absolute; inset:0; pointer-events:none; z-index:1; background:radial-gradient(ellipse 88% 88% at 50% 50%, transparent 42%, rgba(0,0,0,.6) 100%); }
+.stage-hint { position:absolute; bottom:14px; left:50%; transform:translateX(-50%); z-index:40; font-size:0.62rem; color:rgba(255,255,255,.28); letter-spacing:0.14em; text-transform:uppercase; pointer-events:none; white-space:nowrap; background:rgba(0,0,0,.45); padding:4px 14px; border-radius:100px; border:1px solid rgba(255,255,255,.06); }
+.cheat-win { position:absolute; z-index:10; top:10%; left:6%; width:36%; min-width:230px; max-width:390px; background:rgba(7,7,8,.92); border:1px solid rgba(232,41,28,.3); border-radius:12px; box-shadow:0 10px 60px rgba(0,0,0,.8), 0 0 40px rgba(232,41,28,.07); backdrop-filter:blur(14px); transition:box-shadow .2s; }
+.cheat-win.dragging { box-shadow:0 24px 90px rgba(0,0,0,.9), 0 0 60px rgba(232,41,28,.18); }
+.cw-bar { display:flex; align-items:center; justify-content:space-between; padding:9px 12px 9px 14px; background:rgba(232,41,28,.06); border-bottom:1px solid rgba(232,41,28,.17); border-radius:12px 12px 0 0; cursor:grab; }
+.cw-bar:active { cursor:grabbing; }
+.cw-title { font-family:var(--fh); font-size:0.6rem; font-weight:700; letter-spacing:0.16em; color:var(--red); text-transform:uppercase; }
+.cw-dots { display:flex; gap:5px; }
+.cwd { width:8px; height:8px; border-radius:50%; }
+.cwd.r{background:#ff5f56}.cwd.y{background:#febc2e}.cwd.g{background:#28c840}
+.cw-tabs { display:flex; padding:0 6px; gap:2px; border-bottom:1px solid rgba(255,255,255,.05); background:rgba(0,0,0,.3); overflow-x:auto; scrollbar-width:none; }
+.cw-tabs::-webkit-scrollbar{display:none}
+.cw-tab { padding:7px 10px; font-size:0.6rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--t3); cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; border-top:none; border-left:none; border-right:none; transition:color .15s, border-color .15s; background:none; font-family:var(--fb); }
+.cw-tab:hover { color:#aaa; }
+.cw-tab.active { color:var(--red); border-bottom-color:var(--red); }
+.cw-panel { display:none; }
+.cw-panel.active { display:block; }
+.cw-panel img { width:100%; display:block; border-radius:0 0 11px 11px; pointer-events:none; }
+.cw-ph { padding:30px; text-align:center; color:var(--t3); font-size:.75rem; min-height:130px; display:flex; align-items:center; justify-content:center; }
+
+/* ═══════════════════════════
+   VIDEO SHOWCASE
+═══════════════════════════ */
+#showcase { background:var(--bg2); }
+.vid-main { border-radius:18px; overflow:hidden; border:1px solid var(--br); aspect-ratio:16/9; background:#000; position:relative; margin-top:44px; margin-bottom:14px; box-shadow:0 0 60px rgba(232,41,28,.09); transition:box-shadow .25s; }
+.vid-main:hover { box-shadow:0 0 90px rgba(232,41,28,.18); }
+.vid-main iframe { position:absolute; inset:0; width:100%; height:100%; border:none; }
+.vid-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.vid-item { border-radius:14px; overflow:hidden; border:1px solid var(--b); aspect-ratio:16/9; background:#000; position:relative; transition:border-color .22s, box-shadow .22s; }
+.vid-item:hover { border-color:var(--br); box-shadow:0 0 28px rgba(232,41,28,.12); }
+.vid-item iframe { position:absolute; inset:0; width:100%; height:100%; border:none; }
 
 /* ═══════════════════════════
    PRICING
 ═══════════════════════════ */
 #pricing { background:var(--bg); }
 .pricing-top { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap; margin-bottom:44px; }
-.pricing-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; }
+.pricing-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
 .pc { background:var(--bg3); border:1px solid var(--b); border-radius:20px; padding:26px 22px; display:flex; flex-direction:column; transition:transform .28s, box-shadow .28s, border-color .28s; position:relative; }
 .pc:hover { transform:translateY(-6px); }
 .pc.hot { border-color:var(--br); background:linear-gradient(158deg, rgba(232,41,28,.07) 0%, var(--bg3) 50%); box-shadow:0 0 50px rgba(232,41,28,.1); }
@@ -170,11 +211,11 @@ section { padding:80px 24px; }
 #gwSection { margin-bottom:18px; }
 #gwSection label { display:block; font-size:.67rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--t3); margin-bottom:8px; }
 .gw-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.gw-btn { padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); color:var(--t2); font-size:.76rem; font-weight:500; cursor:pointer; text-align:center; font-family:var(--fb); }
+.gw-btn { padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); color:var(--t2); font-size:.76rem; font-weight:500; cursor:pointer; text-align:center; font-family:var(--fb); transition:all 0.2s;}
 .gw-btn:hover { border-color:rgba(255,255,255,.18); color:var(--t); }
 .gw-btn.sel { border-color:rgba(232,41,28,.5); color:var(--t); background:rgba(232,41,28,.08); }
-.btn-pay { width:100%; padding:14px; border-radius:100px; background:var(--red); color:#fff; font-family:var(--fh); font-weight:700; font-size:.88rem; text-transform:uppercase; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; position:relative; overflow:hidden; }
-.btn-pay:hover { background:var(--red2); box-shadow:0 0 28px var(--redg); }
+.btn-pay { width:100%; padding:14px; border-radius:100px; background:var(--red); color:#fff; font-family:var(--fh); font-weight:700; font-size:.88rem; text-transform:uppercase; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; position:relative; overflow:hidden; transition:all 0.2s;}
+.btn-pay:hover { background:var(--red2); box-shadow:0 0 28px var(--redg); transform: translateY(-2px);}
 .btn-pay:disabled { opacity:.45; cursor:not-allowed; }
 .spin { width:15px; height:15px; border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; }
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -189,25 +230,38 @@ section { padding:80px 24px; }
 .mv-ok h3 { font-family:var(--fh); font-size:1rem; font-weight:800; color:#4ade80; margin-bottom:10px; }
 .mv-ok p { font-size:.84rem; color:var(--t2); }
 .mv-ok a { color:var(--red); font-weight:600; }
-.mv-ok-btn { display:inline-flex; margin-top:20px; padding:10px 28px; border-radius:100px; background:rgba(232,41,28,.1); border:1px solid rgba(232,41,28,.22); color:var(--red); font-weight:600; cursor:pointer; font-family:var(--fh); }
+.mv-ok-btn { display:inline-flex; margin-top:20px; padding:10px 28px; border-radius:100px; background:rgba(232,41,28,.1); border:1px solid rgba(232,41,28,.22); color:var(--red); font-weight:600; cursor:pointer; font-family:var(--fh); transition: background 0.2s;}
+.mv-ok-btn:hover { background:rgba(232,41,28,.2); }
 
 /* ═══════════════════════════
    CTA + FOOTER
 ═══════════════════════════ */
 #cta { text-align:center; padding:100px 24px; position:relative; overflow:hidden; background:var(--bg2); }
+#cta::before { content:''; position:absolute; bottom:-100px; left:50%; transform:translateX(-50%); width:700px; height:500px; pointer-events:none; background:radial-gradient(ellipse,rgba(232,41,28,.13) 0%,transparent 68%); filter:blur(50px); animation:orbPulse 6s ease-in-out infinite; }
 .cta-h { font-family:var(--fh); font-weight:800; font-size:clamp(2.4rem,6vw,4.2rem); letter-spacing:-.025em; line-height:1.1; margin-bottom:18px; }
 .cta-h .r { color:var(--red); text-shadow:0 0 44px rgba(232,41,28,.45); }
-.cta-p { color:var(--t2); font-size:.98rem; max-width:400px; margin:0 auto 34px; }
+.cta-p { color:var(--t2); font-size:.98rem; max-width:400px; margin:0 auto 34px; line-height: 1.75; }
 footer { padding:26px 24px; border-top:1px solid var(--b); text-align:center; font-size:.73rem; color:var(--t3); letter-spacing:.05em; }
 
+@media(max-width:900px){
+  .bento { grid-template-columns:1fr 1fr; }
+  .b1,.b2,.b3,.b4,.b5,.b6 { grid-column:span 1; }
+  .b6-inner { flex-direction:column; gap:16px; }
+  .pricing-grid,.pskel { grid-template-columns:1fr 1fr; }
+  .vid-grid { grid-template-columns:1fr 1fr; }
+}
 @media(max-width:600px){
   .navbar { padding:0 20px; }
   .nav-links { display:none; }
   .hero-h1 { font-size:clamp(3.6rem,18vw,5.5rem); }
-  .pskel { grid-template-columns:1fr 1fr; }
+  .bento { grid-template-columns:1fr; }
+  .pricing-grid,.pskel { grid-template-columns:1fr 1fr; }
+  .vid-grid { grid-template-columns:1fr; }
+  .cheat-win { width:72%; }
+  .gw-grid { grid-template-columns:1fr; }
 }
 @media(max-width:420px){
-  .pskel { grid-template-columns:1fr; }
+  .pricing-grid,.pskel { grid-template-columns:1fr; }
   .pricing-top { flex-direction:column; align-items:flex-start; }
 }
 </style>
@@ -264,6 +318,8 @@ footer { padding:26px 24px; border-top:1px solid var(--b); text-align:center; fo
     <a href="#" class="nav-logo"><span class="s">SIGMA</span> CS2</a>
     <div class="nav-links">
       <a href="#features" class="nav-link">Features</a>
+      <a href="#menu-showcase" class="nav-link">Menu</a>
+      <a href="#showcase" class="nav-link">Media</a>
       <a href="#pricing" class="nav-link">Pricing</a>
     </div>
     <a href="#pricing" class="nav-cta">Buy Now</a>
@@ -283,6 +339,11 @@ footer { padding:26px 24px; border-top:1px solid var(--b); text-align:center; fo
       <a href="#pricing" class="btn btn-red">Get Sigma Now</a>
       <a href="#features" class="btn btn-ghost">Explore Features</a>
     </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-n">0%</div><div class="stat-l">VAC Detections</div></div>
+      <div class="stat"><div class="stat-n">$3</div><div class="stat-l">Starts From</div></div>
+      <div class="stat"><div class="stat-n">24/7</div><div class="stat-l">Support</div></div>
+    </div>
   </div>
 </section>
 
@@ -292,26 +353,94 @@ footer { padding:26px 24px; border-top:1px solid var(--b); text-align:center; fo
     <h2 class="sec-h sr sd1">Built Different</h2>
     <p class="sec-p sr sd2">Every feature tuned to look natural. No rage hacks — just smart, subtle edge.</p>
     <div class="bento">
-      <div class="bc sr">
-        <div class="fi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/></svg></div>
+      <div class="bc b1 sr">
+        <div class="fi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg></div>
         <div class="ft">Humanised Aimbot</div>
-        <p class="fd">Natural aim curves with configurable FOV and smoothing.</p>
+        <p class="fd">Natural aim curves with configurable FOV and smoothing. Looks like skill, not a cheat.</p>
       </div>
-      <div class="bc sr sd1">
+      <div class="bc b2 sr sd1">
         <div class="fi"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
         <div class="ft">Subtle ESP</div>
-        <p class="fd">Minimal wallhack overlays. Just clean info to make smart plays.</p>
+        <p class="fd">Minimal wallhack overlays. No flashy colours — just clean info to make smart plays.</p>
       </div>
-      <div class="bc sr sd2">
-        <div class="fi"><svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>
-        <div class="ft">Radar Hack</div>
-        <p class="fd">Full-map enemy positions on your minimap.</p>
-      </div>
-      <div class="bc sr sd3">
+      <div class="bc b3 sr sd2">
         <div class="fi"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <div class="ft">Undetected Engine</div>
-        <p class="fd">Kernel-level driver with randomised signatures. Zero VAC bans.</p>
+        <p class="fd">Kernel-level driver with randomised signatures. Zero VAC bans — patched before Valve.</p>
       </div>
+      <div class="bc b4 sr sd1">
+        <div class="fi"><svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div>
+        <div class="ft">Radar Hack</div>
+        <p class="fd">Full-map enemy positions on your minimap. See rotations before they happen.</p>
+      </div>
+      <div class="bc b5 sr sd2">
+        <div class="fi"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg></div>
+        <div class="ft">Skin Changer</div>
+        <p class="fd">Apply any skin, knife, or glove locally. Look premium without spending on the market.</p>
+      </div>
+      <div class="bc b6 sr sd3">
+        <div class="b6-inner">
+          <div class="fi" style="width:52px;height:52px"><svg viewBox="0 0 24 24" style="width:22px;height:22px"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <div>
+            <div class="ft">Affordable — Starts at $3/week</div>
+            <p class="fd">Premium features at prices that actually make sense. No overpriced subscriptions, no bloat.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="menu-showcase">
+  <div class="inner">
+    <span class="eyebrow sr">Live Preview</span>
+    <h2 class="sec-h sr sd1">Interactive Menu Demo</h2>
+    <p class="sec-p sr sd2">Drag the window. Switch tabs to explore every module.</p>
+
+    <div class="stage sr sd3" id="stage">
+      <img class="stage-bg" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/background.webp" alt="" onerror="this.style.display='none';document.getElementById('stage').style.background='linear-gradient(135deg,#0d0d0d,#1a0505)'">
+      <div class="stage-vig"></div>
+      <div class="stage-hint">⠿ Drag to reposition · Click tabs to switch modules</div>
+
+      <div class="cheat-win" id="cheatWin">
+        <div class="cw-bar" id="cwBar">
+          <span class="cw-title">Σ Sigma CS2</span>
+          <div class="cw-dots"><div class="cwd r"></div><div class="cwd y"></div><div class="cwd g"></div></div>
+        </div>
+        <div class="cw-tabs">
+          <button class="cw-tab active" data-t="aimbot">Aimbot</button>
+          <button class="cw-tab" data-t="esp">ESP</button>
+          <button class="cw-tab" data-t="visuals">Visuals</button>
+          <button class="cw-tab" data-t="triggerbot">Trigger</button>
+          <button class="cw-tab" data-t="misc">Misc</button>
+          <button class="cw-tab" data-t="config">Config</button>
+        </div>
+        <div id="cwPanels">
+          <div class="cw-panel active" data-p="aimbot">    <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/aimbot.webp"      alt="Aimbot"    onerror="this.parentElement.innerHTML='<div class=cw-ph>Aimbot</div>'"></div>
+          <div class="cw-panel"        data-p="esp">       <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/esp.webp"         alt="ESP"       onerror="this.parentElement.innerHTML='<div class=cw-ph>ESP</div>'"></div>
+          <div class="cw-panel"        data-p="visuals">   <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/visuals.webp"     alt="Visuals"  onerror="this.parentElement.innerHTML='<div class=cw-ph>Visuals</div>'"></div>
+          <div class="cw-panel"        data-p="triggerbot"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/triggerbot.webp" alt="Trigger"  onerror="this.parentElement.innerHTML='<div class=cw-ph>Triggerbot</div>'"></div>
+          <div class="cw-panel"        data-p="misc">      <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/misc.webp"        alt="Misc"     onerror="this.parentElement.innerHTML='<div class=cw-ph>Misc</div>'"></div>
+          <div class="cw-panel"        data-p="config">    <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/sigmcsmenu/config.webp"      alt="Config"   onerror="this.parentElement.innerHTML='<div class=cw-ph>Config</div>'"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="showcase">
+  <div class="inner">
+    <span class="eyebrow sr">In Action</span>
+    <h2 class="sec-h sr sd1">Visual Showcase</h2>
+
+    <div class="vid-main sr sd1">
+      <iframe src="https://www.youtube.com/embed/0YsEUi76DfY" title="Sigma CS2 Main Showcase" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+    <div class="vid-grid">
+      <div class="vid-item sr sd1"><iframe src="https://www.youtube.com/embed/kTHrS-ZnMJo"  title="Sigma CS2 Showcase 2" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
+      <div class="vid-item sr sd2"><iframe src="https://www.youtube.com/embed/Hb5v8hj8ThM"  title="Sigma CS2 Showcase 3" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
+      <div class="vid-item sr sd3"><iframe src="https://www.youtube.com/embed/7ZrLjmIBJlY"  title="Sigma CS2 Showcase 4" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
     </div>
   </div>
 </section>
@@ -328,6 +457,8 @@ footer { padding:26px 24px; border-top:1px solid var(--b); text-align:center; fo
       <div class="pskel">
         <div class="sk"><div class="sl s1"></div><div class="sl s2"></div><div class="sl s3"></div><div class="sl s4"></div><div class="sl sb"></div></div>
         <div class="sk"><div class="sl s1"></div><div class="sl s2"></div><div class="sl s3"></div><div class="sl s4"></div><div class="sl sb"></div></div>
+        <div class="sk"><div class="sl s1"></div><div class="sl s2"></div><div class="sl s3"></div><div class="sl s4"></div><div class="sl sb"></div></div>
+        <div class="sk"><div class="sl s1"></div><div class="sl s2"></div><div class="sl s3"></div><div class="sl s4"></div><div class="sl sb"></div></div>
       </div>
     </div>
   </div>
@@ -337,7 +468,10 @@ footer { padding:26px 24px; border-top:1px solid var(--b); text-align:center; fo
   <div class="inner">
     <h2 class="cta-h sr">Ready to Go <span class="r">Sigma?</span></h2>
     <p class="cta-p sr sd1">Stop losing. Start playing smarter. Look legit, stay undetected, win more.</p>
-    <a href="#pricing" class="btn btn-red sr sd2">Get Sigma Now</a>
+    <div class="sr sd2" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="#pricing" class="btn btn-red">Get Sigma Now</a>
+      <a href="#features" class="btn btn-ghost">View Features</a>
+    </div>
   </div>
 </section>
 
@@ -347,10 +481,11 @@ footer { padding:26px 24px; border-top:1px solid var(--b); text-align:center; fo
 'use strict';
 
 /* ═══════════════════════════════════════
-   SELLAUTH CONFIG
+   SELLAUTH CONFIGURATION
+   The format ID|SECRET is the correct Bearer format for this API!
 ═══════════════════════════════════════ */
-const SA_KEY  = '5575424|2CPWY6kz9ZU0xTJ7DWKBwqIf0HWxBBSStw9febs8b29acab6'; // ← PASTE YOUR API KEY HERE
-const SA_SHOP = '219036';            // ← PRE-CONFIGURED SHOP ID
+const SA_KEY  = '5575424|2CPWY6kz9ZU0xTJ7DWKBwqIf0HWxBBSStw9febs8b29acab6'; // Your specific API Key format is applied here.
+const SA_SHOP = '219036';                   
 const SA_BASE = 'https://api.sellauth.com/v1';
 const SA_HDR  = {
   'Authorization': `Bearer ${SA_KEY}`,
@@ -381,36 +516,72 @@ window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', wi
 const srObs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); srObs.unobserve(e.target); } }); }, { threshold: 0.08 });
 document.querySelectorAll('.sr').forEach(el => srObs.observe(el));
 
+/* DRAGGABLE MENU SCRIPT */
+(function () {
+  const win = document.getElementById('cheatWin'), bar = document.getElementById('cwBar'), stg = document.getElementById('stage');
+  let drag = false, ox = 0, oy = 0;
+  const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+  bar.addEventListener('mousedown', e => { drag = true; win.classList.add('dragging'); const r = win.getBoundingClientRect(); ox = e.clientX - r.left; oy = e.clientY - r.top; e.preventDefault(); });
+  bar.addEventListener('touchstart', e => { drag = true; win.classList.add('dragging'); const t = e.touches[0], r = win.getBoundingClientRect(); ox = t.clientX - r.left; oy = t.clientY - r.top; }, { passive: true });
+  function move(cx, cy) { if (!drag) return; const sr = stg.getBoundingClientRect(), wr = win.getBoundingClientRect(); win.style.left = clamp(cx - sr.left - ox, 0, sr.width - wr.width) / sr.width * 100 + '%'; win.style.top = clamp(cy - sr.top - oy, 0, sr.height - wr.height) / sr.height * 100 + '%'; }
+  document.addEventListener('mousemove', e => move(e.clientX, e.clientY)); document.addEventListener('touchmove', e => move(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+  const stop = () => { drag = false; win.classList.remove('dragging'); }; document.addEventListener('mouseup', stop); document.addEventListener('touchend', stop);
+
+  const tabs = document.querySelectorAll('.cw-tab'), panels = document.querySelectorAll('.cw-panel');
+  let idx = 0, timer; const tl = Array.from(tabs);
+  function activate(tab) { tabs.forEach(t => t.classList.remove('active')); panels.forEach(p => p.classList.remove('active')); tab.classList.add('active'); document.querySelector(`.cw-panel[data-p="${tab.dataset.t}"]`).classList.add('active'); }
+  tabs.forEach(t => t.addEventListener('click', () => { idx = tl.indexOf(t); activate(t); resetTimer(); }));
+  function resetTimer() { clearInterval(timer); timer = setInterval(() => { idx = (idx + 1) % tl.length; activate(tl[idx]); }, 3500); }
+  resetTimer(); bar.addEventListener('mousedown', () => clearInterval(timer));
+})();
+
 /* SELLAUTH API INTEGRATION */
-const FEATURES = ['Full Aimbot Access', 'ESP / Wallhack', 'Radar Hack', 'Undetected Engine', '24/7 Support'];
-function parsePeriod(s) { const n = (s || '').toLowerCase(); if (n.includes('lifetime')) return 'Lifetime'; if (n.includes('month')) return 'Monthly'; if (n.includes('week')) return 'Weekly'; return s || 'Access'; }
+const FEATURES = ['Full Aimbot Access', 'ESP / Wallhack', 'Radar Hack', 'Skin Changer', 'Instant Updates', 'Undetected Engine', '24/7 Support'];
+function parsePeriod(s) { const n = (s || '').toLowerCase(); if (n.includes('lifetime') || n.includes('life')) return 'Lifetime'; if (n.includes('month')) return 'Monthly'; if (n.includes('2 week') || n.includes('2week')) return '2 Weeks'; if (n.includes('week')) return '1 Week'; if (n.includes('day')) return 'Daily'; return s || 'Access'; }
 
 let _pid = null, _vid = null, _vdata = null, _gws = ['paypal'], _activeGw = 'paypal';
 
 function renderVariants(productId, variants, gateways) {
   _gws = Array.isArray(gateways) && gateways.length ? gateways : ['paypal'];
   const wrap = document.getElementById('pricingWrap');
+  const hotI = variants.length <= 2 ? variants.length - 1 : Math.floor(variants.length / 2);
+  const cols = Math.min(variants.length, 4);
+
   const grid = document.createElement('div');
   grid.className = 'pricing-grid';
+  grid.style.gridTemplateColumns = `repeat(${cols},1fr)`;
 
   variants.forEach((v, i) => {
-    const price = parseFloat(v.price || 0), origP = parseFloat(v.compare_at_price || 0), cur = v.currency_symbol || '$';
-    const period = parsePeriod(v.title || v.name), inStock = v.stock === null || v.stock > 0;
+    const price = parseFloat(v.price || 0), origP = parseFloat(v.compare_at_price || v.original_price || 0), cur = v.currency_symbol || '$';
+    const period = parsePeriod(v.title || v.name);
+    const stock = v.stock, inStock = stock === null || stock === undefined || stock > 0, lowStock = typeof stock === 'number' && stock > 0 && stock <= 5;
+    const isHot = i === hotI;
+    const feats = FEATURES.slice(0, Math.min(5 + i, FEATURES.length));
+    const delay = i === 1 ? ' sd1' : i === 2 ? ' sd2' : i === 3 ? ' sd3' : '';
+
     const card = document.createElement('div');
-    card.className = `pc sr ${i === Math.floor(variants.length / 2) ? 'hot' : ''}`;
+    card.className = `pc sr${delay}${isHot ? ' hot' : ''}`;
     card.innerHTML = `
-      ${i === Math.floor(variants.length / 2) ? '<div class="pc-badge">Popular</div>' : ''}
+      ${isHot ? '<div class="pc-badge">Most Popular</div>' : ''}
       <div class="pc-period">${period}</div>
       <div class="pc-price"><sup>${cur}</sup>${price.toFixed(2)}</div>
-      <ul class="pc-feats">${FEATURES.slice(0, 4).map(f => `<li>${f}</li>`).join('')}</ul>
+      ${origP > 0 ? `<div class="pc-orig">${cur}${origP.toFixed(2)}</div>` : ''}
+      <div class="pc-stock${lowStock ? ' low' : ''}">${!inStock ? 'Out of stock' : lowStock ? `Only ${stock} left` : stock != null ? `${stock} in stock` : ''}</div>
+      <ul class="pc-feats">${feats.map(f => `<li>${f}</li>`).join('')}</ul>
     `;
+
     const btn = document.createElement('button');
-    btn.className = `btn btn-sm ${i === Math.floor(variants.length / 2) ? 'btn-red' : 'btn-ghost'}`;
+    btn.className = `btn btn-sm ${isHot ? 'btn-red' : 'btn-ghost'}`;
     btn.style.cssText = 'width:100%;justify-content:center;border-radius:10px;margin-top:auto;';
     btn.textContent = inStock ? 'Buy Now' : 'Out of Stock';
     btn.disabled = !inStock;
+
     if (inStock) {
-      btn.addEventListener('click', () => { _pid = String(productId); _vid = String(v.id); _vdata = { price, cur, period, name: `Sigma CS2 — ${period}` }; openModal(); });
+      btn.addEventListener('click', () => {
+        _pid = String(productId); _vid = String(v.id);
+        _vdata = { price, cur, period, name: `Sigma CS2 — ${period}` };
+        openModal();
+      });
     }
     card.appendChild(btn); grid.appendChild(card);
   });
@@ -419,7 +590,7 @@ function renderVariants(productId, variants, gateways) {
 }
 
 function renderFallback() {
-  document.getElementById('pricingWrap').innerHTML = `<p style="text-align:center;color:var(--t3)">Store could not be loaded. Please ensure your API key is correct.</p>`;
+  document.getElementById('pricingWrap').innerHTML = `<p style="text-align:center;color:var(--t3)">Store could not be loaded. Ensure the API Key is correct.</p>`;
 }
 
 async function loadProducts() {
@@ -429,50 +600,69 @@ async function loadProducts() {
     const products = (await listRes.json()).data || [];
     if (!products.length) throw new Error('No products');
     const pid = products[0].id;
+    
     const detRes = await fetch(`${SA_BASE}/shops/${SA_SHOP}/products/${pid}`, { headers: SA_HDR });
     const detail = (await detRes.json()).data;
-    renderVariants(pid, detail.variants || [], detail.gateways || ['paypal']);
+    
+    const variants = detail.variants || detail.serials_variants || detail.product_variants || products[0].variants || [];
+    const gateways = detail.gateways || detail.payment_gateways || detail.enabled_gateways || products[0].gateways || ['paypal'];
+    
+    renderVariants(pid, variants, gateways);
   } catch (err) { console.warn(err); renderFallback(); }
 }
 
 /* MODAL LOGIC */
 const overlay = document.getElementById('overlay'), mErr = document.getElementById('mErr'), btnPay = document.getElementById('btnPay');
-const GW_LABEL = { paypal: '🅿 PayPal', stripe: '💳 Card', cashapp: '💸 CashApp', bitcoin: '₿ Crypto' };
+const GW_LABEL = { paypal: '🅿 PayPal', stripe: '💳 Card', cashapp: '💸 CashApp', bitcoin: '₿ Crypto', litecoin: '◎ Litecoin', ethereum: 'Ξ Ethereum' };
 
 function showView(id) { ['mvForm','mvLoad','mvOk'].forEach(v => document.getElementById(v).classList.remove('show')); document.getElementById(id).classList.add('show'); }
 
 function openModal() {
+  if (!_pid || !_vid || !_vdata) return;
   document.getElementById('mVal').textContent = `${_vdata.cur}${parseFloat(_vdata.price).toFixed(2)}`;
   document.getElementById('mPer').textContent = _vdata.period;
   document.getElementById('mProdName').textContent = _vdata.name;
-  const grid = document.getElementById('gwGrid'); grid.innerHTML = '';
-  _gws.forEach((gw, i) => {
-    const key = (gw.name || gw).toLowerCase();
-    const btn = document.createElement('button');
-    btn.className = 'gw-btn' + (i === 0 ? ' sel' : ''); btn.textContent = GW_LABEL[key] || key;
-    btn.addEventListener('click', () => { grid.querySelectorAll('.gw-btn').forEach(b => b.classList.remove('sel')); btn.classList.add('sel'); _activeGw = key; });
-    grid.appendChild(btn); if (i === 0) _activeGw = key;
-  });
-  showView('mvForm'); overlay.classList.add('open');
+  
+  const grid = document.getElementById('gwGrid'), sect = document.getElementById('gwSection');
+  grid.innerHTML = '';
+  
+  if (_gws.length <= 1) {
+    _activeGw = (typeof _gws[0] === 'string' ? _gws[0] : _gws[0]?.name || 'paypal').toLowerCase();
+    sect.style.display = 'none';
+  } else {
+    sect.style.display = '';
+    _gws.forEach((gw, i) => {
+      const key = (typeof gw === 'string' ? gw : gw?.name || String(gw)).toLowerCase();
+      const btn = document.createElement('button');
+      btn.className = 'gw-btn' + (i === 0 ? ' sel' : ''); btn.textContent = GW_LABEL[key] || `💰 ${key}`;
+      btn.addEventListener('click', () => { grid.querySelectorAll('.gw-btn').forEach(b => b.classList.remove('sel')); btn.classList.add('sel'); _activeGw = key; });
+      grid.appendChild(btn); if (i === 0) _activeGw = key;
+    });
+  }
+  showView('mvForm'); overlay.classList.add('open'); document.body.style.overflow = 'hidden';
 }
 
-function closeModal() { overlay.classList.remove('open'); }
+function closeModal() { overlay.classList.remove('open'); document.body.style.overflow = ''; }
 document.getElementById('mClose').addEventListener('click', closeModal);
 document.getElementById('mDone').addEventListener('click', closeModal);
 overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
 
 btnPay.addEventListener('click', async () => {
   const email = document.getElementById('mEmail').value.trim();
-  if (!email) { mErr.textContent = 'Enter email.'; mErr.classList.add('show'); return; }
-  mErr.classList.remove('show'); btnPay.disabled = true; btnPay.innerHTML = '<div class="spin"></div>'; showView('mvLoad');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { mErr.textContent = 'Please enter a valid email address.'; mErr.classList.add('show'); return; }
+  mErr.classList.remove('show'); btnPay.disabled = true; btnPay.innerHTML = '<div class="spin"></div> Processing…'; showView('mvLoad');
+  
   try {
     const res = await fetch(`${SA_BASE}/shops/${SA_SHOP}/products/${_pid}/buy`, {
       method: 'POST', headers: SA_HDR, body: JSON.stringify({ email, gateway: _activeGw, variant_id: _vid, quantity: 1 })
     });
     const json = await res.json();
-    if (!res.ok) throw new Error(json.message || 'Error');
-    document.getElementById('payLink').href = json.url || json.data.url;
-    showView('mvOk'); setTimeout(() => window.open(json.url || json.data.url, '_blank'), 600);
+    if (!res.ok) throw new Error(json.message || json.error || 'Server error occurred.');
+    const url = json.url || json.checkout_url || json.data?.url || json.data?.checkout_url;
+    if (!url) throw new Error('No checkout URL returned.');
+    
+    document.getElementById('payLink').href = url; showView('mvOk'); setTimeout(() => window.open(url, '_blank'), 600);
   } catch (err) { showView('mvForm'); mErr.textContent = err.message; mErr.classList.add('show'); }
   finally { btnPay.disabled = false; btnPay.textContent = 'Complete Purchase'; }
 });

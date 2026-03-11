@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Download — OMNIS CS2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════
+   OMNIS VARIABLES
+═══════════════════════════ */
+:root {
+  --red: #e8291c; 
+  --red-hover: #ff4433; 
+  --red-glow: rgba(232, 41, 28, 0.4);
+  --bg-main: #0d0c0d; 
+  --bg-card: rgba(20, 20, 20, 0.6);
+  --bg-card-hover: rgba(30, 30, 30, 0.8);
+  --border-color: rgba(255, 255, 255, 0.05);
+  --border-hover: rgba(255, 255, 255, 0.1);
+  --text-main: #ffffff;
+  --text-muted: #9ca3af;
+  --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  --max-width: 1200px;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { 
+  background-color: var(--bg-main) !important; 
+  color: var(--text-main); 
+  font-family: var(--font-main); 
+  overflow-x: hidden; 
+  line-height: 1.6; 
+}
+
+/* ═══════════════════════════
+   FLOATING NAVBAR
+═══════════════════════════ */
+.navbar-container {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  display: flex; justify-content: center; pointer-events: none;
+  transition: all 0.3s ease;
+}
+.navbar {
+  pointer-events: auto; height: 80px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 64px; width: 100%; max-width: 1920px;
+  background-color: transparent; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.navbar.scrolled {
+  height: 70px; width: 900px; max-width: 95%; padding: 0 32px;
+  border: 1px solid var(--border-color); border-radius: 35px;
+  background-color: rgba(10, 10, 10, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  margin-top: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+.nav-left { display: flex; align-items: center; gap: 40px; }
+.logo { font-weight: 800; font-size: 1.2rem; color: #fff; text-decoration: none; letter-spacing: 0.05em; display:flex; align-items:center; gap:8px;}
+.logo span { color: var(--red); text-shadow: 0 0 15px var(--red-glow); }
+
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-link {
+  display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+  border-radius: 9999px; font-size: 14px; font-weight: 600;
+  text-decoration: none; color: var(--text-muted); transition: all 0.3s ease;
+}
+.nav-link:hover { color: white; background-color: rgba(255, 255, 255, 0.05); }
+
+/* ═══════════════════════════
+   DOWNLOAD PAGE CONTENT
+═══════════════════════════ */
+#download-area {
+  position: relative; min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  padding: 120px 24px 60px; overflow: hidden;
+}
+.hero-glow {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 600px; height: 600px; background: radial-gradient(circle, rgba(232,41,28,0.1) 0%, transparent 60%);
+  filter: blur(60px); pointer-events: none; z-index: -1;
+}
+
+.dl-card {
+  background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px;
+  padding: 50px; max-width: 600px; width: 100%; backdrop-filter: blur(10px);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: left;
+}
+.dl-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px;
+}
+.dl-title { font-size: 1.8rem; font-weight: 800; }
+.dl-version { 
+  background: rgba(232,41,28,0.1); border: 1px solid rgba(232,41,28,0.2); 
+  color: #ff8a7a; padding: 4px 12px; border-radius: 100px; font-size: 0.85rem; font-weight: 700;
+}
+
+.dl-steps { margin-bottom: 30px; }
+.step { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.step-num { 
+  background: rgba(255,255,255,0.05); color: var(--red); font-weight: 800; 
+  width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; 
+  border-radius: 50%; flex-shrink: 0; font-size: 0.9rem; border: 1px solid var(--border-color);
+}
+.step-text { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-top: 4px; }
+.step-text strong { color: #fff; }
+
+.dl-btn {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  width: 100%; padding: 18px; border-radius: 12px; background: var(--red); color: white;
+  font-size: 1.1rem; font-weight: 700; border: none; cursor: pointer;
+  transition: all 0.3s ease; text-decoration: none;
+}
+.dl-btn:hover { background: var(--red-hover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(232,41,28,0.3); }
+
+.dl-warning {
+  margin-top: 20px; font-size: 0.85rem; color: #fca5a5; background: rgba(248, 113, 113, 0.05);
+  padding: 12px; border-radius: 8px; border: 1px solid rgba(248, 113, 113, 0.1); text-align: center;
+}
+
+@media(max-width:768px){
+  .dl-card { padding: 30px; }
+  .nav-links { display:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="navbar-container">
+  <nav class="navbar" id="navbar">
+    <div class="nav-left">
+      <a href="/" class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px; height:24px; color:var(--red);"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        <span>OMNIS</span>CS2
+      </a>
+      <div class="nav-links">
+        <a href="/" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> Back to Home
+        </a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<section id="download-area">
+  <div class="hero-glow"></div>
+  
+  <div class="dl-card">
+    <div class="dl-header">
+      <h2 class="dl-title">OMNIS Client</h2>
+      <span class="dl-version">Latest Release</span>
+    </div>
+    
+    <div class="dl-steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Download the client</strong> via the button below and extract the ZIP file to your desktop.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Run as Administrator.</strong> Right-click the extracted executable and select "Run as Administrator".</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Launch CS2.</strong> Wait for the client to inject fully, then open your game. The menu key is Insert (INS).</div>
+      </div>
+    </div>
+
+    <a href="#" class="dl-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px; height:24px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      Download OMNIS CS2
+    </a>
+
+    <div class="dl-warning">
+      <strong>Note:</strong> Windows Defender or other AV software may flag the client due to its injection methods. You may need to temporarily disable your AV or add an exclusion to the folder.
+    </div>
+  </div>
+</section>
+
+<script>
+'use strict';
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => { 
+  navbar.classList.toggle('scrolled', window.scrollY > 50); 
+}, { passive: true });
+</script>
+</body>
+</html>

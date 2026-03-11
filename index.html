@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIGMA CS2 — Premium Enhancement</title>
+<title>OMNIS CS2 — Free Enhancement</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════
-   OBLIVION-INSPIRED VARIABLES
+   OMNIS VARIABLES
 ═══════════════════════════ */
 :root {
   --red: #e8291c; 
   --red-hover: #ff4433; 
   --red-glow: rgba(232, 41, 28, 0.4);
-  --bg-main: #0d0c0d; /* Oblivion Background */
+  --bg-main: #0d0c0d; 
   --bg-card: rgba(20, 20, 20, 0.6);
   --bg-card-hover: rgba(30, 30, 30, 0.8);
   --border-color: rgba(255, 255, 255, 0.05);
@@ -37,7 +37,7 @@ body {
 }
 
 /* ═══════════════════════════
-   FLOATING NAVBAR (Oblivion Style)
+   FLOATING NAVBAR
 ═══════════════════════════ */
 .navbar-container {
   position: fixed; top: 0; left: 0; right: 0; z-index: 500;
@@ -75,6 +75,12 @@ body {
   transition: all 0.3s ease; text-decoration: none;
 }
 .cta-btn:hover { background-color: #e5e5e5; transform: scale(0.97); }
+.cta-btn-primary {
+  background-color: var(--red); color: white;
+}
+.cta-btn-primary:hover {
+  background-color: var(--red-hover); color: white;
+}
 
 /* ═══════════════════════════
    HERO SECTION
@@ -101,6 +107,7 @@ body {
 .hero-h1 { font-size: clamp(3.5rem, 8vw, 7.5rem); font-weight: 800; line-height: 1; letter-spacing: -0.03em; margin-bottom: 20px; }
 .hero-h1 span { color: var(--red); text-shadow: 0 0 60px rgba(232,41,28,0.5); }
 .hero-desc { color: var(--text-muted); font-size: 1.1rem; max-width: 500px; margin: 0 auto 40px; line-height: 1.8; }
+.hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
 
 /* ═══════════════════════════
    LAYOUT & BENTO GRID
@@ -126,56 +133,14 @@ section { padding: 100px 24px; position: relative; z-index: 2; }
 .card-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
 
 /* ═══════════════════════════
-   PRICING & STORE
+   DOWNLOAD BANNER
 ═══════════════════════════ */
-.pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-.pc {
+.download-banner {
   background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px;
-  padding: 40px 32px; display: flex; flex-direction: column; position: relative;
-  transition: all 0.3s ease;
+  padding: 60px 32px; text-align: center; position: relative;
+  transition: all 0.3s ease; overflow: hidden;
 }
-.pc:hover { border-color: rgba(232,41,28,0.3); transform: translateY(-6px); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
-.pc-period { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-muted); margin-bottom: 12px; }
-.pc-price { font-size: 3rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 24px; }
-.pc-price sup { font-size: 1.4rem; color: var(--text-muted); font-weight: 600; margin-right: 4px; }
-.pc-btn {
-  width: 100%; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border-color); color: #fff; font-weight: 600; font-size: 0.95rem;
-  cursor: pointer; transition: all 0.2s; margin-top: auto; font-family: inherit;
-}
-.pc-btn:not(:disabled):hover { background: var(--red); border-color: var(--red); color: #fff; }
-.pc-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.api-error-box {
-  background: rgba(248, 113, 113, 0.05); border: 1px solid rgba(248, 113, 113, 0.2);
-  border-radius: 16px; padding: 24px; text-align: center; color: #fca5a5; font-size: 0.95rem;
-}
-.api-error-box strong { display: block; margin-bottom: 8px; font-size: 1.1rem; color: #fecaca; }
-
-/* ═══════════════════════════
-   CHECKOUT MODAL
-═══════════════════════════ */
-.overlay { position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.9); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .3s; }
-.overlay.open { opacity:1; pointer-events:all; }
-.modal { background:#0a0a0a; border:1px solid var(--border-color); border-radius:24px; width:100%; max-width:420px; overflow:hidden; transform:translateY(20px); transition:transform .3s; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
-.overlay.open .modal { transform:translateY(0); }
-.modal-hd { display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid var(--border-color); }
-.modal-hd h3 { font-size:1.1rem; font-weight:700; color:#fff;}
-.modal-x { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.5rem; transition:color .2s; }
-.modal-x:hover { color:#fff; }
-.modal-body { padding:24px; }
-
-.fi2 { width:100%; padding:14px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:12px; color:#fff; font-size:0.95rem; font-family:inherit; outline:none; transition:all .2s; margin-top:8px; margin-bottom: 20px;}
-.fi2:focus { border-color:var(--red); }
-.gw-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px; margin-bottom:24px;}
-.gw-btn { padding:12px; border-radius:12px; border:1px solid var(--border-color); background:transparent; color:var(--text-muted); font-weight:600; cursor:pointer; transition:all 0.2s; font-family:inherit;}
-.gw-btn:hover { border-color:rgba(255,255,255,0.2); color:#fff; }
-.gw-btn.sel { border-color:var(--red); color:#fff; background:rgba(232,41,28,0.1); }
-.btn-pay { width:100%; padding:16px; border-radius:12px; background:#fff; color:#000; font-weight:700; font-size:1rem; border:none; cursor:pointer; transition:all 0.2s; }
-.btn-pay:hover { background:#e5e5e5; }
-.merr { background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.2); border-radius:10px; padding:12px; font-size:0.85rem; color:#fca5a5; margin-bottom:16px; display:none; }
-.merr.show { display:block; }
-.mv { display:none; } .mv.show { display:block; }
+.download-banner:hover { border-color: rgba(232,41,28,0.3); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
 
 @media(max-width:768px){
   .nav-links { display:none; }
@@ -185,62 +150,23 @@ section { padding: 100px 24px; position: relative; z-index: 2; }
 </head>
 <body>
 
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <div class="modal-hd">
-      <h3 id="mProdName">Secure Checkout</h3>
-      <button class="modal-x" id="mClose">×</button>
-    </div>
-    
-    <div class="mv show" id="mvForm">
-      <div class="modal-body">
-        <div class="merr" id="mErr"></div>
-        <div style="font-size:2rem; font-weight:800; color:#fff; margin-bottom:20px; text-align:center;" id="mVal">$0.00</div>
-        
-        <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Email Address</label>
-        <input type="email" class="fi2" id="mEmail" placeholder="you@example.com">
-        
-        <div id="gwSection">
-          <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Payment Method</label>
-          <div class="gw-grid" id="gwGrid"></div>
-        </div>
-        
-        <button class="btn-pay" id="btnPay">Complete Purchase</button>
-      </div>
-    </div>
-    
-    <div class="mv" id="mvLoad">
-      <div class="modal-body" style="text-align:center; padding: 60px 20px;">
-        <p style="color:var(--text-muted); font-weight:600;">Generating Order...</p>
-      </div>
-    </div>
-    
-    <div class="mv" id="mvOk">
-      <div class="modal-body" style="text-align:center; padding: 50px 20px;">
-        <h3 style="color:#4ade80; font-size:1.5rem; margin-bottom:10px;">Order Created</h3>
-        <p style="color:var(--text-muted); font-size:0.9rem;">You are being redirected.<br><br><a id="payLink" href="#" target="_blank" style="color:#fff;">Click here</a> if it doesn't open automatically.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="navbar-container">
   <nav class="navbar" id="navbar">
     <div class="nav-left">
-      <a href="#" class="logo">
+      <a href="/" class="logo">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px; height:24px; color:var(--red);"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-        <span>SIGMA</span>CS2
+        <span>OMNIS</span>CS2
       </a>
       <div class="nav-links">
         <a href="#features" class="nav-link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Features
         </a>
-        <a href="#pricing" class="nav-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg> Store
+        <a href="/download" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download
         </a>
       </div>
     </div>
-    <a href="#pricing" class="cta-btn">Purchase Access</a>
+    <a href="/download" class="cta-btn cta-btn-primary">Download Menu</a>
   </nav>
 </div>
 
@@ -248,14 +174,17 @@ section { padding: 100px 24px; position: relative; z-index: 2; }
   <div class="hero-glow"></div>
   <div class="badge"><span class="badge-dot"></span> System Status: Undetected</div>
   <h1 class="hero-h1">DOMINATE<br><span>IN SILENCE.</span></h1>
-  <p class="hero-desc">The cleanest, most natural-looking enhancement for everyday players. Stop losing to obvious accounts and secure your ranks effortlessly.</p>
-  <a href="#pricing" class="cta-btn" style="height: 48px; padding: 0 32px; font-size: 15px;">View Pricing Plans</a>
+  <p class="hero-desc">The cleanest, most natural-looking enhancement for everyday players. Stop losing to obvious accounts and secure your ranks effortlessly. Now 100% free.</p>
+  <div class="hero-buttons">
+    <a href="/download" class="cta-btn cta-btn-primary" style="height: 48px; padding: 0 32px; font-size: 15px;">Download Now</a>
+    <a href="#features" class="cta-btn" style="height: 48px; padding: 0 32px; font-size: 15px; background: rgba(255,255,255,0.05); color: #fff;">View Features</a>
+  </div>
 </section>
 
 <section id="features">
   <div class="inner">
-    <h2 class="sec-title">Premium Toolset</h2>
-    <p class="sec-sub">Everything you need built into a beautifully optimized overlay.</p>
+    <h2 class="sec-title">Powerful Toolset</h2>
+    <p class="sec-sub">Everything you need built into a beautifully optimized, free overlay.</p>
     <div class="bento">
       <div class="card">
         <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/></svg></div>
@@ -276,188 +205,22 @@ section { padding: 100px 24px; position: relative; z-index: 2; }
   </div>
 </section>
 
-<section id="pricing">
+<section id="download">
   <div class="inner">
-    <h2 class="sec-title">Select Your Access</h2>
-    <p class="sec-sub">Automated delivery to your email immediately upon successful payment.</p>
-    <div id="pricingWrap">
-      <p style="color:var(--text-muted);">Syncing live products...</p>
+    <div class="download-banner">
+      <h2 class="sec-title" style="margin-bottom: 8px;">Ready to Start?</h2>
+      <p class="sec-sub" style="margin: 0 auto 30px; max-width: 400px;">Join the community and download the OMNIS CS2 menu entirely for free.</p>
+      <a href="/download" class="cta-btn cta-btn-primary" style="display: inline-flex; height: 48px; padding: 0 40px; font-size: 16px;">Go to Download Page</a>
     </div>
   </div>
 </section>
 
 <script>
 'use strict';
-
-/* ═══════════════════════════════════════
-   SELLAUTH INTEGRATION (Error Fixed)
-═══════════════════════════════════════ */
-const SA_KEY  = '5575532|wa5kx2eFh7UpOGNkhbVlEaWAB8e0uQvfuUyGoFbBa77601ef';
-const SA_SHOP = '219036';                   
-const SA_BASE = 'https://api.sellauth.com/v1';
-const SA_HDR  = { 'Authorization': `Bearer ${SA_KEY}`, 'Content-Type': 'application/json', 'Accept': 'application/json' };
-
-/* Scroll Effect */
 const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 50); }, { passive: true });
-
-/* Safe String Parser */
-function parsePeriod(s) { 
-  const n = (s || '').toLowerCase(); 
-  if (n.includes('life')) return 'Lifetime'; if (n.includes('month')) return 'Monthly'; 
-  if (n.includes('week')) return 'Weekly'; if (n.includes('day')) return 'Daily'; 
-  return s || 'Access'; 
-}
-
-let _pid = null, _vid = null, _vdata = null, _gws = ['paypal'], _activeGw = 'paypal';
-
-function renderVariants(productId, variants, gateways) {
-  _gws = Array.isArray(gateways) && gateways.length ? gateways : ['paypal'];
-  const wrap = document.getElementById('pricingWrap');
-  
-  if (!variants || variants.length === 0) {
-    wrap.innerHTML = '<div class="api-error-box">Store connected, but no variants are available for purchase.</div>';
-    return;
-  }
-
-  const grid = document.createElement('div');
-  grid.className = 'pricing-grid';
-
-  variants.forEach((v) => {
-    const price = parseFloat(v.price || 0), cur = v.currency_symbol || '$';
-    const period = parsePeriod(v.title || v.name);
-    const stock = v.stock, inStock = stock === null || stock === undefined || stock > 0;
-
-    const card = document.createElement('div');
-    card.className = 'pc';
-    card.innerHTML = `
-      <div class="pc-period">${period}</div>
-      <div class="pc-price"><sup>${cur}</sup>${price.toFixed(2)}</div>
-    `;
-
-    const btn = document.createElement('button');
-    btn.className = 'pc-btn';
-    btn.textContent = inStock ? 'Purchase Access' : 'Out of Stock';
-    btn.disabled = !inStock;
-
-    if (inStock) {
-      btn.addEventListener('click', () => {
-        _pid = String(productId); 
-        _vid = v.id ? Number(v.id) : null; 
-        _vdata = { price, cur, period, name: `SIGMA CS2 — ${period}` };
-        openModal();
-      });
-    }
-    card.appendChild(btn); grid.appendChild(card);
-  });
-  wrap.innerHTML = ''; wrap.appendChild(grid);
-}
-
-function renderErrorDiagnostic(errMessage) {
-  document.getElementById('pricingWrap').innerHTML = `
-    <div class="api-error-box">
-      <strong>⚠️ Store Connection Failed</strong>
-      SellAuth rejected the connection or returned an invalid structure.<br>
-      <code>${errMessage}</code>
-    </div>
-  `;
-}
-
-async function loadProducts() {
-  try {
-    const listRes = await fetch(`${SA_BASE}/shops/${SA_SHOP}/products`, { headers: SA_HDR });
-    if (!listRes.ok) throw new Error(`API returned ${listRes.status}`);
-    
-    const listJson = await listRes.json();
-    const products = listJson.data || listJson;
-    
-    // FAILSAFE: Ensure products is a valid array and has items
-    if (!Array.isArray(products) || products.length === 0) {
-      throw new Error('No products found in the shop.');
-    }
-    
-    const firstProduct = products[0];
-    if (!firstProduct || !firstProduct.id) {
-      throw new Error('Product ID is missing from API response.');
-    }
-    
-    const pid = firstProduct.id;
-    const detRes = await fetch(`${SA_BASE}/shops/${SA_SHOP}/products/${pid}`, { headers: SA_HDR });
-    const detailJson = await detRes.json();
-    const detail = detailJson.data || detailJson;
-    
-    // FAILSAFE: Safely extract variants without crashing if undefined
-    let variants = detail.variants || detail.serials_variants || detail.product_variants || firstProduct.variants;
-    if (!variants) variants = []; // Prevents the "Cannot read properties of undefined" error!
-
-    const gateways = detail.gateways || detail.enabled_gateways || ['paypal'];
-    
-    renderVariants(pid, variants, gateways);
-  } catch (err) { 
-    console.error(err); 
-    renderErrorDiagnostic(err.message); 
-  }
-}
-
-/* MODAL LOGIC */
-const overlay = document.getElementById('overlay'), mErr = document.getElementById('mErr'), btnPay = document.getElementById('btnPay');
-const GW_LABEL = { paypal: 'PayPal', stripe: 'Credit Card', cashapp: 'CashApp', bitcoin: 'Crypto' };
-
-function showView(id) { ['mvForm','mvLoad','mvOk'].forEach(v => document.getElementById(v).classList.remove('show')); document.getElementById(id).classList.add('show'); }
-
-function openModal() {
-  document.getElementById('mVal').textContent = `${_vdata.cur}${parseFloat(_vdata.price).toFixed(2)}`;
-  document.getElementById('mProdName').textContent = _vdata.name;
-  
-  const grid = document.getElementById('gwGrid'), sect = document.getElementById('gwSection');
-  grid.innerHTML = '';
-  
-  if (_gws.length <= 1) {
-    _activeGw = (typeof _gws[0] === 'string' ? _gws[0] : _gws[0]?.name || 'paypal').toLowerCase();
-    sect.style.display = 'none';
-  } else {
-    sect.style.display = '';
-    _gws.forEach((gw, i) => {
-      const key = (typeof gw === 'string' ? gw : gw?.name || String(gw)).toLowerCase();
-      const btn = document.createElement('button');
-      btn.className = 'gw-btn' + (i === 0 ? ' sel' : ''); btn.textContent = GW_LABEL[key] || key;
-      btn.addEventListener('click', () => { grid.querySelectorAll('.gw-btn').forEach(b => b.classList.remove('sel')); btn.classList.add('sel'); _activeGw = key; });
-      grid.appendChild(btn); if (i === 0) _activeGw = key;
-    });
-  }
-  mErr.classList.remove('show'); showView('mvForm'); overlay.classList.add('open');
-}
-
-function closeModal() { overlay.classList.remove('open'); }
-document.getElementById('mClose').addEventListener('click', closeModal);
-overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-
-btnPay.addEventListener('click', async () => {
-  const email = document.getElementById('mEmail').value.trim();
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { mErr.textContent = 'Valid email required.'; mErr.classList.add('show'); return; }
-  
-  mErr.classList.remove('show'); btnPay.disabled = true; btnPay.textContent = 'Processing...'; showView('mvLoad');
-  
-  try {
-    const payload = { email: email, gateway: _activeGw, quantity: 1 };
-    if (_vid !== null) payload.variant_id = _vid;
-
-    const res = await fetch(`${SA_BASE}/shops/${SA_SHOP}/products/${_pid}/buy`, { method: 'POST', headers: SA_HDR, body: JSON.stringify(payload) });
-    const json = await res.json();
-    
-    if (!res.ok) throw new Error(json.message || json.error || 'Server error.');
-    const url = json.url || json.checkout_url || json.data?.url || json.data?.checkout_url;
-    if (!url) throw new Error('Success, but no redirect link provided.');
-    
-    document.getElementById('payLink').href = url; showView('mvOk'); setTimeout(() => window.open(url, '_blank'), 500);
-  } catch (err) { 
-    showView('mvForm'); mErr.textContent = err.message; mErr.classList.add('show'); 
-  } finally { 
-    btnPay.disabled = false; btnPay.textContent = 'Complete Purchase'; 
-  }
-});
-
-loadProducts();
+window.addEventListener('scroll', () => { 
+  navbar.classList.toggle('scrolled', window.scrollY > 50); 
+}, { passive: true });
 </script>
 </body>
 </html>

@@ -3,151 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OMNIS CS2 — Free Enhancement</title>
+<title>OMNIS CS2 — Free CS2 Cheat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --p:    #9333ea;
-  --p2:   #a855f7;
-  --p3:   #7c3aed;
-  --pdim: rgba(147,51,234,0.18);
-  --pglow:rgba(147,51,234,0.45);
-  --bg:   #06040a;
-  --bg2:  #0b0810;
-  --bg3:  #0f0b16;
-  --glass:rgba(255,255,255,0.03);
-  --border:rgba(147,51,234,0.13);
-  --borderH:rgba(147,51,234,0.3);
-  --text:#fff;
-  --muted:#7a6a90;
-  --muted2:#b09ec0;
-  --display:'Syne',sans-serif;
-  --body:'DM Sans',sans-serif;
+:root{
+  --p:#9333ea;--p2:#a855f7;--p3:#7c3aed;
+  --pglow:rgba(147,51,234,0.5);
+  --bg:#06040a;--bg2:#0b0810;--bg3:#0f0b16;
+  --border:rgba(147,51,234,0.13);--borderH:rgba(147,51,234,0.32);
+  --text:#fff;--muted:#7a6a90;--muted2:#b09ec0;
+  --display:'Syne',sans-serif;--body:'DM Sans',sans-serif;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:var(--body);overflow-x:hidden;line-height:1.6;cursor:none;}
 
-/* cursor */
-#cur{position:fixed;top:0;left:0;width:9px;height:9px;background:var(--p2);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:0 0 14px var(--pglow);transition:width .2s,height .2s;}
+/* CURSOR */
+#cur{position:fixed;top:0;left:0;width:9px;height:9px;background:var(--p2);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:0 0 14px var(--pglow);transition:width .18s,height .18s;}
 #cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;border:1.5px solid rgba(168,85,247,0.3);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s,border-color .3s;}
 
-/* blobs */
-.blob{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;animation:blobDrift 20s ease-in-out infinite alternate;z-index:0;}
-.blob1{width:700px;height:700px;background:radial-gradient(circle,rgba(124,58,237,0.16),transparent 70%);top:-150px;left:-150px;animation-delay:0s;}
-.blob2{width:550px;height:550px;background:radial-gradient(circle,rgba(168,85,247,0.1),transparent 70%);bottom:-100px;right:-100px;animation-delay:-8s;}
-.blob3{width:450px;height:450px;background:radial-gradient(circle,rgba(109,40,217,0.09),transparent 70%);top:40%;left:35%;animation-delay:-15s;}
-@keyframes blobDrift{0%{transform:translate(0,0) scale(1);}40%{transform:translate(50px,-40px) scale(1.06);}70%{transform:translate(-30px,55px) scale(0.94);}100%{transform:translate(40px,15px) scale(1.03);}}
+/* BLOBS */
+.blob{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0;}
+.b1{width:800px;height:800px;top:-200px;left:-200px;background:radial-gradient(circle,rgba(124,58,237,0.15),transparent 70%);animation:bd 24s ease-in-out infinite alternate;}
+.b2{width:600px;height:600px;bottom:-150px;right:-150px;background:radial-gradient(circle,rgba(168,85,247,0.1),transparent 70%);animation:bd 20s ease-in-out infinite alternate-reverse;}
+.b3{width:500px;height:500px;top:45%;left:30%;background:radial-gradient(circle,rgba(109,40,217,0.08),transparent 70%);animation:bd 16s ease-in-out infinite alternate;}
+@keyframes bd{0%{transform:translate(0,0) scale(1);}50%{transform:translate(60px,-50px) scale(1.07);}100%{transform:translate(-40px,60px) scale(.94);}}
 
-/* grain */
-body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.3;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");}
+/* GRAIN */
+body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.28;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");}
 
-/* nav */
-.navbar-container{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;justify-content:center;pointer-events:none;}
-.navbar{pointer-events:auto;height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;width:100%;max-width:1920px;background:transparent;transition:all .4s cubic-bezier(.4,0,.2,1);font-family:var(--display);position:relative;z-index:2;}
-.navbar.scrolled{height:62px;width:860px;max-width:96%;padding:0 28px;border:1px solid var(--border);border-radius:40px;background:rgba(6,4,10,0.8);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);margin-top:18px;box-shadow:0 8px 40px rgba(0,0,0,0.6),0 0 0 1px rgba(147,51,234,0.07) inset,0 0 60px rgba(124,58,237,0.05);}
-.nav-left{display:flex;align-items:center;gap:36px;}
-.logo{font-weight:800;font-size:1.05rem;color:#fff;text-decoration:none;letter-spacing:.07em;display:flex;align-items:center;gap:9px;font-family:var(--display);}
-.logo svg{color:var(--p2);filter:drop-shadow(0 0 8px var(--pglow));}
-.logo em{color:var(--p2);font-style:normal;}
+/* NAV */
+.nav-wrap{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;justify-content:center;pointer-events:none;}
+.navbar{pointer-events:auto;display:flex;align-items:center;justify-content:space-between;padding:0 56px;width:100%;max-width:1920px;height:84px;background:transparent;font-family:var(--display);transition:height .4s cubic-bezier(.4,0,.2,1),width .4s cubic-bezier(.4,0,.2,1),padding .4s,background .4s,border-radius .4s,border-color .4s,margin-top .4s,box-shadow .4s;border:1px solid transparent;border-radius:0;}
+.navbar.scrolled{height:62px;width:900px;max-width:96%;padding:0 28px;background:rgba(6,4,10,0.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-color:var(--border);border-radius:40px;margin-top:18px;box-shadow:0 8px 40px rgba(0,0,0,0.55),0 0 0 1px rgba(147,51,234,0.06) inset;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;}
+.nav-logo img{width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 0 8px var(--pglow));}
+.nav-logo-text{font-family:var(--display);font-size:1rem;font-weight:800;letter-spacing:.07em;}
+.nav-logo-text em{background:linear-gradient(135deg,var(--p2),#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:normal;}
 .nav-links{display:flex;align-items:center;gap:2px;}
-.nav-link{display:flex;align-items:center;gap:7px;padding:7px 15px;border-radius:100px;font-size:13px;font-weight:600;letter-spacing:.025em;text-decoration:none;color:var(--muted);transition:all .25s ease;}
+.nav-link{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:100px;font-size:13px;font-weight:600;letter-spacing:.02em;text-decoration:none;color:var(--muted);transition:all .22s;}
 .nav-link:hover{color:#fff;background:rgba(147,51,234,0.1);}
 .nav-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;}
-.cta-nav{display:flex;align-items:center;gap:8px;padding:0 22px;height:40px;border-radius:100px;background:linear-gradient(135deg,var(--p3),var(--p));color:#fff;font-size:13px;font-weight:700;letter-spacing:.04em;border:none;cursor:none;transition:all .25s ease;text-decoration:none;font-family:var(--display);box-shadow:0 0 20px rgba(147,51,234,0.3);}
-.cta-nav:hover{transform:scale(.97);box-shadow:0 0 30px rgba(168,85,247,0.5);}
+.nav-cta{display:flex;align-items:center;gap:8px;padding:0 22px;height:40px;border-radius:100px;background:linear-gradient(135deg,var(--p3),var(--p2));color:#fff;font-size:13px;font-weight:700;letter-spacing:.04em;border:none;cursor:none;text-decoration:none;font-family:var(--display);transition:all .25s;box-shadow:0 0 20px rgba(147,51,234,0.3);}
+.nav-cta:hover{box-shadow:0 0 30px rgba(168,85,247,0.55);transform:scale(.97);}
 
-/* hero */
-#hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:160px 24px 120px;overflow:hidden;z-index:2;}
-.hero-grid{position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(147,51,234,0.055) 1px,transparent 1px),linear-gradient(90deg,rgba(147,51,234,0.055) 1px,transparent 1px);background-size:55px 55px;mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,black 20%,transparent 100%);}
-.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:900px;height:600px;background:radial-gradient(ellipse,rgba(124,58,237,0.22) 0%,rgba(147,51,234,0.06) 40%,transparent 65%);filter:blur(30px);pointer-events:none;z-index:0;animation:glowPulse 5s ease-in-out infinite;}
-@keyframes glowPulse{0%,100%{opacity:.7;}50%{opacity:1;}}
+/* HERO */
+#hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:180px 24px 140px;overflow:hidden;z-index:2;}
+.hero-grid{position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(147,51,234,0.055) 1px,transparent 1px),linear-gradient(90deg,rgba(147,51,234,0.055) 1px,transparent 1px);background-size:58px 58px;mask-image:radial-gradient(ellipse 75% 65% at 50% 50%,black 10%,transparent 100%);}
+.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);width:1000px;height:700px;background:radial-gradient(ellipse,rgba(124,58,237,0.24) 0%,rgba(147,51,234,0.07) 38%,transparent 62%);filter:blur(28px);pointer-events:none;z-index:0;animation:glowPulse 5s ease-in-out infinite;}
+@keyframes glowPulse{0%,100%{opacity:.65;}50%{opacity:1;}}
 
-.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(147,51,234,0.1);border:1px solid rgba(147,51,234,0.22);padding:5px 16px;border-radius:100px;font-size:11px;font-weight:700;color:#c084fc;text-transform:uppercase;letter-spacing:.12em;margin-bottom:32px;font-family:var(--display);backdrop-filter:blur(8px);animation:fadeUp .7s ease both;}
-.badge-dot{width:5px;height:5px;background:var(--p2);border-radius:50%;box-shadow:0 0 10px var(--p2);animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.2;}}
+.badge{display:inline-flex;align-items:center;gap:9px;background:rgba(147,51,234,0.1);border:1px solid rgba(147,51,234,0.25);padding:7px 18px;border-radius:100px;font-size:11px;font-weight:700;color:#c084fc;text-transform:uppercase;letter-spacing:.13em;margin-bottom:36px;font-family:var(--display);backdrop-filter:blur(10px);animation:badgeIn .9s cubic-bezier(.22,1,.36,1) both;position:relative;z-index:1;overflow:hidden;}
+.badge::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(192,132,252,0.18) 50%,transparent 60%);animation:badgeShimmer 3s ease-in-out 1.2s infinite;}
+@keyframes badgeIn{from{opacity:0;transform:translateY(14px) scale(.95);}to{opacity:1;transform:none;}}
+@keyframes badgeShimmer{0%,100%{transform:translateX(-200%);}50%{transform:translateX(200%);}}
+.bdot{width:6px;height:6px;background:var(--p2);border-radius:50%;box-shadow:0 0 10px var(--p2);animation:pulse 2s infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 10px var(--p2);}50%{opacity:.3;box-shadow:0 0 4px var(--p2);}}
 
-.hero-h1{font-family:var(--display);font-size:clamp(3.8rem,9.5vw,9rem);font-weight:800;line-height:.9;letter-spacing:-.04em;margin-bottom:24px;position:relative;z-index:1;animation:fadeUp .7s .1s ease both;}
-.hero-h1 .line1{display:block;}
-.hero-h1 .line2{display:block;background:linear-gradient(135deg,#a855f7 0%,#c084fc 45%,#7c3aed 90%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 50px rgba(168,85,247,0.45));font-size:clamp(3rem,8vw,7.5rem);}
-.hero-desc{color:var(--muted2);font-size:1.05rem;max-width:440px;margin:0 auto 44px;line-height:1.85;position:relative;z-index:1;animation:fadeUp .7s .2s ease both;}
-.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1;animation:fadeUp .7s .3s ease both;}
+.hero-logo{width:96px;height:96px;object-fit:contain;margin-bottom:24px;filter:drop-shadow(0 0 30px rgba(168,85,247,0.5));position:relative;z-index:1;animation:logoIn .9s .05s cubic-bezier(.22,1,.36,1) both;}
+@keyframes logoIn{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
 
-.btn-primary{display:flex;align-items:center;gap:10px;padding:0 38px;height:52px;border-radius:100px;background:linear-gradient(135deg,var(--p3) 0%,var(--p2) 100%);color:#fff;font-size:14px;font-weight:700;letter-spacing:.03em;border:none;cursor:none;transition:all .3s ease;text-decoration:none;font-family:var(--display);box-shadow:0 0 30px rgba(147,51,234,0.38),0 0 0 1px rgba(168,85,247,0.18) inset;}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 50px rgba(168,85,247,0.55),0 0 0 1px rgba(168,85,247,0.3) inset;}
-.btn-ghost{display:flex;align-items:center;gap:10px;padding:0 36px;height:52px;border-radius:100px;background:rgba(147,51,234,0.07);backdrop-filter:blur(10px);color:#c084fc;font-size:14px;font-weight:600;letter-spacing:.02em;border:1px solid var(--border);cursor:none;transition:all .3s ease;text-decoration:none;font-family:var(--display);}
-.btn-ghost:hover{background:rgba(147,51,234,0.14);border-color:var(--borderH);transform:translateY(-2px);}
+.hero-h1{font-family:var(--display);font-size:clamp(4.5rem,11vw,10.5rem);font-weight:800;line-height:.88;letter-spacing:-.045em;margin-bottom:18px;position:relative;z-index:1;animation:titleIn .9s .12s cubic-bezier(.22,1,.36,1) both;}
+@keyframes titleIn{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:none;}}
+.hero-h1 .t1{display:block;color:#fff;}
+.hero-h1 .t2{display:block;background:linear-gradient(135deg,#a855f7 0%,#c084fc 40%,#7c3aed 85%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 60px rgba(168,85,247,.55));font-size:clamp(3.5rem,9vw,8.5rem);}
 
-/* hero stats */
-.hero-stats{display:flex;margin-top:72px;border:1px solid var(--border);border-radius:20px;background:rgba(11,8,16,0.55);backdrop-filter:blur(22px);overflow:hidden;position:relative;z-index:1;animation:fadeUp .7s .45s ease both;}
-.hero-stats::before{content:'';position:absolute;inset:0;border-radius:20px;background:linear-gradient(135deg,rgba(147,51,234,0.06),transparent 60%);pointer-events:none;}
-.stat-item{padding:26px 48px;border-right:1px solid var(--border);text-align:center;transition:background .2s;}
+.hero-tagline{font-family:var(--display);font-size:clamp(1rem,2vw,1.35rem);font-weight:600;color:rgba(192,132,252,0.75);letter-spacing:.04em;margin-bottom:28px;position:relative;z-index:1;animation:titleIn .9s .2s cubic-bezier(.22,1,.36,1) both;text-transform:uppercase;}
+.hero-desc{color:var(--muted2);font-size:1.05rem;max-width:460px;margin:0 auto 48px;line-height:1.9;position:relative;z-index:1;animation:titleIn .9s .28s cubic-bezier(.22,1,.36,1) both;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1;animation:titleIn .9s .36s cubic-bezier(.22,1,.36,1) both;}
+
+.btn-primary{display:inline-flex;align-items:center;gap:10px;padding:0 40px;height:54px;border-radius:100px;background:linear-gradient(135deg,var(--p3),var(--p2));color:#fff;font-size:14px;font-weight:700;letter-spacing:.03em;border:none;cursor:none;text-decoration:none;font-family:var(--display);transition:all .3s;box-shadow:0 0 30px rgba(147,51,234,0.38),0 0 0 1px rgba(168,85,247,0.18) inset;}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 50px rgba(168,85,247,0.55),0 0 0 1px rgba(168,85,247,0.3) inset;}
+.btn-ghost{display:inline-flex;align-items:center;gap:10px;padding:0 36px;height:54px;border-radius:100px;background:rgba(147,51,234,0.07);backdrop-filter:blur(10px);color:#c084fc;font-size:14px;font-weight:600;letter-spacing:.02em;border:1px solid var(--border);cursor:none;text-decoration:none;font-family:var(--display);transition:all .3s;}
+.btn-ghost:hover{background:rgba(147,51,234,0.14);border-color:var(--borderH);transform:translateY(-3px);}
+
+.hero-stats{display:flex;margin-top:80px;border:1px solid var(--border);border-radius:22px;background:rgba(11,8,16,0.55);backdrop-filter:blur(22px);overflow:hidden;position:relative;z-index:1;animation:titleIn .9s .46s cubic-bezier(.22,1,.36,1) both;}
+.hero-stats::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(147,51,234,0.06),transparent 55%);pointer-events:none;}
+.stat-item{padding:28px 52px;border-right:1px solid var(--border);text-align:center;transition:background .2s;}
 .stat-item:last-child{border-right:none;}
 .stat-item:hover{background:rgba(147,51,234,0.06);}
-.stat-num{font-family:var(--display);font-size:1.9rem;font-weight:800;line-height:1;background:linear-gradient(135deg,#a855f7,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.stat-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:5px;}
+.stat-num{font-family:var(--display);font-size:2rem;font-weight:800;line-height:1;background:linear-gradient(135deg,#a855f7,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-lbl{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:6px;}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
-
-/* layout */
-section{padding:120px 24px;position:relative;z-index:2;}
+/* SECTIONS */
+section{padding:130px 24px;position:relative;z-index:2;}
 .inner{max-width:1200px;margin:0 auto;}
 .sec-eyebrow{display:inline-block;font-family:var(--display);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--p2);margin-bottom:14px;}
-.sec-title{font-family:var(--display);font-size:clamp(2.2rem,4vw,3rem);font-weight:800;letter-spacing:-.03em;margin-bottom:14px;line-height:1.05;}
-.sec-sub{color:var(--muted2);font-size:.95rem;max-width:460px;line-height:1.8;margin-bottom:56px;}
+.sec-title{font-family:var(--display);font-size:clamp(2.2rem,4vw,3.1rem);font-weight:800;letter-spacing:-.03em;line-height:1.06;margin-bottom:14px;}
+.sec-sub{color:var(--muted2);font-size:.95rem;max-width:460px;line-height:1.82;margin-bottom:58px;}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .75s ease,transform .75s ease;}
+.reveal.visible{opacity:1;transform:none;}
 
-/* features */
+/* FEATURES */
 .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border:1px solid var(--border);border-radius:24px;overflow:hidden;}
-.feat-card{padding:44px 36px;background:var(--bg2);transition:background .3s;position:relative;overflow:hidden;}
-.feat-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 30% 0%,rgba(124,58,237,0.1),transparent 70%);opacity:0;transition:opacity .4s;}
+.feat-card{padding:46px 38px;background:var(--bg2);transition:background .3s;position:relative;overflow:hidden;}
+.feat-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 50% at 25% 0%,rgba(124,58,237,0.11),transparent 70%);opacity:0;transition:opacity .4s;}
 .feat-card:hover::before{opacity:1;}
 .feat-card:hover{background:var(--bg3);}
-.feat-num{font-family:var(--display);font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:.1em;margin-bottom:26px;opacity:.4;}
-.feat-icon{width:46px;height:46px;border-radius:13px;background:rgba(147,51,234,0.1);border:1px solid rgba(147,51,234,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.feat-num{font-family:var(--display);font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:.1em;margin-bottom:28px;opacity:.4;}
+.feat-icon{width:46px;height:46px;border-radius:12px;background:rgba(147,51,234,0.1);border:1px solid rgba(147,51,234,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
 .feat-icon svg{width:20px;height:20px;stroke:var(--p2);fill:none;stroke-width:1.8;}
-.feat-title{font-family:var(--display);font-size:1.02rem;font-weight:700;margin-bottom:10px;color:#fff;}
+.feat-title{font-family:var(--display);font-size:1.05rem;font-weight:700;margin-bottom:10px;}
 .feat-desc{font-size:.875rem;color:var(--muted);line-height:1.75;}
 .feat-tag{display:inline-block;margin-top:18px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:3px 10px;border-radius:100px;background:rgba(147,51,234,0.1);color:#c084fc;border:1px solid rgba(147,51,234,0.18);font-family:var(--display);}
 
-/* wide card */
-.wide-card{border:1px solid var(--border);border-radius:28px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;position:relative;background:rgba(11,8,16,0.5);backdrop-filter:blur(20px);transition:border-color .3s,box-shadow .3s;}
-.wide-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,0.07),transparent 60%);pointer-events:none;}
-.wide-card:hover{border-color:var(--borderH);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 80px rgba(124,58,237,0.06);}
-.wide-card-content{padding:64px 56px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1;}
-.wide-card-content .sec-sub{margin-bottom:28px;}
-.wide-card-visual{background:linear-gradient(135deg,transparent,rgba(124,58,237,0.04));border-left:1px solid var(--border);display:flex;align-items:center;justify-content:center;min-height:380px;position:relative;overflow:hidden;}
+/* ═══ INTERACTIVE MENU STAGE ═══ */
+.menu-stage{position:relative;width:100%;height:640px;border:1px solid var(--border);border-radius:24px;overflow:hidden;background:#000;}
+.stage-bg{position:absolute;inset:0;background-image:url('https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/background.webp');background-size:cover;background-position:center;filter:brightness(.8);}
+.stage-overlay{position:absolute;inset:0;background:rgba(6,4,10,0.2);z-index:1;}
+.stage-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;display:inline-flex;align-items:center;gap:8px;background:rgba(6,4,10,0.75);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:100px;padding:6px 16px;font-family:var(--display);font-size:11px;font-weight:700;color:var(--muted2);letter-spacing:.05em;animation:hintPop 3s 1.5s ease both;}
+@keyframes hintPop{0%{opacity:0;transform:translate(-50%,8px);}20%{opacity:1;transform:translate(-50%,0);}80%{opacity:1;}100%{opacity:0;}}
+.stage-hint svg{width:13px;height:13px;stroke:var(--p2);fill:none;stroke-width:2;}
 
-/* mock panel */
-.mock-wrap{position:relative;display:flex;align-items:center;justify-content:center;}
-.mock-glow{position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(147,51,234,0.22),transparent 65%);filter:blur(30px);}
-.mock-panel{width:258px;border:1px solid rgba(147,51,234,0.22);border-radius:14px;background:rgba(6,4,10,0.88);backdrop-filter:blur(16px);overflow:hidden;position:relative;z-index:1;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 0 1px rgba(147,51,234,0.1) inset;}
-.mock-topbar{height:34px;background:rgba(147,51,234,0.09);border-bottom:1px solid rgba(147,51,234,0.14);display:flex;align-items:center;padding:0 14px;gap:7px;}
-.mock-dot{width:7px;height:7px;border-radius:50%;}
-.mock-body{padding:16px;}
-.mock-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
-.mock-row:last-child{border-bottom:none;}
-.mock-lbl{font-family:var(--display);font-size:10px;color:var(--muted);letter-spacing:.06em;}
-.mock-val{font-family:var(--display);font-size:10px;font-weight:700;}
-.mock-val.on{color:#c084fc;text-shadow:0 0 8px rgba(192,132,252,0.7);}
-.mock-val.off{color:var(--muted);}
-.mock-sliderrow{margin-top:14px;}
-.mock-sliderrow .mock-lbl{display:block;margin-bottom:8px;}
-.mock-track{height:3px;border-radius:2px;background:rgba(255,255,255,0.06);position:relative;}
-.mock-fill{height:100%;width:68%;border-radius:2px;background:linear-gradient(90deg,var(--p3),var(--p2));box-shadow:0 0 8px rgba(168,85,247,0.7);}
-.mock-thumb{position:absolute;right:32%;top:50%;transform:translate(50%,-50%);width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 12px rgba(168,85,247,0.9),0 0 0 2px rgba(168,85,247,0.35);}
-.mock-cross{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;pointer-events:none;}
-.mock-cross::before,.mock-cross::after{content:'';position:absolute;background:var(--p2);box-shadow:0 0 8px var(--p);}
-.mock-cross::before{width:1.5px;height:22px;left:50%;top:0;}
-.mock-cross::after{width:22px;height:1.5px;top:50%;left:0;}
+/* draggable menu window */
+.menu-win{position:absolute;top:70px;left:50px;width:520px;background:rgba(7,4,12,0.93);border:1px solid rgba(147,51,234,0.28);border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.7),0 0 0 1px rgba(147,51,234,0.1) inset,0 0 50px rgba(124,58,237,0.08);backdrop-filter:blur(16px);z-index:20;user-select:none;transition:box-shadow .2s;}
+.menu-win.dragging{box-shadow:0 30px 80px rgba(0,0,0,0.85),0 0 0 1px rgba(168,85,247,0.3) inset,0 0 80px rgba(124,58,237,0.15);}
+.win-bar{height:36px;background:linear-gradient(90deg,rgba(124,58,237,0.18),rgba(147,51,234,0.07));border-bottom:1px solid rgba(147,51,234,0.18);border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;cursor:grab;}
+.win-bar:active{cursor:grabbing;}
+.win-dots{display:flex;gap:5px;}
+.wdot{width:8px;height:8px;border-radius:50%;}
+.win-title{font-family:var(--display);font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:.08em;text-transform:uppercase;}
+.win-ver{font-family:var(--display);font-size:10px;color:var(--p2);background:rgba(147,51,234,0.15);border:1px solid rgba(147,51,234,0.2);padding:2px 8px;border-radius:100px;}
+.win-tabs{display:flex;border-bottom:1px solid rgba(147,51,234,0.12);background:rgba(0,0,0,0.2);}
+.wtab{flex:1;padding:9px 4px;font-family:var(--display);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:center;color:var(--muted);border:none;background:transparent;cursor:none;transition:all .2s;border-bottom:2px solid transparent;}
+.wtab:hover{color:var(--muted2);background:rgba(147,51,234,0.05);}
+.wtab.active{color:#c084fc;border-bottom-color:var(--p2);background:rgba(147,51,234,0.08);}
+.wtab svg{display:block;margin:0 auto 3px;width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;}
+.win-content{position:relative;border-radius:0 0 12px 12px;overflow:hidden;min-height:280px;background:#060409;}
+.win-content img{display:block;width:100%;height:auto;transition:opacity .22s;}
+.win-content img.hidden{opacity:0;position:absolute;top:0;left:0;pointer-events:none;}
 
-/* steps */
+/* ═══ BEFORE / AFTER ═══ */
+.ba-outer{position:relative;width:100%;max-width:100%;border-radius:22px;overflow:hidden;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 60px rgba(124,58,237,0.06);user-select:none;touch-action:none;}
+.ba-sizer{display:block;width:100%;aspect-ratio:16/9;background:var(--bg2);}
+.ba-after{position:absolute;inset:0;background-image:url('https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/before%26after/after.webp');background-size:cover;background-position:center;}
+.ba-before{position:absolute;inset:0;background-image:url('https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/before%26after/before.webp');background-size:cover;background-position:center;clip-path:inset(0 50% 0 0);}
+.ba-line{position:absolute;top:0;bottom:0;left:50%;width:2px;background:linear-gradient(180deg,transparent 0%,var(--p2) 15%,var(--p2) 85%,transparent 100%);transform:translateX(-50%);pointer-events:none;z-index:10;box-shadow:0 0 12px rgba(168,85,247,0.7);}
+.ba-handle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--p3),var(--p2));border:2px solid rgba(255,255,255,0.2);box-shadow:0 0 20px rgba(168,85,247,0.7),0 4px 16px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;cursor:ew-resize;z-index:11;transition:box-shadow .2s;}
+.ba-handle:hover{box-shadow:0 0 32px rgba(168,85,247,0.95),0 4px 20px rgba(0,0,0,0.6);}
+.ba-handle svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.5;}
+.ba-lbl{position:absolute;top:16px;z-index:12;font-family:var(--display);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 12px;border-radius:100px;backdrop-filter:blur(8px);pointer-events:none;}
+.ba-lbl-b{left:16px;background:rgba(6,4,10,0.7);border:1px solid rgba(255,255,255,0.1);color:var(--muted2);}
+.ba-lbl-a{right:16px;background:rgba(147,51,234,0.2);border:1px solid rgba(147,51,234,0.3);color:#c084fc;}
+
+/* STEPS */
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:22px;overflow:hidden;}
-.step{background:var(--bg2);padding:40px 30px;position:relative;transition:background .25s,box-shadow .25s;}
+.step{background:var(--bg2);padding:42px 32px;transition:background .25s;}
 .step:hover{background:var(--bg3);}
 .step-num{font-family:var(--display);font-size:3.2rem;font-weight:800;background:linear-gradient(135deg,rgba(168,85,247,0.35),transparent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:22px;letter-spacing:-.04em;}
-.step-title{font-family:var(--display);font-size:.95rem;font-weight:700;margin-bottom:8px;color:#fff;}
+.step-title{font-family:var(--display);font-size:.95rem;font-weight:700;margin-bottom:8px;}
 .step-desc{font-size:.83rem;color:var(--muted);line-height:1.72;}
 
 /* FAQ */
@@ -160,87 +166,73 @@ section{padding:120px 24px;position:relative;z-index:2;}
 .faq-chev{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2;transition:transform .3s,stroke .3s;flex-shrink:0;}
 .faq-item.open .faq-chev{transform:rotate(180deg);stroke:var(--p2);}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .3s;background:rgba(6,4,10,0.5);color:var(--muted2);font-size:.875rem;line-height:1.8;padding:0 26px;}
-.faq-item.open .faq-a{max-height:200px;padding:18px 26px;}
+.faq-item.open .faq-a{max-height:220px;padding:18px 26px;}
 
-/* download cta */
-.dl-cta{border:1px solid var(--border);border-radius:28px;padding:90px 40px;text-align:center;position:relative;overflow:hidden;background:rgba(11,8,16,0.5);backdrop-filter:blur(20px);}
-.dl-cta::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(124,58,237,0.22),rgba(147,51,234,0.07) 40%,transparent 65%);filter:blur(30px);pointer-events:none;}
+/* DOWNLOAD CTA */
+.dl-cta{border:1px solid var(--border);border-radius:28px;padding:96px 40px;text-align:center;position:relative;overflow:hidden;background:rgba(11,8,16,0.5);backdrop-filter:blur(20px);}
+.dl-cta::before{content:'';position:absolute;top:-130px;left:50%;transform:translateX(-50%);width:700px;height:450px;background:radial-gradient(ellipse,rgba(124,58,237,0.22),rgba(147,51,234,0.07) 40%,transparent 65%);filter:blur(28px);pointer-events:none;}
 .dl-cta::after{content:'';position:absolute;inset:0;border-radius:28px;background:linear-gradient(135deg,rgba(124,58,237,0.06),transparent 50%,rgba(168,85,247,0.03));pointer-events:none;}
-.dl-cta .sec-title,.dl-cta .sec-sub,.dl-cta .hero-btns{position:relative;z-index:1;}
+.dl-cta>*{position:relative;z-index:1;}
 .dl-cta .sec-sub{margin:0 auto 36px;}
 
-/* footer */
-footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-index:2;}
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:38px 24px;position:relative;z-index:2;}
 .footer-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
-.footer-logo{font-family:var(--display);font-size:.9rem;font-weight:800;letter-spacing:.06em;color:#fff;text-decoration:none;}
+.footer-logo{font-family:var(--display);font-size:.9rem;font-weight:800;letter-spacing:.07em;color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px;}
+.footer-logo img{width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 0 6px var(--pglow));}
 .footer-logo em{background:linear-gradient(135deg,var(--p),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:normal;}
 .footer-note{font-size:.76rem;color:var(--muted);}
 .footer-links{display:flex;gap:22px;}
 .footer-links a{font-size:.76rem;color:var(--muted);text-decoration:none;transition:color .2s;}
 .footer-links a:hover{color:var(--p2);}
 
-/* reveal */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
-.reveal.visible{opacity:1;transform:none;}
-
-/* responsive */
+/* RESPONSIVE */
 @media(max-width:960px){
   .features-grid{grid-template-columns:1fr 1fr;}
   .steps{grid-template-columns:1fr 1fr;}
-  .wide-card{grid-template-columns:1fr;}
-  .wide-card-visual{display:none;}
   .faq-grid{grid-template-columns:1fr;gap:40px;}
+  .menu-win{width:calc(100% - 40px);}
+  .menu-stage{height:580px;}
 }
 @media(max-width:640px){
-  .navbar{padding:0 18px;}
+  .navbar{padding:0 20px;}
   .navbar.scrolled{width:96%;}
   .nav-links{display:none;}
   .features-grid{grid-template-columns:1fr;}
   .steps{grid-template-columns:1fr;}
-  .hero-stats{display:none;}
+  .hero-stats{flex-direction:column;}
+  .stat-item{border-right:none!important;border-bottom:1px solid var(--border);}
+  .stat-item:last-child{border-bottom:none;}
   .feat-card{padding:32px 24px;}
-  .wide-card-content{padding:40px 28px;}
-  .dl-cta{padding:60px 24px;}
+  .dl-cta{padding:64px 24px;}
+  .menu-stage{height:520px;}
+  .menu-win{width:calc(100% - 24px);left:12px;top:50px;}
 }
 </style>
 </head>
 <body>
-
 <div id="cur"></div>
 <div id="cur-ring"></div>
-<div class="blob blob1"></div>
-<div class="blob blob2"></div>
-<div class="blob blob3"></div>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
 
 <!-- NAV -->
-<div class="navbar-container">
+<div class="nav-wrap">
   <nav class="navbar" id="navbar">
-    <div class="nav-left">
-      <a href="#" class="logo">
-        <svg style="width:22px;height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
-        </svg>
-        <em>OMNIS</em>&nbsp;CS2
-      </a>
-      <div class="nav-links">
-        <a href="#features" class="nav-link">
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          Features
-        </a>
-        <a href="#setup" class="nav-link">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Setup
-        </a>
-        <a href="#faq" class="nav-link">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          FAQ
-        </a>
-      </div>
+    <a href="#" class="nav-logo">
+      <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png" alt="Omnis">
+      <span class="nav-logo-text"><em>OMNIS</em> CS2</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features" class="nav-link"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Features</a>
+      <a href="#menu-demo" class="nav-link"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>Menu</a>
+      <a href="#compare" class="nav-link"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3"/></svg>Compare</a>
+      <a href="#setup" class="nav-link"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Setup</a>
+      <a href="#faq" class="nav-link"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>FAQ</a>
     </div>
-    <a href="download.html" class="cta-nav">
-      <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
+    <a href="download.html" class="nav-cta">
+      <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Download Free
     </a>
   </nav>
@@ -250,44 +242,29 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
 <section id="hero">
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
-
-  <div class="badge"><span class="badge-dot"></span> Status: Undetected &amp; Active</div>
+  <div class="badge"><span class="bdot"></span>Status: Undetected &amp; Active</div>
+  <img class="hero-logo" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png" alt="Omnis Logo">
   <h1 class="hero-h1">
-    <span class="line1">DOMINATE</span>
-    <span class="line2">IN SILENCE.</span>
+    <span class="t1">OMNIS</span>
+    <span class="t2">CS2</span>
   </h1>
-  <p class="hero-desc">The sharpest, most undetectable CS2 enhancement built for everyday players. Now completely free — no subscriptions, no paywalls, forever.</p>
+  <p class="hero-tagline">Free CS2 Cheat — Always Undetected</p>
+  <p class="hero-desc">The cleanest enhancement for everyday CS2 players. Humanised aim, full ESP, skin changer and more — completely free, no subscriptions, no paywalls. Forever.</p>
   <div class="hero-btns">
     <a href="download.html" class="btn-primary">
-      <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
+      <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Download Now — Free
     </a>
     <a href="#features" class="btn-ghost">
-      <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-      </svg>
+      <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       View Features
     </a>
   </div>
   <div class="hero-stats">
-    <div class="stat-item">
-      <div class="stat-num">100%</div>
-      <div class="stat-label">Free Forever</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">∞</div>
-      <div class="stat-label">No Limits</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">Daily</div>
-      <div class="stat-label">Updates</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">0</div>
-      <div class="stat-label">Detected Bans</div>
-    </div>
+    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-lbl">Free Forever</div></div>
+    <div class="stat-item"><div class="stat-num">∞</div><div class="stat-lbl">No Limits</div></div>
+    <div class="stat-item"><div class="stat-num">Daily</div><div class="stat-lbl">Updates</div></div>
+    <div class="stat-item"><div class="stat-num">0</div><div class="stat-lbl">Detected Bans</div></div>
   </div>
 </section>
 
@@ -297,94 +274,89 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
     <div class="reveal">
       <span class="sec-eyebrow">Core Capabilities</span>
       <h2 class="sec-title">Built to perform.<br>Tuned to stay clean.</h2>
-      <p class="sec-sub">Every module is engineered for natural output. No rage, no obvious signatures — just clean edge over everyone else.</p>
+      <p class="sec-sub">Every module engineered for natural output. No rage, no obvious signatures — just clean edge over everyone else.</p>
     </div>
     <div class="features-grid reveal">
-      <div class="feat-card">
-        <div class="feat-num">01</div>
-        <div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7" stroke-dasharray="2 3"/></svg></div>
-        <h3 class="feat-title">Humanised Aimbot</h3>
-        <p class="feat-desc">Bezier-curved mouse paths and dynamic smoothing that perfectly replicate high-level human tracking. Completely indistinguishable in replay.</p>
-        <span class="feat-tag">AI Smooth</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-num">02</div>
-        <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-        <h3 class="feat-title">Clean Visuals / ESP</h3>
-        <p class="feat-desc">Minimal box ESP, health bars, distance, and skeleton rendering. Performance-optimised with zero FPS impact on modern setups.</p>
-        <span class="feat-tag">Zero Lag</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-num">03</div>
-        <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-        <h3 class="feat-title">Kernel-Level Safety</h3>
-        <p class="feat-desc">Runs at ring-0 with custom driver signatures, bypassing VAC and VAC3. Daily automated patch keeps all signatures fresh.</p>
-        <span class="feat-tag">Ring-0</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-num">04</div>
-        <div class="feat-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-        <h3 class="feat-title">Triggerbot</h3>
-        <p class="feat-desc">Configurable delay windows with randomised variance so shot timing never forms a detectable pattern. Per-weapon tuning supported.</p>
-        <span class="feat-tag">Randomised</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-num">05</div>
-        <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
-        <h3 class="feat-title">Skin &amp; Knife Changer</h3>
-        <p class="feat-desc">Apply any skin, knife, or glove client-side with zero inventory requirement. All changes are local — your Steam account stays safe.</p>
-        <span class="feat-tag">Client-Side</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-num">06</div>
-        <div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
-        <h3 class="feat-title">Radar Hack</h3>
-        <p class="feat-desc">Full-map enemy positions via custom overlay. Configurable dot size and opacity to keep things subtle during streams or recording.</p>
-        <span class="feat-tag">Overlay</span>
-      </div>
+      <div class="feat-card"><div class="feat-num">01</div><div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7" stroke-dasharray="2 3"/></svg></div><h3 class="feat-title">Humanised Aimbot</h3><p class="feat-desc">Bezier-curved mouse paths and dynamic smoothing that perfectly replicate high-level human tracking. Indistinguishable in replay.</p><span class="feat-tag">AI Smooth</span></div>
+      <div class="feat-card"><div class="feat-num">02</div><div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><h3 class="feat-title">Clean Visuals / ESP</h3><p class="feat-desc">Minimal box ESP, health bars, distance and skeleton rendering. Performance-optimised with zero FPS impact on modern setups.</p><span class="feat-tag">Zero Lag</span></div>
+      <div class="feat-card"><div class="feat-num">03</div><div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3 class="feat-title">Kernel-Level Safety</h3><p class="feat-desc">Runs at ring-0 with custom driver signatures bypassing VAC and VAC3. Daily automated patch keeps all signatures fresh.</p><span class="feat-tag">Ring-0</span></div>
+      <div class="feat-card"><div class="feat-num">04</div><div class="feat-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><h3 class="feat-title">Triggerbot</h3><p class="feat-desc">Configurable delay windows with randomised variance so shot timing never forms a detectable pattern. Per-weapon tuning supported.</p><span class="feat-tag">Randomised</span></div>
+      <div class="feat-card"><div class="feat-num">05</div><div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><h3 class="feat-title">Skin &amp; Knife Changer</h3><p class="feat-desc">Apply any skin, knife or glove client-side with zero inventory requirement. Local only — your Steam account stays safe.</p><span class="feat-tag">Client-Side</span></div>
+      <div class="feat-card"><div class="feat-num">06</div><div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div><h3 class="feat-title">Radar Hack</h3><p class="feat-desc">Full-map enemy positions via custom overlay. Configurable dot size and opacity — subtle enough for streams or recording.</p><span class="feat-tag">Overlay</span></div>
     </div>
   </div>
 </section>
 
-<!-- WIDE CARD – MENU PREVIEW -->
-<section>
+<!-- INTERACTIVE MENU DEMO -->
+<section id="menu-demo" style="padding-top:0;">
   <div class="inner">
-    <div class="wide-card reveal">
-      <div class="wide-card-content">
-        <span class="sec-eyebrow">In-Game Menu</span>
-        <h2 class="sec-title" style="font-size:clamp(1.8rem,3vw,2.5rem);">Sleek ImGui menu.<br>No visual noise.</h2>
-        <p class="sec-sub">Open and close with INSERT. Every setting is live-configurable without relaunching. Config profiles save locally so you can switch between aggressive and legit presets instantly.</p>
-        <a href="download.html" class="btn-primary" style="width:fit-content;">Get The Menu</a>
+    <div class="reveal" style="margin-bottom:40px;">
+      <span class="sec-eyebrow">Interactive Preview</span>
+      <h2 class="sec-title">The Omnis menu.<br>Live &amp; draggable.</h2>
+      <p class="sec-sub" style="margin-bottom:0;">Drag the menu around the stage. Switch tabs to see every category exactly as it looks in-game.</p>
+    </div>
+    <div class="menu-stage reveal" id="stage">
+      <div class="stage-bg"></div>
+      <div class="stage-overlay"></div>
+      <div class="stage-hint">
+        <svg viewBox="0 0 24 24"><path d="M5 9l4-4 4 4"/><path d="M9 5v14"/><path d="M19 15l-4 4-4-4"/><path d="M15 19V5"/></svg>
+        Drag the menu anywhere
       </div>
-      <div class="wide-card-visual">
-        <div class="mock-wrap">
-          <div class="mock-glow"></div>
-          <div class="mock-panel">
-            <div class="mock-topbar">
-              <div class="mock-dot" style="background:#7c3aed;box-shadow:0 0 6px #7c3aed;"></div>
-              <div class="mock-dot" style="background:rgba(255,255,255,0.12);"></div>
-              <div class="mock-dot" style="background:rgba(255,255,255,0.06);"></div>
+      <!-- DRAGGABLE WINDOW -->
+      <div class="menu-win" id="menuWin">
+        <div class="win-bar" id="winBar">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="win-dots">
+              <div class="wdot" style="background:#7c3aed;box-shadow:0 0 6px #7c3aed;"></div>
+              <div class="wdot" style="background:rgba(255,255,255,0.14);"></div>
+              <div class="wdot" style="background:rgba(255,255,255,0.07);"></div>
             </div>
-            <div class="mock-body">
-              <div class="mock-row"><span class="mock-lbl">AIMBOT</span><span class="mock-val on">ON</span></div>
-              <div class="mock-row"><span class="mock-lbl">TRIGGERBOT</span><span class="mock-val on">ON</span></div>
-              <div class="mock-row"><span class="mock-lbl">ESP</span><span class="mock-val on">ON</span></div>
-              <div class="mock-row"><span class="mock-lbl">RADAR</span><span class="mock-val off">OFF</span></div>
-              <div class="mock-row"><span class="mock-lbl">SKIN CHANGER</span><span class="mock-val on">ON</span></div>
-              <div class="mock-sliderrow">
-                <span class="mock-lbl">SMOOTH — 68%</span>
-                <div class="mock-track"><div class="mock-fill"></div><div class="mock-thumb"></div></div>
-              </div>
-            </div>
+            <span class="win-title">Omnis CS2</span>
           </div>
-          <div class="mock-cross"></div>
+          <span class="win-ver">v1.0.0</span>
+        </div>
+        <div class="win-tabs">
+          <button class="wtab active" data-tab="aimbot"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7" stroke-dasharray="2 3"/></svg>Aimbot</button>
+          <button class="wtab" data-tab="esp"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>ESP</button>
+          <button class="wtab" data-tab="visuals"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Visuals</button>
+          <button class="wtab" data-tab="skins"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Skins</button>
+          <button class="wtab" data-tab="misc"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>Misc</button>
+        </div>
+        <div class="win-content">
+          <img id="ti-aimbot"  src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/menu/aimbot.webp"  alt="Aimbot">
+          <img id="ti-esp"     src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/menu/esp.webp"     alt="ESP"     class="hidden">
+          <img id="ti-visuals" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/menu/visuals.webp" alt="Visuals"  class="hidden">
+          <img id="ti-skins"   src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/menu/skins.webp"   alt="Skins"   class="hidden">
+          <img id="ti-misc"    src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/menu/misc.webp"    alt="Misc"    class="hidden">
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
+<!-- BEFORE / AFTER -->
+<section id="compare" style="padding-top:80px;">
+  <div class="inner">
+    <div class="reveal" style="text-align:center;margin-bottom:48px;">
+      <span class="sec-eyebrow">Visual Proof</span>
+      <h2 class="sec-title">Before &amp; After.</h2>
+      <p class="sec-sub" style="max-width:400px;margin:0 auto;">Drag the slider left and right to see exactly what Omnis adds. Same round, same moment.</p>
+    </div>
+    <div class="ba-outer reveal" id="baOuter">
+      <div class="ba-sizer"></div>
+      <div class="ba-after"></div>
+      <div class="ba-before" id="baBefore"></div>
+      <div class="ba-line" id="baLine"></div>
+      <div class="ba-handle" id="baHandle">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/><polyline points="9 18 3 12 9 6" transform="translate(6,0)"/></svg>
+      </div>
+      <div class="ba-lbl ba-lbl-b">Without</div>
+      <div class="ba-lbl ba-lbl-a">With Omnis</div>
+    </div>
+  </div>
+</section>
+
+<!-- SETUP -->
 <section id="setup">
   <div class="inner">
     <div class="reveal">
@@ -393,26 +365,10 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
       <p class="sec-sub">No technical knowledge needed. The loader handles everything automatically.</p>
     </div>
     <div class="steps reveal">
-      <div class="step">
-        <div class="step-num">01</div>
-        <h3 class="step-title">Download Loader</h3>
-        <p class="step-desc">Grab the latest Omnis loader from our Discord download channel. Always the most current, patched build.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">02</div>
-        <h3 class="step-title">Disable Antivirus</h3>
-        <p class="step-desc">Temporarily disable Windows Defender or your AV before running. The loader will flag this automatically if needed.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">03</div>
-        <h3 class="step-title">Inject &amp; Launch</h3>
-        <p class="step-desc">Run the loader as administrator, open CS2, and wait for the injection confirmation. Takes under 10 seconds.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">04</div>
-        <h3 class="step-title">Press INSERT</h3>
-        <p class="step-desc">The menu opens with INSERT. Configure your modules, save your profile, and you're live. That's all.</p>
-      </div>
+      <div class="step"><div class="step-num">01</div><h3 class="step-title">Download Loader</h3><p class="step-desc">Grab the latest Omnis launcher from the download page. Always the most current, patched build.</p></div>
+      <div class="step"><div class="step-num">02</div><h3 class="step-title">Disable Antivirus</h3><p class="step-desc">Temporarily disable Windows Defender or your AV before running. The loader will flag this automatically if needed.</p></div>
+      <div class="step"><div class="step-num">03</div><h3 class="step-title">Inject &amp; Launch</h3><p class="step-desc">Run the loader as administrator, open CS2, and wait for the injection confirmation. Takes under 10 seconds.</p></div>
+      <div class="step"><div class="step-num">04</div><h3 class="step-title">Press INSERT</h3><p class="step-desc">The menu opens with INSERT. Configure your modules, save your profile, and you're live.</p></div>
     </div>
   </div>
 </section>
@@ -424,54 +380,35 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
       <div>
         <span class="sec-eyebrow">FAQ</span>
         <h2 class="sec-title">Common questions.</h2>
-        <p class="sec-sub">Can't find what you need? Open a ticket in our Discord support channel and we'll get back fast.</p>
-        <a href="download.html" class="btn-ghost" style="width:fit-content;">Join Discord</a>
+        <p class="sec-sub">Can't find what you need? Open a ticket in our Discord and we'll get back fast.</p>
+        <a href="#" class="btn-ghost" style="width:fit-content;">Join Discord</a>
       </div>
       <div class="faq-list">
-        <div class="faq-item">
-          <button class="faq-q">Is Omnis really free?<svg class="faq-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
-          <div class="faq-a">Yes — completely free, forever. No hidden tiers, no premium plan. Download the loader and use every single feature at zero cost.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">Will I get VAC banned?<svg class="faq-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
-          <div class="faq-a">Omnis operates at the kernel level with daily signature rotations and is currently undetected. No cheat carries a 100% guarantee — use on a secondary account if you're cautious.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">Does it work on VAC-secured servers?<svg class="faq-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
-          <div class="faq-a">Yes. Omnis is built specifically for VAC-secured matchmaking. It does not support FACEIT or ESEA, which use separate kernel-level anti-cheats.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">Will the source code be released?<svg class="faq-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
-          <div class="faq-a">A source release is planned for the future once the codebase is cleaned up. Follow our Discord for announcements and showcase drops.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">How do I get support?<svg class="faq-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
-          <div class="faq-a">Head to our Discord and open a support ticket. Include your Windows version and loader logs. We aim to respond within a few hours.</div>
-        </div>
+        <div class="faq-item"><button class="faq-q">Is Omnis really free?<svg class="faq-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Yes — completely free, forever. No hidden tiers, no premium plan. Download the launcher and use every feature at zero cost.</div></div>
+        <div class="faq-item"><button class="faq-q">Will I get VAC banned?<svg class="faq-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Omnis runs at kernel level with daily signature rotations and is currently undetected. No cheat is 100% guaranteed — use a secondary account if cautious.</div></div>
+        <div class="faq-item"><button class="faq-q">Does it work on VAC-secured servers?<svg class="faq-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Yes. Omnis is built specifically for VAC-secured matchmaking. It does not support FACEIT or ESEA which use separate kernel-level anti-cheats.</div></div>
+        <div class="faq-item"><button class="faq-q">Will the source code be released?<svg class="faq-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">A source release is planned for the future once the codebase is cleaned up. Follow our Discord for announcements.</div></div>
+        <div class="faq-item"><button class="faq-q">How do I get support?<svg class="faq-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Head to our Discord and open a support ticket. Include your Windows version and loader logs. We aim to respond within a few hours.</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- DOWNLOAD CTA -->
-<section id="download">
+<!-- CTA -->
+<section>
   <div class="inner">
     <div class="dl-cta reveal">
       <span class="sec-eyebrow">Free — Always</span>
       <h2 class="sec-title" style="margin-bottom:12px;">Ready to play differently?</h2>
-      <p class="sec-sub">Download the Omnis loader from our Discord and be in-game in under five minutes. No strings attached.</p>
-      <div class="hero-btns">
-        <a href="#" class="btn-primary">
-          <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          Download Loader
+      <p class="sec-sub">Download the Omnis launcher and be in-game in under five minutes. No strings attached.</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+        <a href="download.html" class="btn-primary">
+          <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Launcher
         </a>
         <a href="#" class="btn-ghost">
-          <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-          </svg>
-          Open a Support Ticket
+          <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Support Ticket
         </a>
       </div>
     </div>
@@ -481,53 +418,97 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
-    <a href="#" class="footer-logo"><em>OMNIS</em> CS2</a>
+    <a href="#" class="footer-logo">
+      <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png" alt="Omnis">
+      <em>OMNIS</em>&nbsp;CS2
+    </a>
     <span class="footer-note">For educational purposes only. Use responsibly.</span>
     <div class="footer-links">
-      <a href="#features">Features</a>
-      <a href="#setup">Setup</a>
-      <a href="#faq">FAQ</a>
+      <a href="#features">Features</a><a href="#menu-demo">Menu</a><a href="#compare">Compare</a><a href="#setup">Setup</a><a href="#faq">FAQ</a><a href="download.html">Download</a>
     </div>
   </div>
 </footer>
 
 <script>
 'use strict';
-// cursor
-const cur=document.getElementById('cur');
-const ring=document.getElementById('cur-ring');
+// CURSOR
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
 let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{
-  mx=e.clientX;my=e.clientY;
-  cur.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`;
-});
-(function animRing(){
-  rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
-  ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;
-  requestAnimationFrame(animRing);
-})();
-document.querySelectorAll('a,button').forEach(el=>{
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`;});
+(function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button,.ba-handle').forEach(el=>{
   el.addEventListener('mouseenter',()=>{cur.style.width='16px';cur.style.height='16px';ring.style.width='50px';ring.style.height='50px';ring.style.borderColor='rgba(168,85,247,0.55)';});
   el.addEventListener('mouseleave',()=>{cur.style.width='9px';cur.style.height='9px';ring.style.width='34px';ring.style.height='34px';ring.style.borderColor='rgba(168,85,247,0.3)';});
 });
 
-// navbar
+// NAVBAR
 const navbar=document.getElementById('navbar');
-window.addEventListener('scroll',()=>navbar.classList.toggle('scrolled',scrollY>60),{passive:true});
+window.addEventListener('scroll',()=>navbar.classList.toggle('scrolled',scrollY>80),{passive:true});
 
-// scroll reveal
-const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
+// REVEAL
+const ro=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible');}),{threshold:.08});
 document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
 
 // FAQ
 document.querySelectorAll('.faq-q').forEach(btn=>{
   btn.addEventListener('click',()=>{
-    const item=btn.parentElement;
-    const wasOpen=item.classList.contains('open');
+    const item=btn.parentElement,wasOpen=item.classList.contains('open');
     document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
     if(!wasOpen)item.classList.add('open');
   });
 });
+
+// DRAGGABLE MENU
+const win=document.getElementById('menuWin'),bar=document.getElementById('winBar'),stage=document.getElementById('stage');
+let dragging=false,sx=0,sy=0;
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function startDrag(e){
+  e.preventDefault();dragging=true;win.classList.add('dragging');
+  const pt=e.touches?e.touches[0]:e,r=win.getBoundingClientRect();
+  sx=pt.clientX-r.left;sy=pt.clientY-r.top;
+  document.addEventListener('mousemove',onDrag);document.addEventListener('mouseup',stopDrag);
+  document.addEventListener('touchmove',onDrag,{passive:false});document.addEventListener('touchend',stopDrag);
+}
+function onDrag(e){
+  if(!dragging)return;e.preventDefault();
+  const pt=e.touches?e.touches[0]:e,sr=stage.getBoundingClientRect();
+  win.style.left=clamp(pt.clientX-sr.left-sx,0,sr.width-win.offsetWidth)+'px';
+  win.style.top=clamp(pt.clientY-sr.top-sy,0,sr.height-win.offsetHeight)+'px';
+}
+function stopDrag(){dragging=false;win.classList.remove('dragging');document.removeEventListener('mousemove',onDrag);document.removeEventListener('mouseup',stopDrag);document.removeEventListener('touchmove',onDrag);document.removeEventListener('touchend',stopDrag);}
+bar.addEventListener('mousedown',startDrag);bar.addEventListener('touchstart',startDrag,{passive:false});
+
+// TABS
+document.querySelectorAll('.wtab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.wtab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.win-content img').forEach(img=>{img.id==='ti-'+tab.dataset.tab?img.classList.remove('hidden'):img.classList.add('hidden');});
+  });
+});
+
+// BEFORE / AFTER
+const outer=document.getElementById('baOuter'),before=document.getElementById('baBefore'),line=document.getElementById('baLine'),handle=document.getElementById('baHandle');
+let baDown=false,baPct=50;
+function setBA(p){baPct=Math.max(0,Math.min(100,p));before.style.clipPath=`inset(0 ${100-baPct}% 0 0)`;line.style.left=baPct+'%';handle.style.left=baPct+'%';}
+setBA(50);
+function baPctFromX(cx){const r=outer.getBoundingClientRect();return((cx-r.left)/r.width)*100;}
+handle.addEventListener('mousedown',e=>{e.preventDefault();baDown=true;});
+handle.addEventListener('touchstart',e=>{e.preventDefault();baDown=true;},{passive:false});
+outer.addEventListener('mousedown',e=>{baDown=true;setBA(baPctFromX(e.clientX));});
+outer.addEventListener('touchstart',e=>{baDown=true;setBA(baPctFromX(e.touches[0].clientX));},{passive:false});
+document.addEventListener('mousemove',e=>{if(baDown)setBA(baPctFromX(e.clientX));});
+document.addEventListener('touchmove',e=>{if(baDown){e.preventDefault();setBA(baPctFromX(e.touches[0].clientX));}},{passive:false});
+document.addEventListener('mouseup',()=>baDown=false);
+document.addEventListener('touchend',()=>baDown=false);
+// auto demo on scroll into view
+let demoDone=false;
+new IntersectionObserver(([en])=>{
+  if(en.isIntersecting&&!demoDone){
+    demoDone=true;let p=50,dir=-1,ticks=0;
+    const t=setInterval(()=>{p+=dir*1.5;if(p<=12)dir=1;if(p>=88){dir=-1;ticks++;}if(ticks>=1&&p>=50){clearInterval(t);setBA(50);return;}setBA(p);},16);
+  }
+},{threshold:.5}).observe(outer);
 </script>
 </body>
 </html>

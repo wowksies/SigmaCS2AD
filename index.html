@@ -48,6 +48,8 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .nav-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;}
 .nav-cta{display:flex;align-items:center;gap:8px;padding:0 22px;height:40px;border-radius:100px;background:linear-gradient(135deg,var(--p3),var(--p2));color:#fff;font-size:13px;font-weight:700;letter-spacing:.04em;border:none;cursor:none;text-decoration:none;font-family:var(--display);transition:all .25s;box-shadow:0 0 20px rgba(147,51,234,0.3);}
 .nav-cta:hover{box-shadow:0 0 30px rgba(168,85,247,0.55);transform:scale(.97);}
+.nav-discord{display:flex;align-items:center;gap:7px;padding:0 18px;height:40px;border-radius:100px;background:rgba(88,101,242,0.12);color:#9aa0f5;font-size:13px;font-weight:700;letter-spacing:.03em;border:1px solid rgba(88,101,242,0.25);cursor:none;text-decoration:none;font-family:var(--display);transition:all .25s;}
+.nav-discord:hover{background:rgba(88,101,242,0.22);border-color:rgba(88,101,242,0.5);color:#bec3f9;transform:scale(.97);}
 
 /* HERO */
 #hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:180px 24px 140px;overflow:hidden;z-index:2;}
@@ -231,10 +233,16 @@ footer{border-top:1px solid var(--border);padding:38px 24px;position:relative;z-
       <a href="#setup" class="nav-link"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Setup</a>
       <a href="#faq" class="nav-link"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>FAQ</a>
     </div>
-    <a href="download.html" class="nav-cta">
-      <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Download Free
-    </a>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <a href="https://discord.gg/3bX8qSDd85" target="_blank" rel="noopener" class="nav-discord">
+        <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.014.043.031.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+        Discord
+      </a>
+      <a href="download.html" class="nav-cta">
+        <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Free
+      </a>
+    </div>
   </nav>
 </div>
 
@@ -381,7 +389,10 @@ footer{border-top:1px solid var(--border);padding:38px 24px;position:relative;z-
         <span class="sec-eyebrow">FAQ</span>
         <h2 class="sec-title">Common questions.</h2>
         <p class="sec-sub">Can't find what you need? Open a ticket in our Discord and we'll get back fast.</p>
-        <a href="#" class="btn-ghost" style="width:fit-content;">Join Discord</a>
+        <a href="https://discord.gg/3bX8qSDd85" target="_blank" rel="noopener" class="btn-ghost" style="width:fit-content;">
+          <svg style="width:15px;height:15px;fill:currentColor;" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.014.043.031.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+          Join Discord
+        </a>
       </div>
       <div class="faq-list">
         <div class="faq-item"><button class="faq-q">Is Omnis really free?<svg class="faq-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Yes — completely free, forever. No hidden tiers, no premium plan. Download the launcher and use every feature at zero cost.</div></div>
@@ -406,9 +417,9 @@ footer{border-top:1px solid var(--border);padding:38px 24px;position:relative;z-
           <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download Launcher
         </a>
-        <a href="#" class="btn-ghost">
-          <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Support Ticket
+        <a href="https://discord.gg/3bX8qSDd85" target="_blank" rel="noopener" class="btn-ghost">
+          <svg style="width:15px;height:15px;fill:currentColor;" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.014.043.031.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+          Join Discord
         </a>
       </div>
     </div>

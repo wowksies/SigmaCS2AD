@@ -250,6 +250,29 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
 /* ── RESPONSIVE ── */
 @media(max-width:1024px){.feat-grid{grid-template-columns:1fr 1fr;}.pricing-wrap{grid-template-columns:1fr 1fr;}.res-grid{grid-template-columns:1fr;}.steps{grid-template-columns:1fr 1fr;}.faq-grid{grid-template-columns:1fr;gap:36px;}.mwin{width:calc(100% - 36px);}.menu-stage{height:560px;}}
 @media(max-width:640px){.navbar{padding:0 18px;}.navbar.scrolled{width:96%;}.nav-links{display:none;}.feat-grid{grid-template-columns:1fr;}.pricing-wrap{grid-template-columns:1fr;}.steps{grid-template-columns:1fr;}.hero-stats{flex-direction:column;}.stat-it{border-right:none!important;border-bottom:1px solid var(--border);}.stat-it:last-child{border-bottom:none;}.feat{padding:30px 22px;}.cta-box{padding:60px 22px;}.menu-stage{height:500px;}.mwin{width:calc(100% - 20px);left:10px;top:44px;}.checkout-header{padding:24px 24px 20px;}.res-card{flex-direction:column;text-align:center;}.res-row{justify-content:center;}}
+
+/* CHECKOUT PLANS */
+.checkout-plans{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:32px 36px 0;position:relative;z-index:1;}
+.cp-card{border:1px solid var(--border);border-radius:18px;padding:28px 22px;background:rgba(10,7,18,0.7);backdrop-filter:blur(16px);position:relative;overflow:hidden;transition:border-color .28s,box-shadow .28s,transform .28s;cursor:none;text-align:center;}
+.cp-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(109,40,217,0.06),transparent 65%);pointer-events:none;}
+.cp-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(147,51,234,0.35),transparent);opacity:0;transition:opacity .28s;}
+.cp-card:hover,.cp-card:focus{border-color:var(--borderH);box-shadow:0 22px 55px rgba(0,0,0,0.45),0 0 55px rgba(109,40,217,0.1);transform:translateY(-6px);}
+.cp-card:hover::after,.cp-card:focus::after{opacity:1;}
+.cp-card.cp-pop{border-color:rgba(147,51,234,0.42);box-shadow:0 0 0 1px rgba(147,51,234,0.08) inset,0 0 60px rgba(109,40,217,0.1);}
+.cp-card.cp-pop::after{opacity:1;}
+.cp-pop-tag{position:absolute;top:12px;right:12px;font-family:var(--display);font-size:8px;font-weight:800;letter-spacing:.14em;color:#c084fc;background:rgba(147,51,234,0.16);border:1px solid rgba(147,51,234,0.28);padding:3px 9px;border-radius:100px;text-transform:uppercase;}
+.cp-dur{font-family:var(--display);font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:var(--p2);margin-bottom:16px;}
+.cp-price{font-family:var(--display);font-size:3.4rem;font-weight:800;line-height:1;color:var(--text);margin-bottom:4px;letter-spacing:-.04em;}
+.cp-price span{font-size:1.2rem;font-weight:700;color:var(--muted2);vertical-align:top;line-height:2.2;}
+.cp-was{font-family:var(--display);font-size:.78rem;color:var(--muted);text-decoration:line-through;margin-bottom:22px;}
+.cp-cta{display:flex;align-items:center;justify-content:center;width:100%;height:44px;border-radius:100px;background:linear-gradient(135deg,var(--p4),var(--p2));color:#fff;font-size:12px;font-weight:800;letter-spacing:.06em;font-family:var(--display);transition:all .28s;box-shadow:0 0 16px rgba(147,51,234,0.28);}
+.cp-card:hover .cp-cta{box-shadow:0 8px 28px rgba(168,85,247,0.52);}
+.checkout-note{display:flex;align-items:center;justify-content:center;gap:8px;padding:22px 36px 32px;font-size:.82rem;color:var(--muted);position:relative;z-index:1;}
+@media(max-width:1024px){.checkout-plans{grid-template-columns:1fr 1fr;}}
+@media(max-width:640px){.checkout-plans{grid-template-columns:1fr;padding:20px 16px;}.checkout-note{padding:14px 20px 22px;font-size:.78rem;}}
+/* remove old iframe styles */
+.checkout-iframe-wrap,.checkout-loading,.spinner{display:none;}
+
 </style>
 </head>
 <body>
@@ -333,7 +356,7 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
           <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Discord support</li>
           <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Daily updates</li>
         </ul>
-        <button class="pc-btn" onclick="scrollToCheckout()">Buy Now &rarr;</button>
+        <button class="pc-btn" onclick="saCheckout(995693)">Buy Now →</button>
       </div>
       <div class="pc pop">
         <div class="pop-tag">Most Popular</div>
@@ -346,7 +369,7 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
           <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Priority support</li>
           <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Daily updates</li>
         </ul>
-        <button class="pc-btn" onclick="scrollToCheckout()">Buy Now &rarr;</button>
+        <button class="pc-btn" onclick="saCheckout(995694)">Buy Now →</button>
       </div>
       <div class="pc">
         <div class="pc-dur">1 Month</div>
@@ -358,7 +381,7 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
           <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Priority support</li>
           <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Daily updates</li>
         </ul>
-        <button class="pc-btn" onclick="scrollToCheckout()">Buy Now &rarr;</button>
+        <button class="pc-btn" onclick="saCheckout(995695)">Buy Now →</button>
       </div>
       <div class="pc">
         <div class="pc-dur">Lifetime</div>
@@ -370,7 +393,7 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
           <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>VIP support</li>
           <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>All future updates</li>
         </ul>
-        <button class="pc-btn" onclick="scrollToCheckout()">Buy Now &rarr;</button>
+        <button class="pc-btn" onclick="saCheckout(995696)">Buy Now →</button>
       </div>
     </div>
   </div>
@@ -382,13 +405,13 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
     <div class="reveal" style="margin-bottom:36px;">
       <div class="eyebrow">Secure Checkout</div>
       <h2 class="sec-h">Buy directly here.</h2>
-      <p class="sec-p" style="margin-bottom:0;">Complete your purchase below without leaving the page. Powered by SellAuth &mdash; instant key delivery to your email.</p>
+      <p class="sec-p" style="margin-bottom:0;">Click any plan below to open the SellAuth checkout overlay right on this page &mdash; pay with card, PayPal or crypto. Your key arrives instantly in your email.</p>
     </div>
     <div class="checkout-wrap reveal">
       <div class="checkout-header">
         <div>
           <div class="checkout-title">Omnis CS2 &mdash; Purchase</div>
-          <div style="font-size:.83rem;color:var(--muted);margin-top:4px;">Select your plan in the checkout below</div>
+          <div style="font-size:.83rem;color:var(--muted);margin-top:4px;">Click a plan to open the checkout overlay</div>
         </div>
         <div class="checkout-badges">
           <span class="ck-badge green"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Undetected</span>
@@ -396,17 +419,36 @@ footer{border-top:1px solid var(--border);padding:36px 24px;position:relative;z-
           <span class="ck-badge green"><svg viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 9 8 12 2 12"/></svg>Instant Delivery</span>
         </div>
       </div>
-      <div class="checkout-iframe-wrap">
-        <div class="checkout-loading" id="checkoutLoading">
-          <div class="spinner"></div>
+      <div class="checkout-plans">
+        <div class="cp-card" onclick="saCheckout(995693)">
+          <div class="cp-dur">4 Days</div>
+          <div class="cp-price"><span>$</span>5</div>
+          <div class="cp-was">Was $7.00</div>
+          <div class="cp-cta">Buy Now &rarr;</div>
         </div>
-        <iframe
-          id="sellauth-frame"
-          src="https://sellauth.com/s/219036"
-          allow="payment"
-          onload="document.getElementById('checkoutLoading').classList.add('hidden')"
-          title="Omnis CS2 Checkout"
-        ></iframe>
+        <div class="cp-card cp-pop" onclick="saCheckout(995694)">
+          <div class="cp-pop-tag">Most Popular</div>
+          <div class="cp-dur">1 Week</div>
+          <div class="cp-price"><span>$</span>7</div>
+          <div class="cp-was">Was $10.00</div>
+          <div class="cp-cta">Buy Now &rarr;</div>
+        </div>
+        <div class="cp-card" onclick="saCheckout(995695)">
+          <div class="cp-dur">1 Month</div>
+          <div class="cp-price"><span>$</span>12</div>
+          <div class="cp-was">Was $15.00</div>
+          <div class="cp-cta">Buy Now &rarr;</div>
+        </div>
+        <div class="cp-card" onclick="saCheckout(995696)">
+          <div class="cp-dur">Lifetime</div>
+          <div class="cp-price"><span>$</span>30</div>
+          <div class="cp-was">Was $40.00</div>
+          <div class="cp-cta">Buy Now &rarr;</div>
+        </div>
+      </div>
+      <div class="checkout-note">
+        <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Click any plan to open the secure checkout overlay &mdash; pay with card, PayPal or crypto. Key delivered instantly to your email.
       </div>
     </div>
   </div>
@@ -663,7 +705,30 @@ document.addEventListener('touchend',()=>baDown=false);
 let demoDone=false;
 new IntersectionObserver(([en])=>{if(en.isIntersecting&&!demoDone){demoDone=true;let p=50,dir=-1,ticks=0;const t=setInterval(()=>{p+=dir*1.5;if(p<=12)dir=1;if(p>=88){dir=-1;ticks++;}if(ticks>=1&&p>=50){clearInterval(t);setBA(50);return;}setBA(p);},16);}},{threshold:.5}).observe(outer);
 // SCROLL TO CHECKOUT
-window.scrollToCheckout=()=>{document.getElementById('checkout').scrollIntoView({behavior:'smooth'});};
+// Load SellAuth embed script
+(function(){
+  var s = document.createElement('script');
+  s.src = 'https://sellauth.com/assets/js/sellauth-embed-2.js';
+  s.async = true;
+  document.head.appendChild(s);
+})();
+
+// Open SellAuth checkout overlay for a specific variant
+window.saCheckout = function(variantId) {
+  var open = function() {
+    if (window.sellAuthEmbed) {
+      window.sellAuthEmbed.checkout(document.body, {
+        cart: [{ productId: 634549, variantId: variantId, quantity: 1 }],
+        shopId: '219036',
+        modal: true
+      });
+    } else {
+      // fallback if script hasn't loaded yet
+      window.open('https://sellauth.com/s/219036/products/634549?variantId=' + variantId, '_blank');
+    }
+  };
+  if (window.sellAuthEmbed) { open(); } else { setTimeout(open, 600); }
+};
 </script>
 </body>
 </html>

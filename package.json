@@ -1,0 +1,11 @@
+{
+  "name": "omnis-cs2",
+  "version": "1.0.0",
+  "description": "Omnis CS2 - Undetected CS2 Cheat",
+  "scripts": {
+    "install-analytics": "echo 'Vercel Analytics configured for static HTML'"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.1.1"
+  }
+}

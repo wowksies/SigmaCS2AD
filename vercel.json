@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/discord-auth",
+      "dest": "/api/discord-auth.js"
+    },
+    {
+      "src": "/api/reseller-data",
+      "dest": "/api/reseller-data.js"
+    },
+    {
+      "src": "/api/admin-data",
+      "dest": "/api/admin-data.js"
+    },
+    {
+      "src": "/api/generate-key",
+      "dest": "/api/generate-key.js"
+    },
+    {
+      "src": "/api/reseller-logout",
+      "dest": "/api/reseller-logout.js"
+    },
+    {
+      "src": "/api/verify",
+      "dest": "/api/verify.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}
+

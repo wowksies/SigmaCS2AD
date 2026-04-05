@@ -1,0 +1,8 @@
+{
+  "name": "omnis-cs2-site",
+  "version": "1.0.0",
+  "description": "Omnis CS2 Main Site and Reseller Portal",
+  "dependencies": {
+    "cookie": "^0.6.0"
+  }
+}

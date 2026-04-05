@@ -46,7 +46,21 @@ async function resolveUser(req) {
 
     // Fetch user profile from database — this is the source of truth for roles
     const profile = await fbGet(`/resellers/${payload.sub}`);
-    if (!profile) return null;
+
+    // If no profile exists yet, user just logged in for the first time
+    // Return a minimal user with no permissions (discord-auth.js will create the profile)
+    if (!profile) {
+        return {
+            id: payload.sub,
+            username: 'Unknown',
+            avatar: null,
+            nickname: 'Unknown',
+            isAdmin: false,
+            isReseller: false,
+            brands: [],
+            suspended: false,
+        };
+    }
 
     return {
         id: payload.sub,

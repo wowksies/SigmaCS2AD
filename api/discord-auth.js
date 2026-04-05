@@ -121,20 +121,18 @@ module.exports = async function handler(req, res) {
 
         const token = signJWT(payload, process.env.JWT_SECRET);
 
-        // Store ALL role data in Firebase (source of truth for permissions)
-        if (isReseller || isAdmin) {
-            try {
-                await fbPatch(`/resellers/${userData.id}`, {
-                    username: memberData.nick || userData.global_name || userData.username,
-                    nickname: memberData.nick || userData.global_name || userData.username,
-                    avatar: userData.avatar,
-                    isAdmin: isAdmin,
-                    isReseller: isReseller,
-                    brands: brands,
-                    lastLogin: Date.now(),
-                });
-            } catch (e) { console.error('Firebase reseller update error:', e); }
-        }
+        // Store ALL role data in Firebase BEFORE redirect (source of truth for permissions)
+        try {
+            await fbPatch(`/resellers/${userData.id}`, {
+                username: memberData.nick || userData.global_name || userData.username,
+                nickname: memberData.nick || userData.global_name || userData.username,
+                avatar: userData.avatar,
+                isAdmin: isAdmin,
+                isReseller: isReseller || isAdmin,
+                brands: brands,
+                lastLogin: Date.now(),
+            });
+        } catch (e) { console.error('Firebase profile save error:', e); }
 
         // SameSite=Strict, HttpOnly, Secure, 1-hour lifetime
         res.setHeader('Set-Cookie', `omnis_reseller=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`);

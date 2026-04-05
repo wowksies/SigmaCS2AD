@@ -113,33 +113,31 @@ module.exports = async function handler(req, res) {
         // Admin gets all brands
         const brands = isAdmin ? ['voltaris', 'projectservices', 'corvus', 'omnis'] : userBrands;
 
-        // Mint JWT with brand access
+        // JWT only contains user ID + expiry — NEVER store roles in the token
         const payload = {
             sub: userData.id,
-            username: userData.username,
-            avatar: userData.avatar,
-            nickname: memberData.nick || userData.global_name || userData.username,
-            isReseller: isReseller,
-            isAdmin: isAdmin,
-            brands: brands,
-            exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7) 
+            exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour
         };
 
         const token = signJWT(payload, process.env.JWT_SECRET);
 
-        // Update reseller profile in Firebase with brand access
+        // Store ALL role data in Firebase (source of truth for permissions)
         if (isReseller || isAdmin) {
             try {
                 await fbPatch(`/resellers/${userData.id}`, {
                     username: memberData.nick || userData.global_name || userData.username,
+                    nickname: memberData.nick || userData.global_name || userData.username,
                     avatar: userData.avatar,
+                    isAdmin: isAdmin,
+                    isReseller: isReseller,
                     brands: brands,
                     lastLogin: Date.now(),
                 });
             } catch (e) { console.error('Firebase reseller update error:', e); }
         }
 
-        res.setHeader('Set-Cookie', `omnis_reseller=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${60 * 60 * 24 * 7}`);
+        // SameSite=Strict, HttpOnly, Secure, 1-hour lifetime
+        res.setHeader('Set-Cookie', `omnis_reseller=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`);
         
         if (isAdmin) {
             res.writeHead(302, { Location: '/admin.html' });

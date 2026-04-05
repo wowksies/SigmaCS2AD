@@ -1,41 +1,19 @@
 {
-  "version": 2,
-  "routes": [
+  "headers": [
     {
-      "src": "/api/discord-auth",
-      "dest": "/api/discord-auth.js"
-    },
-    {
-      "src": "/api/reseller-data",
-      "dest": "/api/reseller-data.js"
-    },
-    {
-      "src": "/api/admin-data",
-      "dest": "/api/admin-data.js"
-    },
-    {
-      "src": "/api/admin-action",
-      "dest": "/api/admin-action.js"
-    },
-    {
-      "src": "/api/generate-key",
-      "dest": "/api/generate-key.js"
-    },
-    {
-      "src": "/api/submit-payment",
-      "dest": "/api/submit-payment.js"
-    },
-    {
-      "src": "/api/reseller-logout",
-      "dest": "/api/reseller-logout.js"
-    },
-    {
-      "src": "/api/verify",
-      "dest": "/api/verify.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://cdn.discordapp.com; connect-src 'self'; frame-ancestors 'none'" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" }
+      ]
     }
+  ],
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/:path*" }
   ]
 }

@@ -2,6 +2,7 @@
 // Admin panel — reads ALL brands from Firebase, tracks payments
 
 const crypto = require('crypto');
+const { resolveUser, fbGet } = require('./auth-helper');
 
 const DURATION_MAP = {
   1: { label: '1 Day', price: 3 },
@@ -16,34 +17,11 @@ const DURATION_MAP = {
 const CUT = 0.30;
 
 const BRANDS = {
-  voltaris:         { name: 'Voltaris',           prefix: 'VOLTARIS-',  path: '/keys/voltaris/',          color: '#FF3344', emoji: '🔴' },
-  projectservices:  { name: 'Project Services',   prefix: 'PS-',        path: '/keys/projectservices/',   color: '#1E50C8', emoji: '🔵' },
-  corvus:           { name: 'Corvus',             prefix: 'CORVUS-',    path: '/keys/corvus/',            color: '#7832C8', emoji: '🟣' },
-  omnis:            { name: 'Omnis',              prefix: 'OMNIS-',     path: '/keys/omnis/',             color: '#A040FF', emoji: '🟪' },
+  voltaris:         { name: 'Voltaris',           prefix: 'VOLTARIS-',  path: '/keys/voltaris/',          color: '#FF3344', emoji: '\ud83d\udd34' },
+  projectservices:  { name: 'Project Services',   prefix: 'PS-',        path: '/keys/projectservices/',   color: '#1E50C8', emoji: '\ud83d\udd35' },
+  corvus:           { name: 'Corvus',             prefix: 'CORVUS-',    path: '/keys/corvus/',            color: '#7832C8', emoji: '\ud83d\udfe3' },
+  omnis:            { name: 'Omnis',              prefix: 'OMNIS-',     path: '/keys/omnis/',             color: '#A040FF', emoji: '\ud83d\udfea' },
 };
-
-function verifyJWT(token) {
-  try {
-    const [header, body, sig] = token.split('.');
-    const expected = crypto.createHmac('sha256', process.env.JWT_SECRET).update(`${header}.${body}`).digest('base64url');
-    if (sig !== expected) return null;
-    const payload = JSON.parse(Buffer.from(body, 'base64url').toString());
-    if (payload.exp < Date.now() / 1000) return null;
-    return payload;
-  } catch { return null; }
-}
-
-function getCookie(req, name) {
-  const match = (req.headers.cookie || '').match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
-async function fbGet(path) {
-  const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Firebase GET ${path} failed: ${r.status}`);
-  return r.json();
-}
 
 function getDurationInfo(days) {
   const d = parseInt(days) || 0;
@@ -59,9 +37,9 @@ function getKeyStatus(k) {
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
-  const token = getCookie(req, 'omnis_reseller');
-  const payload = token ? verifyJWT(token) : null;
-  if (!payload || !payload.isAdmin) {
+  // DB-based admin check — roles are NEVER trusted from the JWT
+  const user = await resolveUser(req);
+  if (!user || !user.isAdmin) {
     return res.status(401).json({ error: 'Admin only' });
   }
 

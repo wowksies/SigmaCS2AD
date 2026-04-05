@@ -1,7 +1,6 @@
-// api/admin-action.js
-// Admin actions — operates on correct Firebase paths per brand
-
+// api/admin-action.js — uses DB-based role lookup
 const crypto = require('crypto');
+const { resolveUser, fbGet } = require('./auth-helper');
 
 const KEY_CHARSET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 function generateKeyChunk() {
@@ -18,29 +17,9 @@ const BRANDS = {
   omnis:            { path: '/keys/omnis/',            prefix: 'OMNIS-' },
 };
 
-function verifyJWT(token) {
-  try {
-    const [header, body, sig] = token.split('.');
-    const expected = crypto.createHmac('sha256', process.env.JWT_SECRET).update(`${header}.${body}`).digest('base64url');
-    if (sig !== expected) return null;
-    const payload = JSON.parse(Buffer.from(body, 'base64url').toString());
-    if (payload.exp < Date.now() / 1000) return null;
-    return payload;
-  } catch { return null; }
-}
-
-function getCookie(req, name) {
-  const match = (req.headers.cookie || '').match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
 async function fbPatch(path, data) {
   const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
-  const r = await fetch(url, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+  const r = await fetch(url, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
   if (!r.ok) throw new Error(`Firebase PATCH failed: ${r.status}`);
   return r.json();
 }
@@ -51,25 +30,13 @@ async function fbDelete(path) {
   if (!r.ok) throw new Error(`Firebase DELETE failed: ${r.status}`);
 }
 
-async function fbGet(path) {
-  const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Firebase GET failed: ${r.status}`);
-  return r.json();
-}
-
 async function fbPut(path, data) {
   const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
-  const r = await fetch(url, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+  const r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
   if (!r.ok) throw new Error(`Firebase PUT failed: ${r.status}`);
   return r.json();
 }
 
-// keyId format: "brandId/KEYSTRING" e.g. "omnis/OMNIS-XXXX-XXXX-XXXX-XXXX"
 function resolveKeyPath(keyId) {
   const slash = keyId.indexOf('/');
   if (slash === -1) return null;
@@ -84,9 +51,9 @@ module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const token = getCookie(req, 'omnis_reseller');
-  const payload = token ? verifyJWT(token) : null;
-  if (!payload || !payload.isAdmin) {
+  // DB-based admin check
+  const user = await resolveUser(req);
+  if (!user || !user.isAdmin) {
     return res.status(401).json({ error: 'Admin only' });
   }
 

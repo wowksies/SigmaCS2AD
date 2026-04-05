@@ -81,8 +81,8 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // Resellers only see their own keys; admins see all
-    const myKeys = user.isAdmin ? allKeys : allKeys.filter(k => k.createdBy === user.id);
+    // Resellers see: their own keys + legacy keys (no created_by). Admins see all.
+    const myKeys = user.isAdmin ? allKeys : allKeys.filter(k => k.createdBy === user.id || !k.createdBy);
     myKeys.sort((a, b) => b.createdAt - a.createdAt);
 
     const profile = await fbGet(`/resellers/${user.id}`) || {};

@@ -62,19 +62,30 @@ module.exports = async function handler(req, res) {
         });
         const memberData = await memberRes.json();
 
+        // Debug: if the bot can't fetch the member, show why
+        if (!memberRes.ok) {
+            console.error('Bot member fetch failed:', memberRes.status, JSON.stringify(memberData));
+            res.writeHead(302, { Location: `/?error=BotError_${memberRes.status}_${encodeURIComponent(memberData.message || 'unknown')}` });
+            return res.end();
+        }
+
         // Support multiple Reseller Roles (comma separated in Vercel)
         const allowedRoleIds = process.env.DISCORD_RESELLER_ROLE_IDS 
             ? process.env.DISCORD_RESELLER_ROLE_IDS.split(',').map(id => id.trim()) 
             : [];
             
-        // Setup Admin Role
-        const adminRoleId = process.env.DISCORD_ADMIN_ROLE_ID;
+        // Setup Admin Role — trim whitespace to be safe
+        const adminRoleId = (process.env.DISCORD_ADMIN_ROLE_ID || '').trim();
 
-        const isReseller = memberData.roles && memberData.roles.some(role => allowedRoleIds.includes(role));
-        const isAdmin = memberData.roles && memberData.roles.includes(adminRoleId);
+        const userRoles = memberData.roles || [];
+        const isReseller = userRoles.some(role => allowedRoleIds.includes(role));
+        const isAdmin = userRoles.includes(adminRoleId);
 
         if (!isReseller && !isAdmin) {
-            res.writeHead(302, { Location: '/?error=NotAReseller' });
+            // Debug: show what roles the user has vs what we expect
+            const debugInfo = `yourRoles=${userRoles.join('_')}&adminRole=${adminRoleId}&resellerRoles=${allowedRoleIds.join('_')}`;
+            console.error('Role check failed. User roles:', userRoles, 'Admin role:', adminRoleId, 'Reseller roles:', allowedRoleIds);
+            res.writeHead(302, { Location: `/?error=NotAReseller&${debugInfo}` });
             return res.end();
         }
 

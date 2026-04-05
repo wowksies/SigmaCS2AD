@@ -14,8 +14,16 @@
       "dest": "/api/admin-data.js"
     },
     {
+      "src": "/api/admin-action",
+      "dest": "/api/admin-action.js"
+    },
+    {
       "src": "/api/generate-key",
       "dest": "/api/generate-key.js"
+    },
+    {
+      "src": "/api/submit-payment",
+      "dest": "/api/submit-payment.js"
     },
     {
       "src": "/api/reseller-logout",
@@ -31,4 +39,3 @@
     }
   ]
 }
-

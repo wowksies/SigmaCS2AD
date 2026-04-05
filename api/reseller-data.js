@@ -1,7 +1,10 @@
 // api/reseller-data.js
-// Returns reseller-specific sales data from SellAuth, scoped to the logged-in reseller
+// Fetches reseller-specific data from Firebase Realtime Database
 
 const crypto = require('crypto');
+
+const PRICES = { '3days': 5, '1week': 7, '1month': 12, 'lifetime': 30 };
+const CUT = 0.30; // 30% goes to admin
 
 function verifyJWT(token) {
   try {
@@ -19,74 +22,95 @@ function getCookie(req, name) {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
+async function fbGet(path) {
+  const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`Firebase GET ${path} failed: ${r.status}`);
+  return r.json();
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   const token = getCookie(req, 'omnis_reseller');
   const payload = token ? verifyJWT(token) : null;
-
   if (!payload || (!payload.isReseller && !payload.isAdmin)) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
 
+  const resellerId = payload.sub;
+
   try {
-    // Fetch all completed invoices from SellAuth
-    const r = await fetch(
-      `https://api.sellauth.com/v1/shops/${process.env.SELLAUTH_SHOP_ID}/invoices?limit=250&status=completed`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.SELLAUTH_API_KEY}`,
-          Accept: 'application/json',
-        },
+    // Fetch this reseller's keys
+    const allKeys = await fbGet('/keys') || {};
+    const myKeys = [];
+    Object.entries(allKeys).forEach(([id, k]) => {
+      if (k.resellerId === resellerId) {
+        myKeys.push({ id, ...k });
       }
-    );
+    });
 
-    if (!r.ok) throw new Error('SellAuth API error: ' + r.status);
+    // Fetch reseller profile
+    const profile = await fbGet(`/resellers/${resellerId}`) || {};
 
-    const invoicesData = await r.json();
-    const invoices = invoicesData.data || invoicesData || [];
-
-    const variantNames = {
-      995693: '3 Days',
-      995694: '1 Week',
-      995695: '1 Month',
-      995696: 'Lifetime',
-    };
-
-    const variantPrices = {
-      995693: 5,
-      995694: 7,
-      995695: 12,
-      995696: 30,
-    };
-
-    // Map invoices with plan names
-    const mapped = invoices.map(inv => ({
-      id: inv.id,
-      plan: variantNames[inv.variant_id] || 'Unknown',
-      amount: inv.amount || variantPrices[inv.variant_id] || 0,
-      key: inv.license_key || null,
-      date: inv.created_at,
-      active: inv.status === 'completed',
-      note: inv.note || inv.custom_fields?.note || null,
-    }));
+    // Fetch payments
+    const allPayments = await fbGet('/payments') || {};
+    const myPayments = [];
+    Object.entries(allPayments).forEach(([id, p]) => {
+      if (p.resellerId === resellerId) {
+        myPayments.push({ id, ...p });
+      }
+    });
 
     // Calculate stats
     const now = Date.now();
     const dayMs = 86400000;
     const weekMs = dayMs * 7;
 
+    // Only activated keys (have HWID) and not excluded count toward payment
+    const activatedKeys = myKeys.filter(k => k.hwid && !k.excluded);
+    const totalOwed = activatedKeys.reduce((sum, k) => {
+      const price = PRICES[k.plan] || 0;
+      return sum + (price * CUT);
+    }, 0);
+
+    const totalPaid = myPayments
+      .filter(p => p.confirmedByAdmin)
+      .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+
+    const balance = Math.max(0, totalOwed - totalPaid);
+
     const stats = {
-      totalSales: mapped.length,
-      salesToday: mapped.filter(i => now - new Date(i.date).getTime() < dayMs).length,
-      salesThisWeek: mapped.filter(i => now - new Date(i.date).getTime() < weekMs).length,
-      activeKeys: mapped.filter(i => i.active).length,
-      totalRevenue: mapped.reduce((s, i) => s + (parseFloat(i.amount) || 0), 0).toFixed(2),
+      totalKeys: myKeys.length,
+      activatedKeys: activatedKeys.length,
+      unusedKeys: myKeys.filter(k => !k.hwid).length,
+      salesToday: myKeys.filter(k => k.hwid && (now - (k.activatedAt || k.createdAt)) < dayMs).length,
+      salesThisWeek: myKeys.filter(k => k.hwid && (now - (k.activatedAt || k.createdAt)) < weekMs).length,
+      totalOwed: totalOwed.toFixed(2),
+      totalPaid: totalPaid.toFixed(2),
+      balance: balance.toFixed(2),
+      suspended: profile.suspended || false,
+      paymentDeadline: profile.paymentDeadline || null,
     };
+
+    // Map keys for display
+    const mappedKeys = myKeys.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).map(k => ({
+      id: k.id,
+      key: k.key,
+      plan: k.plan,
+      planLabel: { '3days': '3 Days', '1week': '1 Week', '1month': '1 Month', 'lifetime': 'Lifetime' }[k.plan] || k.plan,
+      price: PRICES[k.plan] || 0,
+      owedAmount: (k.hwid && !k.excluded) ? ((PRICES[k.plan] || 0) * CUT).toFixed(2) : '0.00',
+      note: k.note || '',
+      createdAt: k.createdAt,
+      active: k.active !== false,
+      hwid: k.hwid || null,
+      activated: !!k.hwid,
+      excluded: k.excluded || false,
+      activatedAt: k.activatedAt || null,
+    }));
 
     return res.status(200).json({
       reseller: {
@@ -95,12 +119,18 @@ module.exports = async function handler(req, res) {
         avatar: payload.avatar,
         nickname: payload.nickname,
       },
-      stats: stats,
-      recent: mapped.slice(0, 50),
+      stats,
+      keys: mappedKeys.slice(0, 100),
+      payments: myPayments.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 50),
+      paymentMethods: {
+        paypal: 'paypal.me/kayazskrdens',
+        bitcoin: 'bc1qx68swgpyapa03tka8q6yaf9w03g6tshfrjqskc',
+        litecoin: 'LbBLPFSzeXYYXxf7YD2B8SqcxTAc9Rk1u1',
+      },
     });
 
   } catch (error) {
     console.error('Reseller Data Error:', error);
-    return res.status(500).json({ error: 'Failed to fetch data' });
+    return res.status(500).json({ error: 'Failed to fetch data', detail: error.message });
   }
 };

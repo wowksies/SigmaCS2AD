@@ -137,13 +137,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <!-- OVERVIEW -->
     <div class="panel active" id="panel-overview">
       <div class="stat-grid">
-        <div class="stat-card"><div class="stat-label">Total Keys</div><div class="stat-val" id="s-keys">—</div><div class="stat-delta">All resellers</div></div>
-        <div class="stat-card green"><div class="stat-label">Activated</div><div class="stat-val" id="s-act">—</div><div class="stat-delta">HWID registered</div></div>
+        <div class="stat-card"><div class="stat-label">Total Keys</div><div class="stat-val" id="s-keys">—</div><div class="stat-delta">All brands</div></div>
+        <div class="stat-card green"><div class="stat-label">Bound (HWID)</div><div class="stat-val" id="s-act">—</div><div class="stat-delta">Customers using</div></div>
         <div class="stat-card amber"><div class="stat-label">Revenue Owed</div><div class="stat-val" id="s-owed">—</div><div class="stat-delta">30% of activated</div></div>
         <div class="stat-card green"><div class="stat-label">Total Paid</div><div class="stat-val" id="s-paid">—</div><div class="stat-delta">Confirmed</div></div>
         <div class="stat-card red"><div class="stat-label">Outstanding</div><div class="stat-val" id="s-out">—</div><div class="stat-delta">Unpaid balance</div></div>
-        <div class="stat-card"><div class="stat-label">Resellers</div><div class="stat-val" id="s-res">—</div><div class="stat-delta">Active</div></div>
+        <div class="stat-card"><div class="stat-label">Resellers</div><div class="stat-val" id="s-res">—</div><div class="stat-delta">Registered</div></div>
       </div>
+      <div class="sec-hdr"><div><div class="sec-title">Brand Breakdown</div><div class="sec-sub">Keys per product</div></div></div>
+      <div class="stat-grid" id="brandGrid"></div>
     </div>
 
     <!-- RESELLERS -->
@@ -170,10 +172,27 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
     <!-- ALL KEYS -->
     <div class="panel" id="panel-allkeys">
-      <div class="sec-hdr"><div><div class="sec-title">All Keys</div><div class="sec-sub">Every key across all resellers</div></div></div>
+      <div class="sec-hdr">
+        <div><div class="sec-title">All Keys</div><div class="sec-sub">Every key across all brands</div></div>
+        <div style="display:flex;gap:6px;">
+          <select id="brandFilter" onchange="filterKeys()" style="height:28px;padding:0 8px;background:rgba(7,4,26,.8);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--display);font-size:.7rem;">
+            <option value="all">All Brands</option>
+            <option value="omnis">Omnis</option>
+            <option value="voltaris">Voltaris</option>
+            <option value="projectservices">Project Services</option>
+            <option value="corvus">Corvus</option>
+          </select>
+          <select id="statusFilter" onchange="filterKeys()" style="height:28px;padding:0 8px;background:rgba(7,4,26,.8);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--display);font-size:.7rem;">
+            <option value="all">All Status</option>
+            <option value="bound">Bound (HWID)</option>
+            <option value="unbound">Unbound</option>
+            <option value="disabled">Disabled</option>
+          </select>
+        </div>
+      </div>
       <div class="table-wrap">
         <table class="tbl">
-          <thead><tr><th>Key</th><th>Plan</th><th>Reseller</th><th>Status</th><th>HWID</th><th>Tracked</th><th>Owed</th><th>Date</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Key</th><th>Brand</th><th>Duration</th><th>Status</th><th>HWID</th><th>Tracked</th><th>Owed</th><th>Created</th><th>Actions</th></tr></thead>
           <tbody id="keysTbody"><tr><td colspan="9"><div class="empty"><div class="empty-t">Loading…</div></div></td></tr></tbody>
         </table>
       </div>
@@ -212,12 +231,22 @@ function loadData(refresh) {
 function render(d) {
   var s=d.stats;
   document.getElementById('s-keys').textContent=s.totalKeys;
-  document.getElementById('s-act').textContent=s.totalActivated;
+  document.getElementById('s-act').textContent=s.totalBound;
   document.getElementById('s-owed').textContent='$'+s.totalRevenue;
   document.getElementById('s-paid').textContent='$'+s.totalPaid;
   document.getElementById('s-out').textContent='$'+s.outstandingBalance;
   document.getElementById('s-res').textContent=s.totalResellers;
   document.getElementById('pendingCount').textContent=d.pendingPayments.length;
+
+  // Brand breakdown
+  var bg=document.getElementById('brandGrid');
+  if(d.brandStats){
+    var colors={voltaris:'red',projectservices:'',corvus:'',omnis:''};
+    bg.innerHTML=Object.entries(d.brandStats).map(function(e){
+      var b=e[1];
+      return '<div class="stat-card"><div class="stat-label">'+b.emoji+' '+b.name+'</div><div class="stat-val">'+b.total+'</div><div class="stat-delta">'+b.bound+' bound / '+b.active+' active</div></div>';
+    }).join('');
+  }
 
   // Resellers table
   var rtb=document.getElementById('resellersTbody');
@@ -229,8 +258,8 @@ function render(d) {
     var actions=r.suspended
       ?'<button class="btn btn-green" onclick="doAction(\'unsuspendReseller\',{resellerId:\''+r.id+'\'})">Unsuspend</button>'
       :'<button class="btn btn-danger" onclick="doAction(\'suspendReseller\',{resellerId:\''+r.id+'\'})">Suspend</button>';
-    actions+=' <button class="btn btn-ghost" onclick="setDeadline(\''+r.id+'\')">Set Deadline</button>';
-    return '<tr><td style="font-weight:600;color:var(--text);">'+r.username+'</td><td>'+r.totalKeys+'</td><td>'+r.activatedKeys+'</td><td>$'+r.totalOwed+'</td><td style="color:var(--green);">$'+r.totalPaid+'</td><td style="color:'+(parseFloat(r.balance)>0?'var(--red)':'var(--green)')+';">$'+r.balance+'</td><td>'+deadlineStr+'</td><td>'+statusBadge+'</td><td>'+actions+'</td></tr>';
+    actions+=' <button class="btn btn-ghost" onclick="setDeadline(\''+r.id+'\')">Deadline</button>';
+    return '<tr><td style="font-weight:600;color:var(--text);">'+r.username+'</td><td>—</td><td>—</td><td>$'+r.totalOwed+'</td><td style="color:var(--green);">$'+r.totalPaid+'</td><td>$'+r.balance+'</td><td>'+deadlineStr+'</td><td>'+statusBadge+'</td><td style="white-space:nowrap;">'+actions+'</td></tr>';
   }).join('');}
 
   // Pending payments
@@ -241,21 +270,37 @@ function render(d) {
   }).join('');}
 
   // All keys
+  filterKeys();
+}
+
+function filterKeys(){
+  if(!DATA) return;
+  var brand=document.getElementById('brandFilter').value;
+  var status=document.getElementById('statusFilter').value;
+  var keys=DATA.keys.filter(function(k){
+    if(brand!=='all'&&k.brandId!==brand) return false;
+    if(status==='bound'&&!k.activated) return false;
+    if(status==='unbound'&&k.activated) return false;
+    if(status==='disabled'&&k.active) return false;
+    return true;
+  });
   var ktb=document.getElementById('keysTbody');
-  if(!d.keys.length){ktb.innerHTML='<tr><td colspan="9"><div class="empty"><div class="empty-t">No keys</div></div></td></tr>';}
-  else{ktb.innerHTML=d.keys.map(function(k){
-    var st=k.activated?'<span class="badge badge-green">Active</span>':(k.active?'<span class="badge badge-amber">Unused</span>':'<span class="badge badge-red">Deactivated</span>');
+  if(!keys.length){ktb.innerHTML='<tr><td colspan="9"><div class="empty"><div class="empty-t">No keys match filter</div></div></td></tr>';return;}
+  ktb.innerHTML=keys.map(function(k){
+    var st=k.activated?'<span class="badge badge-green">Bound</span>':(k.active?'<span class="badge badge-amber">Unbound</span>':'<span class="badge badge-red">Disabled</span>');
     var tracked=k.excluded?'<span class="badge badge-red">Excluded</span>':'<span class="badge badge-green">Tracked</span>';
     var acts='';
     if(k.excluded){acts+='<button class="btn btn-green" onclick="doAction(\'includeKey\',{keyId:\''+k.id+'\'})">Track</button> ';}
     else{acts+='<button class="btn btn-ghost" onclick="doAction(\'excludeKey\',{keyId:\''+k.id+'\'})">Exclude</button> ';}
-    if(k.active){acts+='<button class="btn btn-danger" onclick="doAction(\'deactivateKey\',{keyId:\''+k.id+'\'})">Deactivate</button>';}
-    else{acts+='<button class="btn btn-green" onclick="doAction(\'activateKey\',{keyId:\''+k.id+'\'})">Activate</button>';}
-    return '<tr><td><span class="key-mono" onclick="copyText(\''+k.key+'\')">'+k.key+'</span></td><td><span class="badge badge-purple">'+k.planLabel+'</span></td><td>'+k.resellerName+'</td><td>'+st+'</td><td style="font-size:.65rem;font-family:monospace;max-width:100px;overflow:hidden;text-overflow:ellipsis;">'+(k.hwid||'—')+'</td><td>'+tracked+'</td><td>$'+k.owedAmount+'</td><td>'+fmtDate(k.createdAt)+'</td><td style="white-space:nowrap;">'+acts+'</td></tr>';
-  }).join('');}
+    if(k.active){acts+='<button class="btn btn-danger" onclick="doAction(\'deactivateKey\',{keyId:\''+k.id+'\'})">Disable</button> ';}
+    else{acts+='<button class="btn btn-green" onclick="doAction(\'activateKey\',{keyId:\''+k.id+'\'})">Enable</button> ';}
+    if(k.hwid){acts+='<button class="btn btn-ghost" onclick="doAction(\'resetHwid\',{keyId:\''+k.id+'\'})">Reset HWID</button> ';}
+    acts+='<button class="btn btn-danger" onclick="if(confirm(\'Delete key permanently?\'))doAction(\'deleteKey\',{keyId:\''+k.id+'\'})">Del</button>';
+    return '<tr><td><span class="key-mono" onclick="copyText(\''+k.key+'\')">'+k.key+'</span></td><td style="color:'+k.brandColor+';">'+k.brand+'</td><td><span class="badge badge-purple">'+k.planLabel+'</span></td><td>'+st+'</td><td style="font-size:.6rem;font-family:monospace;max-width:90px;overflow:hidden;text-overflow:ellipsis;">'+(k.hwid||'—')+'</td><td>'+tracked+'</td><td>$'+k.owedAmount+'</td><td>'+fmtDate(k.createdAt)+'</td><td style="white-space:nowrap;">'+acts+'</td></tr>';
+  }).join('');
 }
 
-function fmtDate(ts){if(!ts)return'—';var d=new Date(ts);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'});}
+function fmtDate(ts){if(!ts)return'—';var ms=ts<9999999999?ts*1000:ts;var d=new Date(ms);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'});}
 
 function showPanel(id){
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});

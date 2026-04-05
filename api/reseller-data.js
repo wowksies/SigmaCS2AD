@@ -1,10 +1,27 @@
 // api/reseller-data.js
-// Fetches reseller-specific data from Firebase Realtime Database
+// Fetches keys from ALL brands in Firebase for the reseller dashboard
 
 const crypto = require('crypto');
 
-const PRICES = { '3days': 5, '1week': 7, '1month': 12, 'lifetime': 30 };
+// Maps duration_days to plan labels and retail prices
+const DURATION_MAP = {
+  1: { label: '1 Day', price: 3 },
+  3: { label: '3 Days', price: 5 },
+  7: { label: '1 Week', price: 7 },
+  14: { label: '14 Days', price: 10 },
+  30: { label: '1 Month', price: 12 },
+  90: { label: '90 Days', price: 20 },
+  365: { label: '1 Year', price: 25 },
+  99999: { label: 'Lifetime', price: 30 },
+};
 const CUT = 0.30; // 30% goes to admin
+
+const BRANDS = {
+  voltaris:         { name: 'Voltaris',           prefix: 'VOLTARIS-',  path: '/keys/voltaris/',          color: '#FF3344' },
+  projectservices:  { name: 'Project Services',   prefix: 'PS-',        path: '/keys/projectservices/',   color: '#1E50C8' },
+  corvus:           { name: 'Corvus',             prefix: 'CORVUS-',    path: '/keys/corvus/',            color: '#7832C8' },
+  omnis:            { name: 'Omnis',              prefix: 'OMNIS-',     path: '/keys/omnis/',             color: '#A040FF' },
+};
 
 function verifyJWT(token) {
   try {
@@ -29,9 +46,13 @@ async function fbGet(path) {
   return r.json();
 }
 
+function getDurationInfo(days) {
+  const d = parseInt(days) || 0;
+  return DURATION_MAP[d] || { label: d + ' Days', price: 5 };
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
-
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   const token = getCookie(req, 'omnis_reseller');
@@ -40,77 +61,54 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
 
-  const resellerId = payload.sub;
-
   try {
-    // Fetch this reseller's keys
-    const allKeys = await fbGet('/keys') || {};
-    const myKeys = [];
-    Object.entries(allKeys).forEach(([id, k]) => {
-      if (k.resellerId === resellerId) {
-        myKeys.push({ id, ...k });
+    // Fetch keys from ALL brands
+    const allKeys = [];
+    for (const [brandId, brand] of Object.entries(BRANDS)) {
+      const data = await fbGet(brand.path);
+      if (data && typeof data === 'object') {
+        Object.entries(data).forEach(([keyId, k]) => {
+          if (k && typeof k === 'object') {
+            const info = getDurationInfo(k.duration_days);
+            allKeys.push({
+              id: brandId + '/' + keyId,
+              key: keyId,               // The key IS the node ID (e.g. OMNIS-XXXX-XXXX-XXXX-XXXX)
+              brand: brand.name,
+              brandId: brandId,
+              brandColor: brand.color,
+              durationDays: k.duration_days || 0,
+              planLabel: info.label,
+              price: info.price,
+              owedAmount: (k.hwid && k.hwid.length > 0) ? (info.price * CUT).toFixed(2) : '0.00',
+              active: k.active !== false,
+              hwid: k.hwid || '',
+              activated: !!(k.hwid && k.hwid.length > 0),
+              expiresAt: k.expires_at || 0,
+              createdAt: k.created_at || 0,           // Unix timestamp in SECONDS
+              excluded: k.excluded || false,
+            });
+          }
+        });
       }
-    });
+    }
 
-    // Fetch reseller profile
-    const profile = await fbGet(`/resellers/${resellerId}`) || {};
+    // Sort by creation date (newest first)
+    allKeys.sort((a, b) => b.createdAt - a.createdAt);
 
-    // Fetch payments
+    // Fetch reseller profile + payments
+    const profile = await fbGet(`/resellers/${payload.sub}`) || {};
     const allPayments = await fbGet('/payments') || {};
     const myPayments = [];
     Object.entries(allPayments).forEach(([id, p]) => {
-      if (p.resellerId === resellerId) {
-        myPayments.push({ id, ...p });
-      }
+      if (p && p.resellerId === payload.sub) myPayments.push({ id, ...p });
     });
 
-    // Calculate stats
-    const now = Date.now();
-    const dayMs = 86400000;
-    const weekMs = dayMs * 7;
+    // Stats — only activated keys (have HWID) and not excluded count
+    const now = Math.floor(Date.now() / 1000);
+    const activatedKeys = allKeys.filter(k => k.activated && !k.excluded);
 
-    // Only activated keys (have HWID) and not excluded count toward payment
-    const activatedKeys = myKeys.filter(k => k.hwid && !k.excluded);
-    const totalOwed = activatedKeys.reduce((sum, k) => {
-      const price = PRICES[k.plan] || 0;
-      return sum + (price * CUT);
-    }, 0);
-
-    const totalPaid = myPayments
-      .filter(p => p.confirmedByAdmin)
-      .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
-
-    const balance = Math.max(0, totalOwed - totalPaid);
-
-    const stats = {
-      totalKeys: myKeys.length,
-      activatedKeys: activatedKeys.length,
-      unusedKeys: myKeys.filter(k => !k.hwid).length,
-      salesToday: myKeys.filter(k => k.hwid && (now - (k.activatedAt || k.createdAt)) < dayMs).length,
-      salesThisWeek: myKeys.filter(k => k.hwid && (now - (k.activatedAt || k.createdAt)) < weekMs).length,
-      totalOwed: totalOwed.toFixed(2),
-      totalPaid: totalPaid.toFixed(2),
-      balance: balance.toFixed(2),
-      suspended: profile.suspended || false,
-      paymentDeadline: profile.paymentDeadline || null,
-    };
-
-    // Map keys for display
-    const mappedKeys = myKeys.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).map(k => ({
-      id: k.id,
-      key: k.key,
-      plan: k.plan,
-      planLabel: { '3days': '3 Days', '1week': '1 Week', '1month': '1 Month', 'lifetime': 'Lifetime' }[k.plan] || k.plan,
-      price: PRICES[k.plan] || 0,
-      owedAmount: (k.hwid && !k.excluded) ? ((PRICES[k.plan] || 0) * CUT).toFixed(2) : '0.00',
-      note: k.note || '',
-      createdAt: k.createdAt,
-      active: k.active !== false,
-      hwid: k.hwid || null,
-      activated: !!k.hwid,
-      excluded: k.excluded || false,
-      activatedAt: k.activatedAt || null,
-    }));
+    const totalOwed = activatedKeys.reduce((sum, k) => sum + (k.price * CUT), 0);
+    const totalPaid = myPayments.filter(p => p.confirmedByAdmin).reduce((s, p) => s + (parseFloat(p.amount) || 0), 0);
 
     return res.status(200).json({
       reseller: {
@@ -119,14 +117,25 @@ module.exports = async function handler(req, res) {
         avatar: payload.avatar,
         nickname: payload.nickname,
       },
-      stats,
-      keys: mappedKeys.slice(0, 100),
+      stats: {
+        totalKeys: allKeys.length,
+        activatedKeys: activatedKeys.length,
+        unusedKeys: allKeys.filter(k => !k.activated).length,
+        salesToday: activatedKeys.filter(k => (now - k.createdAt) < 86400).length,
+        totalOwed: totalOwed.toFixed(2),
+        totalPaid: totalPaid.toFixed(2),
+        balance: Math.max(0, totalOwed - totalPaid).toFixed(2),
+        suspended: profile.suspended || false,
+        paymentDeadline: profile.paymentDeadline || null,
+      },
+      keys: allKeys.slice(0, 200),
       payments: myPayments.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 50),
       paymentMethods: {
         paypal: 'paypal.me/kayazskrdens',
         bitcoin: 'bc1qx68swgpyapa03tka8q6yaf9w03g6tshfrjqskc',
         litecoin: 'LbBLPFSzeXYYXxf7YD2B8SqcxTAc9Rk1u1',
       },
+      brands: BRANDS,
     });
 
   } catch (error) {

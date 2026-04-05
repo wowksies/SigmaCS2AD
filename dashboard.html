@@ -207,17 +207,30 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div style="display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start;">
         <div style="border:1px solid var(--border);border-radius:10px;padding:22px;background:rgba(7,4,26,0.65);">
           <div class="form-row">
-            <div class="form-label">Select Plan</div>
-            <select class="form-select" id="genPlan">
-              <option value="3days">3 Days — $5 (you owe $1.50)</option>
-              <option value="1week" selected>1 Week — $7 (you owe $2.10)</option>
-              <option value="1month">1 Month — $12 (you owe $3.60)</option>
-              <option value="lifetime">Lifetime — $30 (you owe $9.00)</option>
+            <div class="form-label">Brand</div>
+            <select class="form-select" id="genBrand">
+              <option value="omnis">Omnis</option>
+              <option value="voltaris">Voltaris</option>
+              <option value="projectservices">Project Services</option>
+              <option value="corvus">Corvus</option>
             </select>
           </div>
           <div class="form-row">
-            <div class="form-label">Quantity (max 10)</div>
-            <input type="number" class="form-input" id="genQty" value="1" min="1" max="10">
+            <div class="form-label">Duration</div>
+            <select class="form-select" id="genDuration">
+              <option value="1">1 Day — $3 (you owe $0.90)</option>
+              <option value="3">3 Days — $5 (you owe $1.50)</option>
+              <option value="7" selected>1 Week — $7 (you owe $2.10)</option>
+              <option value="14">14 Days — $10 (you owe $3.00)</option>
+              <option value="30">1 Month — $12 (you owe $3.60)</option>
+              <option value="90">90 Days — $20 (you owe $6.00)</option>
+              <option value="365">1 Year — $25 (you owe $7.50)</option>
+              <option value="99999">Lifetime — $30 (you owe $9.00)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-label">Quantity (max 50)</div>
+            <input type="number" class="form-input" id="genQty" value="1" min="1" max="50">
           </div>
           <div class="form-row">
             <div class="form-label">Note (optional)</div>
@@ -236,10 +249,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
     <!-- MY KEYS -->
     <div class="panel" id="panel-mykeys">
-      <div class="sec-hdr"><div><div class="sec-title">My Keys</div><div class="sec-sub">All keys you've generated</div></div></div>
+      <div class="sec-hdr"><div><div class="sec-title">All Keys</div><div class="sec-sub">Keys across all brands</div></div></div>
       <div class="table-wrap">
         <table class="tbl">
-          <thead><tr><th>Key</th><th>Plan</th><th>Status</th><th>Owed</th><th>Note</th><th>Date</th></tr></thead>
+          <thead><tr><th>Key</th><th>Brand</th><th>Duration</th><th>Status</th><th>Owed</th><th>Date</th></tr></thead>
           <tbody id="keysTbody"><tr><td colspan="6"><div class="empty"><div class="empty-t">Loading…</div></div></td></tr></tbody>
         </table>
       </div>
@@ -358,12 +371,12 @@ function render(d) {
     ktb.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-t">No keys yet</div></div></td></tr>';
   } else {
     ktb.innerHTML = d.keys.map(function(k) {
-      var status = k.activated ? '<span class="badge badge-green">Activated</span>' : (k.active ? '<span class="badge badge-amber">Unused</span>' : '<span class="badge badge-red">Deactivated</span>');
+      var status = k.activated ? '<span class="badge badge-green">Bound</span>' : (k.active ? '<span class="badge badge-amber">Unbound</span>' : '<span class="badge badge-red">Disabled</span>');
       return '<tr><td><span class="key-mono" onclick="copyText(\'' + k.key + '\')">' + k.key + '</span></td>' +
+        '<td style="color:' + (k.brandColor || 'var(--p2)') + ';">' + (k.brand || '—') + '</td>' +
         '<td><span class="badge badge-purple">' + k.planLabel + '</span></td>' +
         '<td>' + status + '</td>' +
         '<td>' + (k.excluded ? '<span style="color:var(--muted)">Excluded</span>' : '$' + k.owedAmount) + '</td>' +
-        '<td>' + (k.note || '—') + '</td>' +
         '<td>' + fmtDate(k.createdAt) + '</td></tr>';
     }).join('');
   }
@@ -380,7 +393,7 @@ function render(d) {
   }
 }
 
-function fmtDate(ts) { if (!ts) return '—'; var d = new Date(ts); return d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'2-digit'}); }
+function fmtDate(ts) { if (!ts) return '—'; var ms = ts < 9999999999 ? ts * 1000 : ts; var d = new Date(ms); return d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'2-digit'}); }
 
 function showPanel(id) {
   document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
@@ -395,7 +408,8 @@ function showPanel(id) {
 }
 
 function generateKeys() {
-  var plan = document.getElementById('genPlan').value;
+  var brand = document.getElementById('genBrand').value;
+  var duration = parseInt(document.getElementById('genDuration').value);
   var qty = parseInt(document.getElementById('genQty').value) || 1;
   var note = document.getElementById('genNote').value.trim();
   var btn = document.getElementById('genBtnText');
@@ -406,7 +420,7 @@ function generateKeys() {
   fetch('/api/generate-key', {
     method: 'POST', credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ plan: plan, quantity: qty, note: note }),
+    body: JSON.stringify({ brand: brand, duration: duration, quantity: qty, note: note }),
   }).then(function(r) { return r.json(); }).then(function(d) {
     btn.textContent = 'Generate Keys';
     if (d.error) { err.textContent = d.error; err.style.display = 'block'; return; }

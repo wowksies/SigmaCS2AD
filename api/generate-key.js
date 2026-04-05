@@ -1,7 +1,26 @@
 // api/generate-key.js
-// Generates license keys and stores them in Firebase Realtime Database
+// Generates keys using same format as the Discord bot — key ID is the node name
 
 const crypto = require('crypto');
+
+const KEY_CHARSET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+
+function generateKeyChunk() {
+  return Array.from({ length: 4 }, () => KEY_CHARSET[Math.floor(Math.random() * KEY_CHARSET.length)]).join('');
+}
+
+function generateKeyId(prefix) {
+  return prefix + generateKeyChunk() + '-' + generateKeyChunk() + '-' + generateKeyChunk() + '-' + generateKeyChunk();
+}
+
+const BRANDS = {
+  voltaris:         { name: 'Voltaris',           prefix: 'VOLTARIS-',  path: '/keys/voltaris/' },
+  projectservices:  { name: 'Project Services',   prefix: 'PS-',        path: '/keys/projectservices/' },
+  corvus:           { name: 'Corvus',             prefix: 'CORVUS-',    path: '/keys/corvus/' },
+  omnis:            { name: 'Omnis',              prefix: 'OMNIS-',     path: '/keys/omnis/' },
+};
+
+const VALID_DURATIONS = [1, 3, 7, 14, 30, 90, 365, 99999];
 
 function verifyJWT(token) {
   try {
@@ -17,11 +36,6 @@ function verifyJWT(token) {
 function getCookie(req, name) {
   const match = (req.headers.cookie || '').match(new RegExp(`(?:^|; )${name}=([^;]*)`));
   return match ? decodeURIComponent(match[1]) : null;
-}
-
-function generateKey() {
-  const seg = () => crypto.randomBytes(3).toString('hex').toUpperCase();
-  return `OMNIS-${seg()}-${seg()}-${seg()}`;
 }
 
 async function fbGet(path) {
@@ -42,22 +56,8 @@ async function fbPut(path, data) {
   return r.json();
 }
 
-async function fbPost(path, data) {
-  const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
-  const r = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  if (!r.ok) throw new Error(`Firebase POST failed: ${r.status}`);
-  return r.json();
-}
-
-const VALID_PLANS = ['3days', '1week', '1month', 'lifetime'];
-
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
-
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const token = getCookie(req, 'omnis_reseller');
@@ -66,52 +66,57 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
 
-  // Check if reseller is suspended
+  // Check suspension
   const profile = await fbGet(`/resellers/${payload.sub}`);
   if (profile && profile.suspended) {
-    return res.status(403).json({ error: 'Your account is suspended. Please contact admin to resolve payment.' });
+    return res.status(403).json({ error: 'Your account is suspended. Contact admin.' });
   }
 
-  const { plan, quantity, note } = req.body || {};
+  const { brand, duration, quantity, note } = req.body || {};
 
-  if (!plan || !VALID_PLANS.includes(plan)) {
-    return res.status(400).json({ error: 'Invalid plan. Must be: 3days, 1week, 1month, or lifetime' });
+  // Validate brand
+  const brandConfig = BRANDS[brand];
+  if (!brandConfig) {
+    return res.status(400).json({ error: 'Invalid brand. Must be: ' + Object.keys(BRANDS).join(', ') });
   }
 
-  const qty = Math.min(Math.max(parseInt(quantity) || 1, 1), 10);
+  // Validate duration
+  const dur = parseInt(duration);
+  if (!VALID_DURATIONS.includes(dur)) {
+    return res.status(400).json({ error: 'Invalid duration. Must be: ' + VALID_DURATIONS.join(', ') });
+  }
+
+  const qty = Math.min(Math.max(parseInt(quantity) || 1, 1), 50);
 
   try {
     const keys = [];
-    const now = Date.now();
+    const now = Math.floor(Date.now() / 1000);
 
     for (let i = 0; i < qty; i++) {
-      const key = generateKey();
+      const keyId = generateKeyId(brandConfig.prefix);
+      // Same payload structure as the Discord bot
       const keyData = {
-        key: key,
-        plan: plan,
-        resellerId: payload.sub,
-        resellerName: payload.nickname || payload.username,
-        note: note || '',
-        createdAt: now,
+        hwid: '',
+        expires_at: 0,
+        duration_days: dur,
         active: true,
-        hwid: '',        // Empty until customer activates
-        excluded: false,  // Admin can set true to exclude from payment tracking
-        activatedAt: null,
+        created_at: now,
       };
 
-      const result = await fbPost('/keys', keyData);
-      keys.push({ key: key, id: result.name });
+      // PUT to /keys/{brand}/{KEYID} — same as bot does
+      await fbPut(brandConfig.path + keyId, keyData);
+      keys.push({ key: keyId, brand: brandConfig.name });
     }
 
     // Ensure reseller profile exists
     if (!profile) {
-      await fbPut(`/resellers/${payload.sub}`, {
+      const resellerPatch = {
         username: payload.nickname || payload.username,
         avatar: payload.avatar,
         suspended: false,
-        paymentDeadline: null,
-        createdAt: now,
-      });
+        createdAt: Date.now(),
+      };
+      await fbPut(`/resellers/${payload.sub}`, resellerPatch);
     }
 
     return res.status(200).json({ keys });

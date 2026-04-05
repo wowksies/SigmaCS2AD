@@ -107,6 +107,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <div class="sb-link active" data-panel="overview" onclick="showPanel('overview')">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview
     </div>
+    <div class="sb-link" data-panel="genkeys" onclick="showPanel('genkeys')">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Generate Keys
+    </div>
     <div class="sb-link" data-panel="resellers" onclick="showPanel('resellers')">
       <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Resellers
     </div>
@@ -115,6 +118,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
     </div>
     <div class="sb-link" data-panel="allkeys" onclick="showPanel('allkeys')">
       <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>All Keys
+    </div>
+    <div class="sb-link" data-panel="logs" onclick="showPanel('logs')">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Protection Logs
     </div>
   </nav>
   <div class="sb-footer">
@@ -148,13 +154,38 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <div class="stat-grid" id="brandGrid"></div>
     </div>
 
+    <!-- GENERATE KEYS -->
+    <div class="panel" id="panel-genkeys">
+      <div class="sec-hdr"><div><div class="sec-title">Generate Keys</div><div class="sec-sub">Create license keys for any brand</div></div></div>
+      <div style="display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start;">
+        <div style="border:1px solid var(--border);border-radius:10px;padding:22px;background:rgba(7,4,26,0.65);">
+          <div style="margin-bottom:14px;"><div class="form-label">Brand</div><select class="form-select" id="aGenBrand"><option value="omnis">Omnis</option><option value="voltaris">Voltaris</option><option value="projectservices">Project Services</option><option value="corvus">Corvus</option></select></div>
+          <div style="margin-bottom:14px;"><div class="form-label">Duration</div><select class="form-select" id="aGenDur"><option value="1">1 Day</option><option value="3">3 Days</option><option value="7" selected>1 Week</option><option value="14">14 Days</option><option value="30">1 Month</option><option value="90">90 Days</option><option value="365">1 Year</option><option value="99999">Lifetime</option></select></div>
+          <div style="margin-bottom:14px;"><div class="form-label">Quantity (max 50)</div><input type="number" class="form-input" id="aGenQty" value="1" min="1" max="50"></div>
+          <button class="btn btn-primary" style="width:100%;height:42px;font-size:.8rem;" onclick="adminGenKeys()"><span id="aGenText">Generate Keys</span></button>
+          <div id="aGenError" style="font-size:.75rem;color:var(--red);margin-top:8px;display:none;"></div>
+        </div>
+        <div id="aGenOut"><div class="empty"><div class="empty-t">No keys generated yet</div><div style="font-size:.75rem;">Fill in the form and click Generate</div></div></div>
+      </div>
+    </div>
+
     <!-- RESELLERS -->
     <div class="panel" id="panel-resellers">
-      <div class="sec-hdr"><div><div class="sec-title">Reseller Management</div><div class="sec-sub">Track payments, suspend, set deadlines</div></div></div>
+      <div class="sec-hdr"><div><div class="sec-title">Reseller Management</div><div class="sec-sub">Add, suspend, remove resellers</div></div></div>
+      <!-- Add reseller form -->
+      <div style="border:1px solid var(--border);border-radius:10px;padding:18px;background:rgba(7,4,26,0.65);">
+        <div style="font-family:var(--display);font-size:.84rem;font-weight:700;margin-bottom:12px;">Add Reseller</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;">
+          <div><div class="form-label">Discord User ID</div><input type="text" class="form-input" id="addResId" placeholder="e.g. 123456789012345678"></div>
+          <div><div class="form-label">Username</div><input type="text" class="form-input" id="addResName" placeholder="e.g. kayaz"></div>
+          <button class="btn btn-primary" style="height:40px;" onclick="addReseller()">Add</button>
+        </div>
+        <div id="addResError" style="font-size:.75rem;color:var(--red);margin-top:6px;display:none;"></div>
+      </div>
       <div class="table-wrap">
         <table class="tbl">
-          <thead><tr><th>Reseller</th><th>Keys</th><th>Activated</th><th>Owed (30%)</th><th>Paid</th><th>Balance</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="resellersTbody"><tr><td colspan="9"><div class="empty"><div class="empty-t">Loading…</div></div></td></tr></tbody>
+          <thead><tr><th>Reseller</th><th>ID</th><th>Owed</th><th>Paid</th><th>Balance</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="resellersTbody"><tr><td colspan="8"><div class="empty"><div class="empty-t">Loading…</div></div></td></tr></tbody>
         </table>
       </div>
     </div>
@@ -197,6 +228,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
         </table>
       </div>
     </div>
+
+    <!-- PROTECTION LOGS -->
+    <div class="panel" id="panel-logs">
+      <div class="sec-hdr"><div><div class="sec-title">Protection Logs</div><div class="sec-sub">Recent cheat loads with Discord usernames</div></div></div>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>Brand</th><th>Discord</th><th>Desktop User</th><th>PC Name</th><th>HWID</th><th>License Key</th><th>Version</th><th>Time</th></tr></thead>
+          <tbody id="logsTbody"><tr><td colspan="8"><div class="empty"><div class="empty-t">Loading…</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </main>
 </div>
@@ -208,9 +250,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 var DATA = null;
 var PANELS = {
   overview:{title:'Overview',sub:'Global revenue and reseller stats'},
-  resellers:{title:'Resellers',sub:'Manage resellers, payments, and deadlines'},
+  genkeys:{title:'Generate Keys',sub:'Create license keys for any brand'},
+  resellers:{title:'Resellers',sub:'Add, manage, and suspend resellers'},
   pending:{title:'Pending Payments',sub:'Confirm or reject payment claims'},
-  allkeys:{title:'All Keys',sub:'Every key across all resellers'},
+  allkeys:{title:'All Keys',sub:'Every key across all brands'},
+  logs:{title:'Protection Logs',sub:'Recent cheat loads with Discord usernames'},
 };
 
 window.addEventListener('DOMContentLoaded', function(){ loadData(false); });
@@ -250,7 +294,7 @@ function render(d) {
 
   // Resellers table
   var rtb=document.getElementById('resellersTbody');
-  if(!d.resellers.length){rtb.innerHTML='<tr><td colspan="9"><div class="empty"><div class="empty-t">No resellers yet</div></div></td></tr>';}
+  if(!d.resellers.length){rtb.innerHTML='<tr><td colspan="8"><div class="empty"><div class="empty-t">No resellers yet</div><div style="font-size:.75rem;">Add one using the form above</div></div></td></tr>';}
   else{rtb.innerHTML=d.resellers.map(function(r){
     var deadlineStr='—';
     if(r.paymentDeadline){var dl=new Date(r.paymentDeadline);var days=Math.ceil((dl.getTime()-Date.now())/86400000);deadlineStr=dl.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+(days<=3?' <span style="color:var(--red);">('+days+'d)</span>':'');}
@@ -259,7 +303,8 @@ function render(d) {
       ?'<button class="btn btn-green" onclick="doAction(\'unsuspendReseller\',{resellerId:\''+r.id+'\'})">Unsuspend</button>'
       :'<button class="btn btn-danger" onclick="doAction(\'suspendReseller\',{resellerId:\''+r.id+'\'})">Suspend</button>';
     actions+=' <button class="btn btn-ghost" onclick="setDeadline(\''+r.id+'\')">Deadline</button>';
-    return '<tr><td style="font-weight:600;color:var(--text);">'+r.username+'</td><td>—</td><td>—</td><td>$'+r.totalOwed+'</td><td style="color:var(--green);">$'+r.totalPaid+'</td><td>$'+r.balance+'</td><td>'+deadlineStr+'</td><td>'+statusBadge+'</td><td style="white-space:nowrap;">'+actions+'</td></tr>';
+    actions+=' <button class="btn btn-danger" onclick="if(confirm(\'Remove reseller?\'))doAction(\'removeReseller\',{resellerId:\''+r.id+'\'})">Remove</button>';
+    return '<tr><td style="font-weight:600;color:var(--text);">'+r.username+'</td><td style="font-size:.65rem;color:var(--muted2);font-family:monospace;">'+r.id+'</td><td>$'+r.totalOwed+'</td><td style="color:var(--green);">$'+r.totalPaid+'</td><td>$'+r.balance+'</td><td>'+deadlineStr+'</td><td>'+statusBadge+'</td><td style="white-space:nowrap;">'+actions+'</td></tr>';
   }).join('');}
 
   // Pending payments
@@ -271,6 +316,20 @@ function render(d) {
 
   // All keys
   filterKeys();
+
+  // Protection logs
+  var ltb=document.getElementById('logsTbody');
+  if(!d.recentLogs||!d.recentLogs.length){ltb.innerHTML='<tr><td colspan="8"><div class="empty"><div class="empty-t">No logs yet</div></div></td></tr>';}
+  else{ltb.innerHTML=d.recentLogs.map(function(l){
+    return '<tr><td style="color:'+(l.brandEmoji?'var(--text)':'var(--muted2)')+';">'+((l.brandEmoji||'')+' '+(l.brand||'—'))+'</td>'+
+      '<td style="font-weight:600;color:#c4b5fd;">'+(l.discord_username||'Unknown')+'</td>'+
+      '<td>'+(l.desktop_user||'—')+'</td>'+
+      '<td>'+(l.pc_name||'—')+'</td>'+
+      '<td style="font-size:.6rem;font-family:monospace;max-width:80px;overflow:hidden;text-overflow:ellipsis;">'+(l.hwid||'—')+'</td>'+
+      '<td><span class="key-mono" onclick="copyText(\''+(l.license_key||'')+'\')">'+(l.license_key||'—')+'</span></td>'+
+      '<td>'+(l.version||'—')+'</td>'+
+      '<td>'+fmtDate(l.created_at)+'</td></tr>';
+  }).join('');}
 }
 
 function filterKeys(){
@@ -332,6 +391,47 @@ function setDeadline(resellerId){
 
 function copyText(text){navigator.clipboard.writeText(text).then(function(){showToast('Copied!');}).catch(function(){var t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast('Copied!');});}
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
+
+function adminGenKeys(){
+  var brand=document.getElementById('aGenBrand').value;
+  var dur=parseInt(document.getElementById('aGenDur').value);
+  var qty=parseInt(document.getElementById('aGenQty').value)||1;
+  var btn=document.getElementById('aGenText');
+  var err=document.getElementById('aGenError');
+  btn.textContent='Generating\u2026'; err.style.display='none';
+  doActionRaw('generateKeys',{brand:brand,duration:dur,quantity:qty},function(d){
+    btn.textContent='Generate Keys';
+    if(d.error){err.textContent=d.error;err.style.display='block';return;}
+    var keys=d.keys||[];
+    document.getElementById('aGenOut').innerHTML=keys.map(function(k){
+      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.18);border-radius:7px;padding:8px 12px;margin-bottom:6px;">'+
+        '<span style="font-family:monospace;font-size:.8rem;color:var(--green);letter-spacing:.05em;">'+k+'</span>'+
+        '<button class="btn btn-ghost" style="height:26px;font-size:.6rem;padding:0 9px;" onclick="copyText(\''+k+'\')">Copy</button></div>';
+    }).join('');
+    showToast(keys.length+' key(s) generated!');
+    loadData(false);
+  });
+}
+
+function addReseller(){
+  var id=document.getElementById('addResId').value.trim();
+  var name=document.getElementById('addResName').value.trim();
+  var err=document.getElementById('addResError');
+  err.style.display='none';
+  if(!id||!name){err.textContent='Enter both Discord User ID and Username';err.style.display='block';return;}
+  if(!/^\d{17,20}$/.test(id)){err.textContent='Discord User ID must be 17-20 digits';err.style.display='block';return;}
+  doAction('addReseller',{discordId:id,username:name});
+  document.getElementById('addResId').value='';
+  document.getElementById('addResName').value='';
+}
+
+function doActionRaw(action,params,callback){
+  var body=Object.assign({action:action},params);
+  fetch('/api/admin-action',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+  .then(function(r){return r.json();})
+  .then(function(d){callback(d);})
+  .catch(function(e){callback({error:e.message});});
+}
 </script>
 </body>
 </html>

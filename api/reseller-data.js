@@ -62,9 +62,13 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Fetch keys from ALL brands
+    // Determine which brands this reseller can access
+    const userBrands = payload.isAdmin ? Object.keys(BRANDS) : (payload.brands || []);
+
+    // Fetch keys only from accessible brands
     const allKeys = [];
     for (const [brandId, brand] of Object.entries(BRANDS)) {
+      if (!userBrands.includes(brandId)) continue;
       const data = await fbGet(brand.path);
       if (data && typeof data === 'object') {
         Object.entries(data).forEach(([keyId, k]) => {
@@ -136,6 +140,7 @@ module.exports = async function handler(req, res) {
         litecoin: 'LbBLPFSzeXYYXxf7YD2B8SqcxTAc9Rk1u1',
       },
       brands: BRANDS,
+      userBrands: userBrands,
     });
 
   } catch (error) {

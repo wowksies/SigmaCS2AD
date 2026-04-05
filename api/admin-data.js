@@ -133,7 +133,8 @@ module.exports = async function handler(req, res) {
         id: r.id,
         username: r.username || 'Unknown',
         avatar: r.avatar || null,
-        totalOwed: '0.00',  // We don't track per-reseller keys yet in the old system
+        brands: r.brands || [],
+        totalOwed: '0.00',
         totalPaid: rPaid.toFixed(2),
         balance: Math.max(0, -rPaid).toFixed(2),
         suspended: r.suspended || false,

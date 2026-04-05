@@ -179,17 +179,20 @@ module.exports = async function handler(req, res) {
       }
 
       case 'addReseller': {
-        const { discordId, username } = req.body;
+        const { discordId, username, brands } = req.body;
         if (!discordId || !username) return res.status(400).json({ error: 'Missing discordId or username' });
+        const validBrands = (brands || []).filter(b => BRANDS[b]);
+        if (validBrands.length === 0) return res.status(400).json({ error: 'Must select at least one brand' });
         await fbPut(`/resellers/${discordId}`, {
           username: username,
           avatar: null,
+          brands: validBrands,
           suspended: false,
           paymentDeadline: null,
           createdAt: Date.now(),
           addedBy: 'admin',
         });
-        return res.json({ success: true, message: 'Reseller ' + username + ' added' });
+        return res.json({ success: true, message: 'Reseller ' + username + ' added with brands: ' + validBrands.join(', ') });
       }
 
       case 'removeReseller': {
@@ -220,6 +223,53 @@ module.exports = async function handler(req, res) {
           keys.push(keyId);
         }
         return res.json({ success: true, keys, message: qty + ' key(s) generated' });
+      }
+
+      case 'addTime': {
+        const { keyId, days } = req.body;
+        const path = resolveKeyPath(keyId);
+        if (!path) return res.status(400).json({ error: 'Invalid keyId format' });
+        const extraDays = parseInt(days);
+        if (!extraDays || extraDays < 1) return res.status(400).json({ error: 'Invalid days' });
+        const keyData = await fbGet(path);
+        if (!keyData) return res.status(404).json({ error: 'Key not found' });
+        const patch = { duration_days: (keyData.duration_days || 0) + extraDays };
+        if (keyData.expires_at && keyData.expires_at > 0) {
+          patch.expires_at = keyData.expires_at + (extraDays * 86400);
+        }
+        await fbPatch(path, patch);
+        return res.json({ success: true, message: 'Added ' + extraDays + ' days to key' });
+      }
+
+      case 'bulkExtend': {
+        const { brand: bulkBrand, filter, days } = req.body;
+        const extraDays = parseInt(days);
+        if (!extraDays || extraDays < 1) return res.status(400).json({ error: 'Invalid days' });
+        
+        // Determine which brands to operate on
+        const targetBrands = bulkBrand === 'all' ? Object.keys(BRANDS) : (BRANDS[bulkBrand] ? [bulkBrand] : []);
+        if (targetBrands.length === 0) return res.status(400).json({ error: 'Invalid brand' });
+
+        let count = 0;
+        for (const bId of targetBrands) {
+          const data = await fbGet(BRANDS[bId].path);
+          if (!data || typeof data !== 'object') continue;
+          for (const [keyId, k] of Object.entries(data)) {
+            if (!k || typeof k !== 'object') continue;
+            // Apply filter
+            if (filter === 'active' && k.active === false) continue;
+            if (filter === 'bound' && !(k.hwid && k.hwid.length > 0)) continue;
+            if (filter === 'unbound' && (k.hwid && k.hwid.length > 0)) continue;
+            
+            const patch = { duration_days: (k.duration_days || 0) + extraDays };
+            if (k.expires_at && k.expires_at > 0) {
+              patch.expires_at = k.expires_at + (extraDays * 86400);
+            }
+            await fbPatch(BRANDS[bId].path + keyId, patch);
+            count++;
+          }
+        }
+        return res.json({ success: true, message: 'Extended ' + count + ' keys by ' + extraDays + ' days' });
       }
 
       default:

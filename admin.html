@@ -175,17 +175,26 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
       <!-- Add reseller form -->
       <div style="border:1px solid var(--border);border-radius:10px;padding:18px;background:rgba(7,4,26,0.65);">
         <div style="font-family:var(--display);font-size:.84rem;font-weight:700;margin-bottom:12px;">Add Reseller</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;">
           <div><div class="form-label">Discord User ID</div><input type="text" class="form-input" id="addResId" placeholder="e.g. 123456789012345678"></div>
           <div><div class="form-label">Username</div><input type="text" class="form-input" id="addResName" placeholder="e.g. kayaz"></div>
+          <div>
+            <div class="form-label">Brand Access</div>
+            <div style="display:flex;gap:10px;height:40px;align-items:center;">
+              <label style="font-size:.75rem;display:flex;align-items:center;gap:4px;color:var(--muted2);cursor:pointer;"><input type="checkbox" id="cb_omnis" value="omnis" checked> Omnis</label>
+              <label style="font-size:.75rem;display:flex;align-items:center;gap:4px;color:var(--muted2);cursor:pointer;"><input type="checkbox" id="cb_voltaris" value="voltaris"> Voltaris</label>
+              <label style="font-size:.75rem;display:flex;align-items:center;gap:4px;color:var(--muted2);cursor:pointer;"><input type="checkbox" id="cb_ps" value="projectservices"> PS</label>
+              <label style="font-size:.75rem;display:flex;align-items:center;gap:4px;color:var(--muted2);cursor:pointer;"><input type="checkbox" id="cb_corvus" value="corvus"> Corvus</label>
+            </div>
+          </div>
           <button class="btn btn-primary" style="height:40px;" onclick="addReseller()">Add</button>
         </div>
         <div id="addResError" style="font-size:.75rem;color:var(--red);margin-top:6px;display:none;"></div>
       </div>
       <div class="table-wrap">
         <table class="tbl">
-          <thead><tr><th>Reseller</th><th>ID</th><th>Owed</th><th>Paid</th><th>Balance</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="resellersTbody"><tr><td colspan="8"><div class="empty"><div class="empty-t">Loading…</div></div></td></tr></tbody>
+          <thead><tr><th>Reseller</th><th>ID</th><th>Brands</th><th>Owed</th><th>Paid</th><th>Balance</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="resellersTbody"><tr><td colspan="9"><div class="empty"><div class="empty-t">Loading…</div></div></td></tr></tbody>
         </table>
       </div>
     </div>
@@ -219,6 +228,30 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
             <option value="unbound">Unbound</option>
             <option value="disabled">Disabled</option>
           </select>
+        </div>
+      </div>
+      <!-- Bulk Extend -->
+      <div style="border:1px solid var(--border);border-radius:10px;padding:14px 18px;background:rgba(7,4,26,0.65);margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span style="font-family:var(--display);font-size:.78rem;font-weight:700;">Bulk Extend</span>
+          <select id="bulkBrand" style="height:28px;padding:0 8px;background:rgba(7,4,26,.8);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--display);font-size:.7rem;">
+            <option value="all">All Brands</option>
+            <option value="omnis">Omnis</option>
+            <option value="voltaris">Voltaris</option>
+            <option value="projectservices">Project Services</option>
+            <option value="corvus">Corvus</option>
+          </select>
+          <select id="bulkFilter" style="height:28px;padding:0 8px;background:rgba(7,4,26,.8);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--display);font-size:.7rem;">
+            <option value="all">All Keys</option>
+            <option value="active">Active Only</option>
+            <option value="bound">Bound (HWID)</option>
+            <option value="unbound">Unbound Only</option>
+          </select>
+          <span style="font-size:.72rem;color:var(--muted2);">+ </span>
+          <input type="number" id="bulkDays" value="7" min="1" max="365" style="width:60px;height:28px;padding:0 8px;background:rgba(7,4,26,.8);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--display);font-size:.7rem;text-align:center;">
+          <span style="font-size:.72rem;color:var(--muted2);">days</span>
+          <button class="btn btn-primary" style="height:28px;font-size:.7rem;padding:0 14px;" onclick="bulkExtend()">Extend All</button>
+          <span id="bulkResult" style="font-size:.72rem;color:var(--green);display:none;"></span>
         </div>
       </div>
       <div class="table-wrap">
@@ -294,17 +327,19 @@ function render(d) {
 
   // Resellers table
   var rtb=document.getElementById('resellersTbody');
-  if(!d.resellers.length){rtb.innerHTML='<tr><td colspan="8"><div class="empty"><div class="empty-t">No resellers yet</div><div style="font-size:.75rem;">Add one using the form above</div></div></td></tr>';}
+  var brandLabels={omnis:'Omnis',voltaris:'Voltaris',projectservices:'PS',corvus:'Corvus'};
+  if(!d.resellers.length){rtb.innerHTML='<tr><td colspan="9"><div class="empty"><div class="empty-t">No resellers yet</div><div style="font-size:.75rem;">Add one using the form above</div></div></td></tr>';}
   else{rtb.innerHTML=d.resellers.map(function(r){
     var deadlineStr='—';
     if(r.paymentDeadline){var dl=new Date(r.paymentDeadline);var days=Math.ceil((dl.getTime()-Date.now())/86400000);deadlineStr=dl.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+(days<=3?' <span style="color:var(--red);">('+days+'d)</span>':'');}
     var statusBadge=r.suspended?'<span class="badge badge-red">Suspended</span>':'<span class="badge badge-green">Active</span>';
+    var brandsStr=(r.brands||[]).map(function(b){return '<span class="badge" style="font-size:.55rem;padding:1px 5px;background:rgba(167,139,250,.15);color:#c4b5fd;">'+(brandLabels[b]||b)+'</span>';}).join(' ')||'—';
     var actions=r.suspended
       ?'<button class="btn btn-green" onclick="doAction(\'unsuspendReseller\',{resellerId:\''+r.id+'\'})">Unsuspend</button>'
       :'<button class="btn btn-danger" onclick="doAction(\'suspendReseller\',{resellerId:\''+r.id+'\'})">Suspend</button>';
     actions+=' <button class="btn btn-ghost" onclick="setDeadline(\''+r.id+'\')">Deadline</button>';
     actions+=' <button class="btn btn-danger" onclick="if(confirm(\'Remove reseller?\'))doAction(\'removeReseller\',{resellerId:\''+r.id+'\'})">Remove</button>';
-    return '<tr><td style="font-weight:600;color:var(--text);">'+r.username+'</td><td style="font-size:.65rem;color:var(--muted2);font-family:monospace;">'+r.id+'</td><td>$'+r.totalOwed+'</td><td style="color:var(--green);">$'+r.totalPaid+'</td><td>$'+r.balance+'</td><td>'+deadlineStr+'</td><td>'+statusBadge+'</td><td style="white-space:nowrap;">'+actions+'</td></tr>';
+    return '<tr><td style="font-weight:600;color:var(--text);">'+r.username+'</td><td style="font-size:.6rem;color:var(--muted2);font-family:monospace;">'+r.id+'</td><td>'+brandsStr+'</td><td>$'+r.totalOwed+'</td><td style="color:var(--green);">$'+r.totalPaid+'</td><td>$'+r.balance+'</td><td>'+deadlineStr+'</td><td>'+statusBadge+'</td><td style="white-space:nowrap;">'+actions+'</td></tr>';
   }).join('');}
 
   // Pending payments
@@ -354,6 +389,7 @@ function filterKeys(){
     if(k.active){acts+='<button class="btn btn-danger" onclick="doAction(\'deactivateKey\',{keyId:\''+k.id+'\'})">Disable</button> ';}
     else{acts+='<button class="btn btn-green" onclick="doAction(\'activateKey\',{keyId:\''+k.id+'\'})">Enable</button> ';}
     if(k.hwid){acts+='<button class="btn btn-ghost" onclick="doAction(\'resetHwid\',{keyId:\''+k.id+'\'})">Reset HWID</button> ';}
+    acts+='<button class="btn btn-ghost" onclick="addTimeToKey(\''+k.id+'\')">+Time</button> ';
     acts+='<button class="btn btn-danger" onclick="if(confirm(\'Delete key permanently?\'))doAction(\'deleteKey\',{keyId:\''+k.id+'\'})">Del</button>';
     return '<tr><td><span class="key-mono" onclick="copyText(\''+k.key+'\')">'+k.key+'</span></td><td style="color:'+k.brandColor+';">'+k.brand+'</td><td><span class="badge badge-purple">'+k.planLabel+'</span></td><td>'+st+'</td><td style="font-size:.6rem;font-family:monospace;max-width:90px;overflow:hidden;text-overflow:ellipsis;">'+(k.hwid||'—')+'</td><td>'+tracked+'</td><td>$'+k.owedAmount+'</td><td>'+fmtDate(k.createdAt)+'</td><td style="white-space:nowrap;">'+acts+'</td></tr>';
   }).join('');
@@ -420,9 +456,36 @@ function addReseller(){
   err.style.display='none';
   if(!id||!name){err.textContent='Enter both Discord User ID and Username';err.style.display='block';return;}
   if(!/^\d{17,20}$/.test(id)){err.textContent='Discord User ID must be 17-20 digits';err.style.display='block';return;}
-  doAction('addReseller',{discordId:id,username:name});
+  var brands=[];
+  if(document.getElementById('cb_omnis').checked) brands.push('omnis');
+  if(document.getElementById('cb_voltaris').checked) brands.push('voltaris');
+  if(document.getElementById('cb_ps').checked) brands.push('projectservices');
+  if(document.getElementById('cb_corvus').checked) brands.push('corvus');
+  if(brands.length===0){err.textContent='Select at least one brand';err.style.display='block';return;}
+  doAction('addReseller',{discordId:id,username:name,brands:brands});
   document.getElementById('addResId').value='';
   document.getElementById('addResName').value='';
+}
+
+function bulkExtend(){
+  var brand=document.getElementById('bulkBrand').value;
+  var filter=document.getElementById('bulkFilter').value;
+  var days=parseInt(document.getElementById('bulkDays').value)||7;
+  var res=document.getElementById('bulkResult');
+  if(!confirm('Extend '+filter+' keys in '+(brand==='all'?'ALL brands':brand)+' by '+days+' days?')) return;
+  doActionRaw('bulkExtend',{brand:brand,filter:filter,days:days},function(d){
+    if(d.error){alert('Error: '+d.error);return;}
+    res.textContent=d.message;res.style.display='inline';
+    setTimeout(function(){res.style.display='none';},4000);
+    showToast(d.message);
+    loadData(false);
+  });
+}
+
+function addTimeToKey(keyId){
+  var days=prompt('Add how many days to this key?','7');
+  if(!days) return;
+  doAction('addTime',{keyId:keyId,days:parseInt(days)});
 }
 
 function doActionRaw(action,params,callback){

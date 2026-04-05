@@ -80,6 +80,14 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid brand. Must be: ' + Object.keys(BRANDS).join(', ') });
   }
 
+  // Check brand access for resellers (admins can gen any brand)
+  if (!payload.isAdmin) {
+    const userBrands = payload.brands || [];
+    if (!userBrands.includes(brand)) {
+      return res.status(403).json({ error: 'You don\'t have access to generate ' + brand + ' keys. Your brands: ' + userBrands.join(', ') });
+    }
+  }
+
   // Validate duration
   const dur = parseInt(duration);
   if (!VALID_DURATIONS.includes(dur)) {

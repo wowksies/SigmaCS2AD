@@ -343,6 +343,15 @@ function render(d) {
   document.getElementById('s-balance').textContent = '$' + s.balance;
   document.getElementById('s-paid').textContent = '$' + s.totalPaid;
 
+  // Populate brand dropdown with only accessible brands
+  var brandNames = {omnis:'Omnis',voltaris:'Voltaris',projectservices:'Project Services',corvus:'Corvus'};
+  var genBrand = document.getElementById('genBrand');
+  if (d.userBrands && genBrand) {
+    genBrand.innerHTML = d.userBrands.map(function(b) {
+      return '<option value="' + b + '">' + (brandNames[b] || b) + '</option>';
+    }).join('');
+  }
+
   // Warning banners
   var wa = document.getElementById('warningArea');
   wa.innerHTML = '';

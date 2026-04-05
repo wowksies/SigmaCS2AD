@@ -76,7 +76,7 @@ module.exports = async function handler(req, res) {
             const info = getDurationInfo(k.duration_days);
             allKeys.push({
               id: brandId + '/' + keyId,
-              key: keyId,               // The key IS the node ID (e.g. OMNIS-XXXX-XXXX-XXXX-XXXX)
+              key: keyId,
               brand: brand.name,
               brandId: brandId,
               brandColor: brand.color,
@@ -88,16 +88,23 @@ module.exports = async function handler(req, res) {
               hwid: k.hwid || '',
               activated: !!(k.hwid && k.hwid.length > 0),
               expiresAt: k.expires_at || 0,
-              createdAt: k.created_at || 0,           // Unix timestamp in SECONDS
+              createdAt: k.created_at || 0,
               excluded: k.excluded || false,
+              createdBy: k.created_by || '',
+              createdByName: k.created_by_name || '',
             });
           }
         });
       }
     }
 
+    // Resellers only see their own keys; admins see all
+    const myKeys = payload.isAdmin
+      ? allKeys
+      : allKeys.filter(k => k.createdBy === payload.sub);
+
     // Sort by creation date (newest first)
-    allKeys.sort((a, b) => b.createdAt - a.createdAt);
+    myKeys.sort((a, b) => b.createdAt - a.createdAt);
 
     // Fetch reseller profile + payments
     const profile = await fbGet(`/resellers/${payload.sub}`) || {};
@@ -109,7 +116,7 @@ module.exports = async function handler(req, res) {
 
     // Stats — only activated keys (have HWID) and not excluded count
     const now = Math.floor(Date.now() / 1000);
-    const activatedKeys = allKeys.filter(k => k.activated && !k.excluded);
+    const activatedKeys = myKeys.filter(k => k.activated && !k.excluded);
 
     const totalOwed = activatedKeys.reduce((sum, k) => sum + (k.price * CUT), 0);
     const totalPaid = myPayments.filter(p => p.confirmedByAdmin).reduce((s, p) => s + (parseFloat(p.amount) || 0), 0);
@@ -122,9 +129,9 @@ module.exports = async function handler(req, res) {
         nickname: payload.nickname,
       },
       stats: {
-        totalKeys: allKeys.length,
+        totalKeys: myKeys.length,
         activatedKeys: activatedKeys.length,
-        unusedKeys: allKeys.filter(k => !k.activated).length,
+        unusedKeys: myKeys.filter(k => !k.activated).length,
         salesToday: activatedKeys.filter(k => (now - k.createdAt) < 86400).length,
         totalOwed: totalOwed.toFixed(2),
         totalPaid: totalPaid.toFixed(2),
@@ -132,7 +139,7 @@ module.exports = async function handler(req, res) {
         suspended: profile.suspended || false,
         paymentDeadline: profile.paymentDeadline || null,
       },
-      keys: allKeys.slice(0, 200),
+      keys: myKeys.slice(0, 200),
       payments: myPayments.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 50),
       paymentMethods: {
         paypal: 'paypal.me/kayazskrdens',

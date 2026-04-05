@@ -254,10 +254,24 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
           <span id="bulkResult" style="font-size:.72rem;color:var(--green);display:none;"></span>
         </div>
       </div>
+      <!-- Selection Toolbar -->
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+        <button class="btn btn-ghost" style="height:28px;font-size:.68rem;padding:0 12px;" onclick="toggleSelectAll()"><input type="checkbox" id="selectAllCb" style="margin-right:4px;vertical-align:middle;cursor:pointer;" onclick="event.stopPropagation();toggleSelectAll(this.checked)"> Select All</button>
+        <button class="btn btn-ghost" style="height:28px;font-size:.68rem;padding:0 12px;" onclick="selectAllActive()">✓ Select Active</button>
+        <button class="btn btn-ghost" style="height:28px;font-size:.68rem;padding:0 12px;" onclick="copySelectedKeys()">📋 Copy Selected</button>
+        <button class="btn btn-ghost" style="height:28px;font-size:.68rem;padding:0 12px;" onclick="copyAllKeys()">📋 Copy All</button>
+        <span style="font-size:.72rem;color:var(--muted2);margin-left:4px;" id="selectedCount">0 selected</span>
+        <div style="margin-left:auto;display:flex;gap:6px;align-items:center;">
+          <span style="font-size:.72rem;color:var(--muted2);">+</span>
+          <input type="number" id="selDays" value="7" min="1" max="365" style="width:55px;height:28px;padding:0 6px;background:rgba(7,4,26,.8);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--display);font-size:.7rem;text-align:center;">
+          <span style="font-size:.72rem;color:var(--muted2);">days to</span>
+          <button class="btn btn-primary" style="height:28px;font-size:.68rem;padding:0 14px;" id="btnAddTimeSel" onclick="addTimeToSelected()">Add Time to Selected</button>
+        </div>
+      </div>
       <div class="table-wrap">
         <table class="tbl">
-          <thead><tr><th>Key</th><th>Brand</th><th>Duration</th><th>Status</th><th>HWID</th><th>Tracked</th><th>Owed</th><th>Created</th><th>Actions</th></tr></thead>
-          <tbody id="keysTbody"><tr><td colspan="9"><div class="empty"><div class="empty-t">Loading…</div></div></td></tr></tbody>
+          <thead><tr><th style="width:30px;"><input type="checkbox" id="selectAllCbHead" onclick="toggleSelectAll(this.checked)" style="cursor:pointer;"></th><th>Key</th><th>Brand</th><th>Duration</th><th>Status</th><th>HWID</th><th>Tracked</th><th>Owed</th><th>Created</th><th>Actions</th></tr></thead>
+          <tbody id="keysTbody"><tr><td colspan="10"><div class="empty"><div class="empty-t">Loading…</div></div></td></tr></tbody>
         </table>
       </div>
     </div>
@@ -265,6 +279,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <!-- PROTECTION LOGS -->
     <div class="panel" id="panel-logs">
       <div class="sec-hdr"><div><div class="sec-title">Protection Logs</div><div class="sec-sub">Recent cheat loads with Discord usernames</div></div></div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+        <input type="text" id="logSearch" placeholder="Search by Discord, PC, HWID, key…" oninput="filterLogs()" style="flex:1;min-width:200px;height:32px;padding:0 12px;background:rgba(7,4,26,.8);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--display);font-size:.72rem;">
+        <select id="logBrandFilter" onchange="filterLogs()" style="height:32px;padding:0 10px;background:rgba(7,4,26,.8);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--display);font-size:.72rem;">
+          <option value="all">All Brands</option>
+          <option value="omnis">Omnis</option>
+          <option value="voltaris">Voltaris</option>
+          <option value="projectservices">Project Services</option>
+          <option value="corvus">Corvus</option>
+        </select>
+      </div>
       <div class="table-wrap">
         <table class="tbl">
           <thead><tr><th>Brand</th><th>Discord</th><th>Desktop User</th><th>PC Name</th><th>HWID</th><th>License Key</th><th>Version</th><th>Time</th></tr></thead>
@@ -281,6 +305,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 <script>
 'use strict';
 var DATA = null;
+var selectedKeys = new Set();
 var PANELS = {
   overview:{title:'Overview',sub:'Global revenue and reseller stats'},
   genkeys:{title:'Generate Keys',sub:'Create license keys for any brand'},
@@ -379,10 +404,11 @@ function filterKeys(){
     return true;
   });
   var ktb=document.getElementById('keysTbody');
-  if(!keys.length){ktb.innerHTML='<tr><td colspan="9"><div class="empty"><div class="empty-t">No keys match filter</div></div></td></tr>';return;}
+  if(!keys.length){ktb.innerHTML='<tr><td colspan="10"><div class="empty"><div class="empty-t">No keys match filter</div></div></td></tr>';return;}
   ktb.innerHTML=keys.map(function(k){
     var st=k.activated?'<span class="badge badge-green">Bound</span>':(k.active?'<span class="badge badge-amber">Unbound</span>':'<span class="badge badge-red">Disabled</span>');
     var tracked=k.excluded?'<span class="badge badge-red">Excluded</span>':'<span class="badge badge-green">Tracked</span>';
+    var chk=selectedKeys.has(k.id)?'checked':'';
     var acts='';
     if(k.excluded){acts+='<button class="btn btn-green" onclick="doAction(\'includeKey\',{keyId:\''+k.id+'\'})">Track</button> ';}
     else{acts+='<button class="btn btn-ghost" onclick="doAction(\'excludeKey\',{keyId:\''+k.id+'\'})">Exclude</button> ';}
@@ -391,7 +417,81 @@ function filterKeys(){
     if(k.hwid){acts+='<button class="btn btn-ghost" onclick="doAction(\'resetHwid\',{keyId:\''+k.id+'\'})">Reset HWID</button> ';}
     acts+='<button class="btn btn-ghost" onclick="addTimeToKey(\''+k.id+'\')">+Time</button> ';
     acts+='<button class="btn btn-danger" onclick="if(confirm(\'Delete key permanently?\'))doAction(\'deleteKey\',{keyId:\''+k.id+'\'})">Del</button>';
-    return '<tr><td><span class="key-mono" onclick="copyText(\''+k.key+'\')">'+k.key+'</span></td><td style="color:'+k.brandColor+';">'+k.brand+'</td><td><span class="badge badge-purple">'+k.planLabel+'</span></td><td>'+st+'</td><td style="font-size:.6rem;font-family:monospace;max-width:90px;overflow:hidden;text-overflow:ellipsis;">'+(k.hwid||'—')+'</td><td>'+tracked+'</td><td>$'+k.owedAmount+'</td><td>'+fmtDate(k.createdAt)+'</td><td style="white-space:nowrap;">'+acts+'</td></tr>';
+    return '<tr data-keyid="'+k.id+'"><td><input type="checkbox" class="key-cb" '+chk+' onchange="toggleKeySelect(\''+k.id+'\',this.checked)" style="cursor:pointer;"></td><td><span class="key-mono" onclick="copyText(\''+k.key+'\')">' +k.key+'</span></td><td style="color:'+k.brandColor+';">'+k.brand+'</td><td><span class="badge badge-purple">'+k.planLabel+'</span></td><td>'+st+'</td><td style="font-size:.6rem;font-family:monospace;max-width:90px;overflow:hidden;text-overflow:ellipsis;">'+(k.hwid||'—')+'</td><td>'+tracked+'</td><td>$'+k.owedAmount+'</td><td>'+fmtDate(k.createdAt)+'</td><td style="white-space:nowrap;">'+acts+'</td></tr>';
+  }).join('');
+  updateSelectionUI();
+}
+
+function toggleKeySelect(id,checked){
+  if(checked) selectedKeys.add(id); else selectedKeys.delete(id);
+  updateSelectionUI();
+}
+function toggleSelectAll(checked){
+  if(typeof checked==='undefined') checked=!document.getElementById('selectAllCb').checked;
+  var cbs=document.querySelectorAll('.key-cb');
+  cbs.forEach(function(cb){cb.checked=checked;var row=cb.closest('tr');if(row){var kid=row.getAttribute('data-keyid');if(checked)selectedKeys.add(kid);else selectedKeys.delete(kid);}});
+  document.getElementById('selectAllCb').checked=checked;
+  document.getElementById('selectAllCbHead').checked=checked;
+  updateSelectionUI();
+}
+function selectAllActive(){
+  selectedKeys.clear();
+  if(!DATA) return;
+  DATA.keys.forEach(function(k){if(k.active&&!k.excluded) selectedKeys.add(k.id);});
+  document.querySelectorAll('.key-cb').forEach(function(cb){var row=cb.closest('tr');if(row){cb.checked=selectedKeys.has(row.getAttribute('data-keyid'));}});
+  updateSelectionUI();
+  showToast('✓ Selected '+selectedKeys.size+' active keys');
+}
+function updateSelectionUI(){
+  document.getElementById('selectedCount').textContent=selectedKeys.size+' selected';
+}
+function copySelectedKeys(){
+  if(selectedKeys.size===0){showToast('No keys selected');return;}
+  var keyTexts=[];
+  DATA.keys.forEach(function(k){if(selectedKeys.has(k.id)) keyTexts.push(k.key);});
+  copyText(keyTexts.join('\n'));
+  showToast('✓ Copied '+selectedKeys.size+' keys');
+}
+function copyAllKeys(){
+  if(!DATA||!DATA.keys.length){showToast('No keys');return;}
+  copyText(DATA.keys.map(function(k){return k.key;}).join('\n'));
+  showToast('✓ Copied all '+DATA.keys.length+' keys');
+}
+function addTimeToSelected(){
+  if(selectedKeys.size===0){showToast('No keys selected');return;}
+  var days=parseInt(document.getElementById('selDays').value)||7;
+  if(!confirm('Add '+days+' days to '+selectedKeys.size+' selected keys?')) return;
+  var ids=Array.from(selectedKeys);
+  var done=0;
+  function next(){
+    if(done>=ids.length){showToast('✓ Added '+days+' days to '+ids.length+' keys');selectedKeys.clear();loadData(false);return;}
+    doActionRaw('addTime',{keyId:ids[done],days:days},function(){done++;next();});
+  }
+  next();
+}
+function filterLogs(){
+  if(!DATA||!DATA.recentLogs) return;
+  var q=(document.getElementById('logSearch').value||'').toLowerCase();
+  var brand=document.getElementById('logBrandFilter').value;
+  var filtered=DATA.recentLogs.filter(function(l){
+    if(brand!=='all'&&(l.brand||'').toLowerCase().indexOf(brand)===-1) return false;
+    if(q){
+      var hay=((l.discord_username||'')+(l.desktop_user||'')+(l.pc_name||'')+(l.hwid||'')+(l.license_key||'')).toLowerCase();
+      if(hay.indexOf(q)===-1) return false;
+    }
+    return true;
+  });
+  var ltb=document.getElementById('logsTbody');
+  if(!filtered.length){ltb.innerHTML='<tr><td colspan="8"><div class="empty"><div class="empty-t">No matching logs</div></div></td></tr>';return;}
+  ltb.innerHTML=filtered.map(function(l){
+    return '<tr><td>'+(l.brand||'—')+'</td>'+
+      '<td style="font-weight:600;color:#c4b5fd;">'+(l.discord_username||'Unknown')+'</td>'+
+      '<td>'+(l.desktop_user||'—')+'</td>'+
+      '<td>'+(l.pc_name||'—')+'</td>'+
+      '<td style="font-size:.6rem;font-family:monospace;max-width:80px;overflow:hidden;text-overflow:ellipsis;">'+(l.hwid||'—')+'</td>'+
+      '<td><span class="key-mono" onclick="copyText(\''+(l.license_key||'')+'\')">'+(l.license_key||'—')+'</span></td>'+
+      '<td>'+(l.version||'—')+'</td>'+
+      '<td>'+fmtDate(l.created_at)+'</td></tr>';
   }).join('');
 }
 

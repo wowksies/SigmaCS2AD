@@ -102,13 +102,15 @@ module.exports = async function handler(req, res) {
 
     for (let i = 0; i < qty; i++) {
       const keyId = generateKeyId(brandConfig.prefix);
-      // Same payload structure as the Discord bot
+      // Same payload structure as the Discord bot + reseller tracking
       const keyData = {
         hwid: '',
         expires_at: 0,
         duration_days: dur,
         active: true,
         created_at: now,
+        created_by: payload.sub,
+        created_by_name: payload.nickname || payload.username || 'Unknown',
       };
 
       // PUT to /keys/{brand}/{KEYID} — same as bot does

@@ -186,6 +186,8 @@ module.exports = async function handler(req, res) {
             duration_days: dur,
             active: true,
             created_at: now,
+            created_by: user.id,
+            created_by_name: user.nickname || user.username || 'Admin',
           });
           keys.push(keyId);
         }

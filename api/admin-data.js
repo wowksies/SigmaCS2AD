@@ -74,6 +74,8 @@ module.exports = async function handler(req, res) {
               expiresAt: k.expires_at || 0,
               createdAt: k.created_at || 0,
               excluded: k.excluded || false,
+              createdBy: k.created_by || '',
+              createdByName: k.created_by_name || '',
               status: getKeyStatus({ active: k.active !== false, expiresAt: k.expires_at }),
             });
             brandTotal++;

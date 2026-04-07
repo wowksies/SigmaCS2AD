@@ -190,12 +190,25 @@ async function resolveUser(req, options = {}) {
         };
     }
 
+    // ── ADMIN ALLOWLIST (HARDCODED OVERRIDE) ─────────────────────
+    // Even if profile.isAdmin === true in the database, the user MUST be
+    // in the allowlist. This blocks attackers who write isAdmin:true directly
+    // to Firebase (via leaked auth key from C++ binary / .env).
+    const adminAllowlist = (process.env.ADMIN_ALLOWLIST || '').split(',').map(s => s.trim()).filter(s => /^\d{17,20}$/.test(s));
+    const isInAllowlist = adminAllowlist.includes(payload.sub);
+    
+    // If someone has isAdmin in DB but is NOT in allowlist, it's suspicious
+    if (profile.isAdmin === true && !isInAllowlist) {
+        console.error(`🚨 SUSPICIOUS: User ${payload.sub} has isAdmin=true in DB but is NOT in ADMIN_ALLOWLIST! Possible Firebase injection attack.`);
+        // Strip admin — they are NOT authorized
+    }
+
     return {
         id: payload.sub,
         username: profile.username || 'Unknown',
         avatar: profile.avatar || null,
         nickname: profile.nickname || profile.username || 'Unknown',
-        isAdmin: profile.isAdmin === true,
+        isAdmin: isInAllowlist && profile.isAdmin === true,
         isReseller: profile.isReseller === true || (profile.brands && profile.brands.length > 0),
         brands: profile.brands || [],
         suspended: profile.suspended || false,

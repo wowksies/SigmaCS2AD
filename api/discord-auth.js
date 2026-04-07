@@ -85,9 +85,40 @@ module.exports = async function handler(req, res) {
 
         const userRoles = memberData.roles || [];
 
-        // Detect admin
+        // Detect admin — REQUIRES both the Discord role AND being in the allowlist
         const adminRoleId = (process.env.DISCORD_ADMIN_ROLE_ID || '').trim();
-        const isAdmin = userRoles.includes(adminRoleId);
+        const hasAdminRole = userRoles.includes(adminRoleId);
+        const adminAllowlist = (process.env.ADMIN_ALLOWLIST || '').split(',').map(s => s.trim()).filter(s => /^\d{17,20}$/.test(s));
+        const isInAllowlist = adminAllowlist.includes(userData.id);
+        const isAdmin = hasAdminRole && isInAllowlist;
+
+        // SECURITY ALERT: Someone has admin role but is NOT in the allowlist
+        if (hasAdminRole && !isInAllowlist) {
+            console.error(`🚨 SECURITY ALERT: User ${userData.id} (${userData.username}) has admin role but is NOT in ADMIN_ALLOWLIST!`);
+            // Send Discord webhook alert if configured
+            try {
+                const alertWebhook = process.env.SECURITY_WEBHOOK_URL;
+                if (alertWebhook) {
+                    await fetch(alertWebhook, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            content: '🚨 **SECURITY ALERT**',
+                            embeds: [{
+                                title: '⚠️ Unauthorized Admin Attempt',
+                                color: 0xFF0000,
+                                fields: [
+                                    { name: 'User', value: `${userData.username} (${userData.id})`, inline: true },
+                                    { name: 'Has Admin Role', value: 'Yes', inline: true },
+                                    { name: 'In Allowlist', value: 'NO', inline: true },
+                                ],
+                                timestamp: new Date().toISOString(),
+                            }],
+                        }),
+                    });
+                }
+            } catch (e) { /* don't block on webhook failure */ }
+        }
 
         // Detect which brand roles the user has
         const userBrands = [];
@@ -120,7 +151,7 @@ module.exports = async function handler(req, res) {
 
         const token = signJWT(payload, process.env.JWT_SECRET);
 
-        // Store ALL role data in Firebase BEFORE redirect (source of truth for permissions)
+        // Store role data in Firebase (source of truth for permissions)
         try {
             await fbPatch(`/resellers/${userData.id}`, {
                 username: memberData.nick || userData.global_name || userData.username,
@@ -130,6 +161,7 @@ module.exports = async function handler(req, res) {
                 isReseller: isReseller || isAdmin,
                 brands: brands,
                 lastLogin: Date.now(),
+                lastLoginIP: req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown',
             });
         } catch (e) { console.error('Firebase profile save error:', e); }
 

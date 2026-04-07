@@ -74,7 +74,18 @@ module.exports = async function handler(req, res) {
     return res.status(403).json({ error: 'Account suspended' });
   }
 
-  // Rate limit check
+  // SECURITY: Verify reseller actually exists in the database
+  // Prevents ghost sessions from generating keys
+  const resellerProfile = await fbGet(`/resellers/${user.id}`);
+  if (!resellerProfile) {
+    console.warn(`KEY GEN BLOCKED: User ${user.id} has no reseller profile in DB`);
+    return res.status(403).json({ error: 'Account not registered' });
+  }
+  if (resellerProfile.suspended) {
+    return res.status(403).json({ error: 'Account suspended' });
+  }
+
+  // Rate limit check — 5 requests per 5 minutes
   if (!checkRateLimit(user.id)) {
     console.warn(`RATE LIMIT HIT: User ${user.id} (${user.username}) exceeded key generation limit`);
     return res.status(429).json({ error: 'Too many requests. Try again in a few minutes.' });
@@ -87,11 +98,12 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid brand' });
   }
 
-  // Strict brand access check (DB-based, not JWT-based)
+  // Strict brand access check — from DB profile, not JWT
+  const dbBrands = resellerProfile.brands || [];
   if (!user.isAdmin) {
-    if (!user.brands || !user.brands.includes(brand)) {
-      console.warn(`UNAUTHORIZED KEY GEN ATTEMPT: User ${user.id} (${user.username}) tried brand ${brand} without access`);
-      return res.status(403).json({ error: 'No access to ' + brand });
+    if (!dbBrands.includes(brand)) {
+      console.warn(`UNAUTHORIZED KEY GEN ATTEMPT: User ${user.id} (${user.username}) tried brand ${brand} without access. DB brands: ${dbBrands}`);
+      return res.status(403).json({ error: 'No access to this brand' });
     }
   }
 
@@ -135,18 +147,37 @@ module.exports = async function handler(req, res) {
         ip: ip,
         timestamp: now,
         is_admin: user.isAdmin || false,
+        source: 'reseller_panel',
       });
     } catch (e) { /* audit log failure should not block key gen */ }
 
-    // Ensure reseller profile exists
-    const profile = await fbGet(`/resellers/${user.id}`);
-    if (!profile) {
-      await fbPatch(`/resellers/${user.id}`, {
-        username: user.username,
-        brands: user.brands,
-        createdAt: Date.now(),
-      });
-    }
+    // DISCORD SECURITY WEBHOOK — notify owner on every key generation
+    try {
+      const alertWebhook = process.env.SECURITY_WEBHOOK_URL;
+      if (alertWebhook) {
+        const color = user.isAdmin ? 0x00FF00 : 0xFFA500;
+        await fetch(alertWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            embeds: [{
+              title: '🔑 Keys Generated',
+              color: color,
+              fields: [
+                { name: 'User', value: `${user.nickname || user.username}\n\`${user.id}\``, inline: true },
+                { name: 'Brand', value: brandConfig.name, inline: true },
+                { name: 'Quantity', value: String(qty), inline: true },
+                { name: 'Duration', value: dur === 99999 ? 'Lifetime' : dur + ' days', inline: true },
+                { name: 'Source', value: user.isAdmin ? 'Admin Panel' : 'Reseller Panel', inline: true },
+                { name: 'IP', value: '`' + ip + '`', inline: true },
+              ],
+              footer: { text: 'Key Security Monitor' },
+              timestamp: new Date().toISOString(),
+            }],
+          }),
+        });
+      }
+    } catch (e) { /* webhook failure should not block */ }
 
     return res.status(200).json({
       success: true,

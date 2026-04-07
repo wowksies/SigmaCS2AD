@@ -267,6 +267,31 @@ module.exports = async function handler(req, res) {
           keys.push(keyId);
         }
         await auditLog('generateKeys', user, { brand, duration: dur, quantity: qty, keys, ip, source: 'admin_panel' }, req);
+        // DISCORD SECURITY WEBHOOK — real-time alert on key generation
+        try {
+          const alertWebhook = process.env.SECURITY_WEBHOOK_URL;
+          if (alertWebhook) {
+            await fetch(alertWebhook, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                embeds: [{
+                  title: '\u{1F511} Admin Keys Generated',
+                  color: 0x00FF00,
+                  fields: [
+                    { name: 'Admin', value: `${user.nickname || user.username}\n\`${user.id}\``, inline: true },
+                    { name: 'Brand', value: brand, inline: true },
+                    { name: 'Quantity', value: String(qty), inline: true },
+                    { name: 'Duration', value: dur === 99999 ? 'Lifetime' : dur + ' days', inline: true },
+                    { name: 'IP', value: '`' + ip + '`', inline: true },
+                  ],
+                  footer: { text: 'Key Security Monitor' },
+                  timestamp: new Date().toISOString(),
+                }],
+              }),
+            });
+          }
+        } catch (e) { /* webhook failure should not block */ }
         return res.json({ success: true, keys, message: qty + ' key(s) generated' });
       }
 

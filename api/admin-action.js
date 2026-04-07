@@ -1,10 +1,11 @@
-// api/admin-action.js — uses DB-based role lookup
+// api/admin-action.js — HARDENED: DB-based role lookup + audit logging
 const crypto = require('crypto');
 const { resolveUser, fbGet } = require('./auth-helper');
 
 const KEY_CHARSET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 function generateKeyChunk() {
-  return Array.from({ length: 4 }, () => KEY_CHARSET[Math.floor(Math.random() * KEY_CHARSET.length)]).join('');
+  const bytes = crypto.randomBytes(4);
+  return Array.from(bytes).map(b => KEY_CHARSET[b % KEY_CHARSET.length]).join('');
 }
 function generateKeyId(prefix) {
   return prefix + generateKeyChunk() + '-' + generateKeyChunk() + '-' + generateKeyChunk() + '-' + generateKeyChunk();
@@ -35,6 +36,11 @@ async function fbPut(path, data) {
   const r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
   if (!r.ok) throw new Error(`Firebase PUT failed: ${r.status}`);
   return r.json();
+}
+
+async function fbPost(path, data) {
+  const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
+  await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
 }
 
 function resolveKeyPath(keyId) {
@@ -177,6 +183,7 @@ module.exports = async function handler(req, res) {
         if (!dur || dur < 1) return res.status(400).json({ error: 'Invalid duration' });
         const qty = Math.min(Math.max(parseInt(quantity) || 1, 1), 50);
         const now = Math.floor(Date.now() / 1000);
+        const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
         const keys = [];
         for (let i = 0; i < qty; i++) {
           const keyId = generateKeyId(brandConfig.prefix);
@@ -191,6 +198,21 @@ module.exports = async function handler(req, res) {
           });
           keys.push(keyId);
         }
+        // Audit log
+        try {
+          await fbPost('/audit_logs/key_generation', {
+            user_id: user.id,
+            username: user.nickname || user.username,
+            brand: brand,
+            quantity: qty,
+            duration: dur,
+            keys_generated: keys,
+            ip: ip,
+            timestamp: now,
+            is_admin: true,
+            source: 'admin_panel',
+          });
+        } catch (e) { /* audit failure should not block */ }
         return res.json({ success: true, keys, message: qty + ' key(s) generated' });
       }
 

@@ -104,9 +104,8 @@ module.exports = async function handler(req, res) {
         const isReseller = userBrands.length > 0 || userRoles.some(role => allowedRoleIds.includes(role));
 
         if (!isReseller && !isAdmin) {
-            const debugInfo = `yourRoles=${userRoles.join('_')}&adminRole=${adminRoleId}&brandRoles=${Object.keys(BRAND_ROLES).join('_')}`;
-            console.error('Role check failed. User roles:', userRoles);
-            res.writeHead(302, { Location: `/?error=NotAReseller&${debugInfo}` });
+            console.error('Role check failed. User:', userData.id, 'roles:', userRoles);
+            res.writeHead(302, { Location: '/?error=NotAuthorized' });
             return res.end();
         }
 

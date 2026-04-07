@@ -1,23 +1,5 @@
-// api/submit-payment.js
-// Reseller submits a payment claim for admin to confirm
-
-const crypto = require('crypto');
-
-function verifyJWT(token) {
-  try {
-    const [header, body, sig] = token.split('.');
-    const expected = crypto.createHmac('sha256', process.env.JWT_SECRET).update(`${header}.${body}`).digest('base64url');
-    if (sig !== expected) return null;
-    const payload = JSON.parse(Buffer.from(body, 'base64url').toString());
-    if (payload.exp < Date.now() / 1000) return null;
-    return payload;
-  } catch { return null; }
-}
-
-function getCookie(req, name) {
-  const match = (req.headers.cookie || '').match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
-}
+// api/submit-payment.js — SECURED: uses DB-based role lookup
+const { resolveUser } = require('./auth-helper');
 
 async function fbPost(path, data) {
   const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
@@ -35,10 +17,13 @@ module.exports = async function handler(req, res) {
 
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const token = getCookie(req, 'omnis_reseller');
-  const payload = token ? verifyJWT(token) : null;
-  if (!payload || (!payload.isReseller && !payload.isAdmin)) {
+  // DB-based role check — roles are NEVER trusted from the JWT
+  const user = await resolveUser(req);
+  if (!user || (!user.isReseller && !user.isAdmin)) {
     return res.status(401).json({ error: 'Not authenticated' });
+  }
+  if (user.suspended) {
+    return res.status(403).json({ error: 'Account suspended' });
   }
 
   const { amount, method, note } = req.body || {};
@@ -47,18 +32,26 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Missing amount or method' });
   }
 
+  const parsedAmount = parseFloat(amount);
+  if (isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > 10000) {
+    return res.status(400).json({ error: 'Invalid amount' });
+  }
+
   const validMethods = ['paypal', 'bitcoin', 'litecoin'];
   if (!validMethods.includes(method)) {
     return res.status(400).json({ error: 'Invalid payment method' });
   }
 
+  // Sanitize note — strip HTML
+  const safeNote = (note || '').replace(/<[^>]*>/g, '').substring(0, 500);
+
   try {
     const paymentData = {
-      resellerId: payload.sub,
-      resellerName: payload.nickname || payload.username,
-      amount: parseFloat(amount).toFixed(2),
+      resellerId: user.id,
+      resellerName: user.nickname || user.username,
+      amount: parsedAmount.toFixed(2),
       method: method,
-      note: note || '',
+      note: safeNote,
       confirmedByAdmin: false,
       confirmedAt: null,
       createdAt: Date.now(),
@@ -70,6 +63,6 @@ module.exports = async function handler(req, res) {
 
   } catch (error) {
     console.error('Submit Payment Error:', error);
-    return res.status(500).json({ error: 'Failed to submit payment', detail: error.message });
+    return res.status(500).json({ error: 'Failed to submit payment' });
   }
 };

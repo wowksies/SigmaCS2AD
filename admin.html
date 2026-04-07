@@ -86,7 +86,75 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .toast{position:fixed;bottom:20px;right:20px;background:#07041a;border:1px solid rgba(52,211,153,.3);border-radius:8px;padding:10px 16px;font-family:var(--display);font-size:.76rem;font-weight:700;color:var(--green);box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:2000;transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.22,1,.36,1);}
 .toast.show{transform:none;opacity:1;}
 .pending-dot{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:rgba(248,113,113,.15);color:var(--red);font-size:.55rem;font-weight:800;margin-left:4px;font-family:var(--display);}
-@media(max-width:900px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.stat-grid{grid-template-columns:1fr 1fr;}.content{padding:16px;}}
+/* ── MOBILE HAMBURGER ────────────────────── */
+.mobile-header{display:none;position:sticky;top:0;z-index:200;background:rgba(7,4,26,0.96);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:12px 16px;align-items:center;justify-content:space-between;}
+.mobile-header img{width:22px;height:22px;object-fit:contain;filter:drop-shadow(0 0 8px var(--pglow));}
+.mobile-header-left{display:flex;align-items:center;gap:8px;}
+.mobile-header-brand{font-family:var(--bebas);font-size:.95rem;letter-spacing:.08em;}
+.mobile-header-brand em{background:linear-gradient(135deg,var(--p2),#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-style:normal;}
+.hamburger{width:36px;height:36px;border-radius:8px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all .2s;}
+.hamburger:hover{background:rgba(139,92,246,.2);}
+.hamburger span{display:block;width:16px;height:1.5px;background:var(--p2);border-radius:1px;transition:all .3s;}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(3px,3px);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px);}
+
+/* ── MOBILE SIDEBAR OVERLAY ────────────── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:150;opacity:0;transition:opacity .3s;}
+.sidebar-overlay.show{opacity:1;}
+
+/* ── MOBILE BOTTOM NAV TABS ────────────── */
+.mobile-tabs{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(7,4,26,0.97);backdrop-filter:blur(24px);border-top:1px solid var(--border);padding:6px 4px;padding-bottom:max(6px, env(safe-area-inset-bottom));}
+.mobile-tabs-inner{display:flex;justify-content:space-around;gap:2px;}
+.mob-tab{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px;border-radius:8px;font-family:var(--display);font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);cursor:pointer;transition:all .18s;flex:1;min-width:0;border:none;background:none;}
+.mob-tab svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;}
+.mob-tab.active{color:var(--p2);background:rgba(139,92,246,.08);}
+.mob-tab:hover{color:var(--muted2);}
+
+/* ── RESPONSIVE ────────────────────────── */
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{position:fixed;top:0;left:-280px;width:280px;height:100vh;transition:left .3s cubic-bezier(.22,1,.36,1);z-index:200;border-right:1px solid var(--borderM);}
+  .sidebar.open{left:0;}
+  .mobile-header{display:flex;}
+  .mobile-tabs{display:block;}
+  .sidebar-overlay{display:block;pointer-events:none;}
+  .sidebar-overlay.show{pointer-events:auto;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .content{padding:14px 12px;padding-bottom:80px;}
+  .topbar{display:none;}
+  .tbl{font-size:.72rem;}
+  .tbl th{padding:8px 8px;font-size:.55rem;letter-spacing:.1em;}
+  .tbl td{padding:8px 8px;}
+  .btn{height:36px;font-size:.62rem;padding:0 10px;min-width:44px;border-radius:6px;}
+  .table-wrap{border-radius:8px;-webkit-overflow-scrolling:touch;}
+  .sec-hdr{flex-direction:column;align-items:flex-start;gap:8px;}
+  .toast{bottom:70px;left:12px;right:12px;}
+  /* Stack form grids on mobile */
+  [style*="grid-template-columns:360px"]{grid-template-columns:1fr !important;}
+  [style*="grid-template-columns:1fr 1fr 1fr auto"]{grid-template-columns:1fr !important;}
+  /* Make all form inputs touch-friendly */
+  .form-input,.form-select,input[type="text"],input[type="number"],select{
+    height:44px !important;font-size:.85rem !important;border-radius:8px !important;padding:0 14px !important;
+  }
+  /* Bigger checkboxes */
+  input[type="checkbox"]{width:20px;height:20px;accent-color:var(--p);}
+  label{font-size:.82rem !important;gap:8px !important;}
+  /* Search/filter inputs */
+  #logSearch,#brandFilter,#statusFilter,#logBrandFilter{height:40px !important;font-size:.8rem !important;}
+  /* Key gen output cards */
+  #aGenOut>div{padding:10px 14px !important;}
+  #aGenOut span{font-size:.72rem !important;word-break:break-all;}
+}
+@media(max-width:500px){
+  .stat-grid{grid-template-columns:1fr;}
+  .stat-card{padding:14px 14px;}
+  .stat-val{font-size:1.6rem;}
+  .content{padding:10px 8px;padding-bottom:80px;}
+  /* Even bigger tap targets on small phones */
+  .btn{height:40px;font-size:.65rem;padding:0 12px;}
+  .mob-tab{font-size:.48rem;padding:6px 2px;}
+}
 </style>
 </head>
 <body>
@@ -96,6 +164,38 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
   <div class="ld-bar"><div class="ld-fill"></div></div>
 </div>
 <div id="app">
+<!-- MOBILE HEADER -->
+<div class="mobile-header" id="mobileHeader">
+  <div class="mobile-header-left">
+    <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png" alt="Omnis">
+    <span class="mobile-header-brand"><em>OMNIS</em> ADMIN</span>
+  </div>
+  <div class="hamburger" id="hamburger" onclick="toggleMobileSidebar()">
+    <span></span><span></span><span></span>
+  </div>
+</div>
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+<!-- BOTTOM TABS -->
+<div class="mobile-tabs">
+  <div class="mobile-tabs-inner">
+    <button class="mob-tab active" data-panel="overview" onclick="showPanel('overview')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Stats
+    </button>
+    <button class="mob-tab" data-panel="genkeys" onclick="showPanel('genkeys')">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Gen
+    </button>
+    <button class="mob-tab" data-panel="allkeys" onclick="showPanel('allkeys')">
+      <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>Keys
+    </button>
+    <button class="mob-tab" data-panel="resellers" onclick="showPanel('resellers')">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Sellers
+    </button>
+    <button class="mob-tab" data-panel="logs" onclick="showPanel('logs')">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Logs
+    </button>
+  </div>
+</div>
 <div class="layout">
 <aside class="sidebar">
   <div class="sb-brand">
@@ -513,11 +613,38 @@ function fmtDate(ts){if(!ts)return'—';var ms=ts<9999999999?ts*1000:ts;var d=ne
 function showPanel(id){
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.sb-link').forEach(function(l){l.classList.remove('active');});
+  document.querySelectorAll('.mob-tab').forEach(function(t){t.classList.remove('active');});
   var p=document.getElementById('panel-'+id);if(p)p.classList.add('active');
-  var l=document.querySelector('[data-panel="'+id+'"]');if(l)l.classList.add('active');
+  // Highlight sidebar link
+  var links=document.querySelectorAll('.sb-link[data-panel]');
+  links.forEach(function(l){if(l.getAttribute('data-panel')===id)l.classList.add('active');});
+  // Highlight mobile tab
+  var tabs=document.querySelectorAll('.mob-tab[data-panel]');
+  tabs.forEach(function(t){if(t.getAttribute('data-panel')===id)t.classList.add('active');});
   var m=PANELS[id]||{};
   document.getElementById('panelTitle').textContent=m.title||id;
   document.getElementById('panelSub').textContent=m.sub||'';
+  // Close mobile sidebar if open
+  closeMobileSidebar();
+  // Scroll to top on panel switch
+  window.scrollTo(0,0);
+}
+
+function toggleMobileSidebar(){
+  var sidebar=document.querySelector('.sidebar');
+  var overlay=document.getElementById('sidebarOverlay');
+  var hamburger=document.getElementById('hamburger');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+  hamburger.classList.toggle('open');
+}
+function closeMobileSidebar(){
+  var sidebar=document.querySelector('.sidebar');
+  var overlay=document.getElementById('sidebarOverlay');
+  var hamburger=document.getElementById('hamburger');
+  if(sidebar)sidebar.classList.remove('open');
+  if(overlay)overlay.classList.remove('show');
+  if(hamburger)hamburger.classList.remove('open');
 }
 
 function doAction(action,params){

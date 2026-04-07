@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /dashboard.html
+Disallow: /api/
+Disallow: /thankyou.html
 
 Sitemap: https://omniscs2.xyz/sitemap.xml

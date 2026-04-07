@@ -304,6 +304,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
 <script>
 'use strict';
+// ── Immediate Auth Gate ──────────────────────────────────────
+// Verify session BEFORE rendering anything. Prevents source-code snooping.
+(function(){
+  fetch('/api/auth-check',{credentials:'include'}).then(function(r){
+    if(r.status!==200){document.documentElement.innerHTML='';window.location.replace('/');return;}
+    return r.json();
+  }).then(function(d){
+    if(!d||!d.isAdmin){document.documentElement.innerHTML='';window.location.replace('/');}
+  }).catch(function(){document.documentElement.innerHTML='';window.location.replace('/');});
+})();
 var DATA = null;
 var selectedKeys = new Set();
 var PANELS = {

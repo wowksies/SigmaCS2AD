@@ -76,6 +76,7 @@ module.exports = async function handler(req, res) {
               excluded: k.excluded || false,
               createdBy: k.created_by || '',
               createdByName: k.created_by_name || '',
+              isAdminKey: k.is_admin === true,
               status: getKeyStatus({ active: k.active !== false, expiresAt: k.expires_at }),
             });
             brandTotal++;
@@ -100,7 +101,7 @@ module.exports = async function handler(req, res) {
     const paymentsArr = allPayments ? Object.entries(allPayments).map(([id, p]) => ({ id, ...p })) : [];
 
     // Activated keys (have HWID, not excluded) for revenue
-    const activatedKeys = allKeys.filter(k => k.activated && !k.excluded);
+    const activatedKeys = allKeys.filter(k => k.activated && !k.excluded && !k.isAdminKey);
     const totalRevenue = activatedKeys.reduce((sum, k) => sum + (k.price * CUT), 0);
     const totalPaid = paymentsArr.filter(p => p.confirmedByAdmin).reduce((s, p) => s + (parseFloat(p.amount) || 0), 0);
 
@@ -109,14 +110,17 @@ module.exports = async function handler(req, res) {
       const rPayments = paymentsArr.filter(p => p.resellerId === r.id);
       const rPaid = rPayments.filter(p => p.confirmedByAdmin).reduce((s, p) => s + (parseFloat(p.amount) || 0), 0);
       const pendingPayments = rPayments.filter(p => !p.confirmedByAdmin);
+      // Sum owed: activated non-excluded keys created by this reseller
+      const resellerKeys = allKeys.filter(k => k.createdBy === r.id && k.activated && !k.excluded && !k.isAdminKey);
+      const rOwed = resellerKeys.reduce((sum, k) => sum + (k.price * CUT), 0);
       return {
         id: r.id,
         username: r.username || 'Unknown',
         avatar: r.avatar || null,
         brands: r.brands || [],
-        totalOwed: '0.00',
+        totalOwed: rOwed.toFixed(2),
         totalPaid: rPaid.toFixed(2),
-        balance: Math.max(0, -rPaid).toFixed(2),
+        balance: Math.max(0, rOwed - rPaid).toFixed(2),
         suspended: r.suspended || false,
         paymentDeadline: r.paymentDeadline || null,
         pendingPayments: pendingPayments.length,
@@ -168,7 +172,7 @@ module.exports = async function handler(req, res) {
       },
       brandStats,
       resellers: resellerStats,
-      keys: allKeys.slice(0, 300),
+      keys: allKeys.slice(0, 1000),
       pendingPayments,
       recentLogs,
     });

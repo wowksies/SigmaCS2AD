@@ -190,7 +190,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
     <div class="panel active" id="panel-overview">
       <div id="warningArea"></div>
       <div class="stat-grid">
-        <div class="stat-card"><div class="stat-label">Keys Generated</div><div class="stat-val" id="s-total">—</div><div class="stat-delta">All time</div></div>
+        <div class="stat-card"><div class="stat-label">Tracked Keys</div><div class="stat-val" id="s-total">—</div><div class="stat-delta">Across your assigned brands</div></div>
         <div class="stat-card green"><div class="stat-label">Activated (HWID)</div><div class="stat-val" id="s-activated">—</div><div class="stat-delta">Customers using</div></div>
         <div class="stat-card"><div class="stat-label">Unused Keys</div><div class="stat-val" id="s-unused">—</div><div class="stat-delta">No HWID yet</div></div>
         <div class="stat-card red"><div class="stat-label">Balance Owed</div><div class="stat-val" id="s-balance">-</div><div class="stat-delta" id="s-balance-note">Configured cut on activated keys</div></div>
@@ -241,7 +241,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
     <!-- MY KEYS -->
     <div class="panel" id="panel-mykeys">
-      <div class="sec-hdr"><div><div class="sec-title">All Keys</div><div class="sec-sub">Keys across all brands</div></div></div>
+      <div class="sec-hdr"><div><div class="sec-title">All Keys</div><div class="sec-sub">Keys across your assigned brands</div></div></div>
       <div class="table-wrap">
         <table class="tbl">
           <thead><tr><th>Key</th><th>Brand</th><th>Duration</th><th>Status</th><th>Owed</th><th>Date</th></tr></thead>
@@ -320,7 +320,7 @@ var DATA = null;
 var PANEL_META = {
   overview: { title: 'Overview', sub: 'Your reseller stats at a glance' },
   keys: { title: 'Generate Keys', sub: 'Create license keys for your customers' },
-  mykeys: { title: 'My Keys', sub: 'All keys you have generated' },
+  mykeys: { title: 'My Keys', sub: 'All keys across your assigned brands' },
   payments: { title: 'Payments', sub: 'Submit and track your payments' }
 };
 
@@ -415,7 +415,7 @@ function render(data) {
   document.getElementById('s-unused').textContent = stats.unusedKeys;
   document.getElementById('s-balance').textContent = '$' + stats.balance;
   document.getElementById('s-paid').textContent = '$' + stats.totalPaid;
-  document.getElementById('s-balance-note').textContent = (data.pricing ? data.pricing.cutPercent : 0) + '% configured cut on activated keys';
+  document.getElementById('s-balance-note').textContent = (data.pricing ? data.pricing.cutPercent : 0) + '% configured cut across your assigned brands';
 
   var genBrand = document.getElementById('genBrand');
   if (data.userBrands && genBrand) {

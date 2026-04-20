@@ -672,7 +672,7 @@ function renderPricingEditor() {
 
   summary.innerHTML = [
     { label: 'Cut', value: formatPercent(reseller.cutPercent), cls: 'amber', note: 'Your share on each activated key' },
-    { label: 'Owed', value: '$' + reseller.totalOwed, cls: '', note: 'Total owed by this reseller' },
+    { label: 'Owed', value: '$' + reseller.totalOwed, cls: '', note: 'Activated keys across this reseller\'s assigned brands' },
     { label: 'Paid', value: '$' + reseller.totalPaid, cls: 'green', note: 'Confirmed payments' },
     { label: 'Balance', value: '$' + reseller.balance, cls: 'red', note: 'Outstanding amount' }
   ].map(function(card) {
@@ -705,7 +705,7 @@ function renderPricingEditor() {
         '<div class="form-label">Your Cut (%)</div>' +
         '<input type="number" class="form-input" id="pricingCutPercent" value="' + cutValue + '" min="0" max="100" step="0.01">' +
       '</div>' +
-      '<div style="font-size:.74rem;color:var(--muted2);padding-bottom:8px;">This reseller currently has access to: ' + escapeHtml((reseller.brands || []).map(getBrandName).join(', ') || 'No brands') + '</div>' +
+      '<div style="font-size:.74rem;color:var(--muted2);padding-bottom:8px;">This reseller currently has access to: ' + escapeHtml((reseller.brands || []).map(getBrandName).join(', ') || 'No brands') + '. Activated keys in these brands count toward what they owe, even if someone else generated the key.</div>' +
     '</div>' +
     '<div class="table-wrap"><table class="tbl"><thead><tr><th>Duration</th>' + headerCells + '</tr></thead><tbody>' + bodyRows + '</tbody></table></div>';
 }

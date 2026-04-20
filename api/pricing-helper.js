@@ -154,15 +154,23 @@ function getConfiguredPrice(profile, brandId, durationDays) {
   return normalizeMoney(getDurationInfo(durationDays).price, getDurationInfo(durationDays).price);
 }
 
-function getKeyFinancials(keyRecord, profile, brandId) {
+function getKeyFinancials(keyRecord, profile, brandId, options = {}) {
   const durationDays = parseInt(keyRecord.duration_days || keyRecord.durationDays || 0, 10) || 0;
   const durationInfo = getDurationInfo(durationDays);
   const configuredPrice = getConfiguredPrice(profile, brandId, durationDays);
-  const storedPrice = keyRecord.sale_price ?? keyRecord.unit_price ?? keyRecord.price;
+  const useStoredPricing = options.useStoredPricing !== false;
+  const storedPrice = useStoredPricing
+    ? (keyRecord.sale_price ?? keyRecord.unit_price ?? keyRecord.price)
+    : undefined;
   const unitPrice = normalizeMoney(storedPrice, configuredPrice);
-  const cutRate = normalizeRate(keyRecord.cut_rate ?? keyRecord.cutRate, getResellerCutRate(profile));
+  const storedCutRate = useStoredPricing
+    ? (keyRecord.cut_rate ?? keyRecord.cutRate)
+    : undefined;
+  const cutRate = normalizeRate(storedCutRate, getResellerCutRate(profile));
   const computedOwed = normalizeMoney(unitPrice * cutRate, 0);
-  const storedOwed = keyRecord.owed_amount ?? keyRecord.owedAmount;
+  const storedOwed = useStoredPricing
+    ? (keyRecord.owed_amount ?? keyRecord.owedAmount)
+    : undefined;
   const owedAmount = normalizeMoney(storedOwed, computedOwed);
 
   return {

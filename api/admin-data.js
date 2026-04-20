@@ -15,6 +15,10 @@ function getKeyStatus(key) {
   return 'Active';
 }
 
+function resellerTracksBrand(reseller, brandId) {
+  return Array.isArray(reseller && reseller.brands) && reseller.brands.includes(brandId);
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
@@ -98,21 +102,22 @@ module.exports = async function handler(req, res) {
 
     allKeys.sort((a, b) => b.createdAt - a.createdAt);
 
-    const activatedKeys = allKeys.filter((key) => key.activated && !key.excluded && !key.isAdminKey);
-    const totalRevenue = activatedKeys.reduce((sum, key) => sum + key.owedAmountValue, 0);
-    const totalPaid = paymentsArr
-      .filter((payment) => payment.confirmedByAdmin)
-      .reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0);
-
     const resellerStats = resellersArr.map((reseller) => {
       const resellerPayments = paymentsArr.filter((payment) => payment.resellerId === reseller.id);
       const resellerPaid = resellerPayments
         .filter((payment) => payment.confirmedByAdmin)
         .reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0);
       const pendingPayments = resellerPayments.filter((payment) => !payment.confirmedByAdmin);
-      const resellerKeys = allKeys.filter((key) => key.createdBy === reseller.id && key.activated && !key.excluded && !key.isAdminKey);
-      const resellerOwed = resellerKeys.reduce((sum, key) => sum + key.owedAmountValue, 0);
       const pricingProfile = getResellerPricingProfile(reseller);
+      const resellerKeys = allKeys.filter((key) => (
+        resellerTracksBrand(reseller, key.brandId) &&
+        key.activated &&
+        !key.excluded &&
+        !key.isAdminKey
+      ));
+      const resellerOwed = resellerKeys.reduce((sum, key) => (
+        sum + getKeyFinancials(key, reseller, key.brandId, { useStoredPricing: false }).owedAmount
+      ), 0);
 
       return {
         id: reseller.id,
@@ -122,6 +127,7 @@ module.exports = async function handler(req, res) {
         cutRate: pricingProfile.cutRate,
         cutPercent: pricingProfile.cutPercent,
         pricing: pricingProfile,
+        trackedKeys: resellerKeys.length,
         totalOwed: formatMoney(resellerOwed),
         totalPaid: formatMoney(resellerPaid),
         balance: formatMoney(Math.max(0, resellerOwed - resellerPaid)),
@@ -131,6 +137,12 @@ module.exports = async function handler(req, res) {
         createdAt: reseller.createdAt,
       };
     });
+
+    const activatedKeys = allKeys.filter((key) => key.activated && !key.excluded && !key.isAdminKey);
+    const totalRevenue = resellerStats.reduce((sum, reseller) => sum + (parseFloat(reseller.totalOwed) || 0), 0);
+    const totalPaid = paymentsArr
+      .filter((payment) => payment.confirmedByAdmin)
+      .reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0);
 
     const pendingPayments = paymentsArr
       .filter((payment) => !payment.confirmedByAdmin)

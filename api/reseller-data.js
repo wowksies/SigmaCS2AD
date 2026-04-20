@@ -31,8 +31,7 @@ module.exports = async function handler(req, res) {
         if (!keyRecord || typeof keyRecord !== 'object') return;
 
         const activated = !!(keyRecord.hwid && keyRecord.hwid.length > 0);
-        const ownerProfile = keyRecord.created_by === user.id ? profile : null;
-        const financials = getKeyFinancials(keyRecord, ownerProfile, brandId);
+        const financials = getKeyFinancials(keyRecord, profile, brandId, { useStoredPricing: user.isAdmin });
         const isAdminKey = keyRecord.is_admin === true;
         const owedAmountValue = activated && !keyRecord.excluded && !isAdminKey ? financials.owedAmount : 0;
 
@@ -62,9 +61,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const myKeys = user.isAdmin
-      ? allKeys
-      : allKeys.filter((key) => key.createdBy === user.id || !key.createdBy);
+    const myKeys = allKeys;
     myKeys.sort((a, b) => b.createdAt - a.createdAt);
 
     const allPayments = await fbGet('/payments') || {};

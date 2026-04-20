@@ -1002,12 +1002,7 @@ function setCheckoutState(loading, errorMessage) {
 }
 
 function canEmbedCheckout(url) {
-  try {
-    var host = new URL(url).hostname.toLowerCase();
-    return host === 'sellauth.com' || host.endsWith('.sellauth.com') || host.endsWith('.mysellauth.com');
-  } catch (error) {
-    return false;
-  }
+  return false;
 }
 
 window.openModal = function(variantId) {
@@ -1030,23 +1025,12 @@ window.closeModal = function() {
 };
 
 window.openCheckoutModal = function(url) {
-  if (!canEmbedCheckout(url)) {
-    var popup = window.open(url, '_blank', 'noopener');
-    if (!popup) window.location.href = url;
+  checkoutState.url = url;
+  var popup = window.open(url, '_blank', 'noopener');
+  if (!popup) {
+    window.location.href = url;
     return;
   }
-  var frame = document.getElementById('saFrame');
-  var loader = document.getElementById('saLoad');
-  var openLink = document.getElementById('saOpen');
-  var sub = document.getElementById('saSub');
-  checkoutState.url = url;
-  frame.classList.remove('ready');
-  frame.src = url;
-  loader.style.display = 'flex';
-  openLink.href = url;
-  sub.textContent = 'Finish your ' + (checkoutLabels[selectedId] || 'selected') + ' purchase securely.';
-  document.getElementById('saBd').classList.add('open');
-  syncModalOverflow();
 };
 
 window.closeCheckoutModal = function() {

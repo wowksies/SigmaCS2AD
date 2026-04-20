@@ -2,7 +2,6 @@ const net = require('net');
 const { validateOrigin, validateUserAgent } = require('./auth-helper');
 const {
   buildCheckoutLink,
-  fetchSellAuthJson,
   resolveCheckoutCatalog,
   resolvePlanKey,
 } = require('./sellauth-helper');
@@ -70,19 +69,6 @@ async function parseJsonBody(req) {
   });
 }
 
-function getSellAuthErrorMessage(error) {
-  if (error && error.payload) {
-    if (typeof error.payload.message === 'string' && error.payload.message) {
-      return error.payload.message;
-    }
-    if (typeof error.payload.error === 'string' && error.payload.error) {
-      return error.payload.error;
-    }
-  }
-
-  return error && error.message ? error.message : 'SellAuth rejected the checkout request.';
-}
-
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Cache-Control', 'no-store');
@@ -116,50 +102,16 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: 'SellAuth variant is not configured for this plan.' });
     }
 
-    const payload = {
-      cart: [{ productId: catalog.productId, variantId, quantity: 1 }],
-      user_agent: String(req.headers['user-agent'] || '').substring(0, 500),
-    };
-
-    const clientIp = getClientIp(req);
-    if (clientIp) {
-      payload.ip = clientIp;
-    }
-
-    try {
-      if (!catalog.shopId) {
-        throw new Error('SELLAUTH_SHOP_ID is not configured for API checkout; using checkout-link fallback.');
-      }
-
-      const responseData = await fetchSellAuthJson(`/shops/${catalog.shopId}/checkout`, {
-        method: 'POST',
-        body: payload,
-      });
-
-      const checkoutUrl = responseData.invoice_url || responseData.url;
-      if (!checkoutUrl) {
-        throw new Error('SellAuth did not return a checkout URL.');
-      }
-
-      return res.status(200).json({
-        success: true,
-        checkoutUrl,
-        invoiceId: responseData.invoice_id || null,
-        invoiceUrl: responseData.invoice_url || null,
-        providerUrl: responseData.url || null,
-        planKey,
-      });
-    } catch (error) {
-      const fallbackUrl = buildCheckoutLink(catalog, planKey);
-      console.warn('SellAuth checkout API failed; falling back to checkout-link:', getSellAuthErrorMessage(error));
-      return res.status(200).json({
-        success: true,
-        checkoutUrl: fallbackUrl,
-        fallback: true,
-        message: getSellAuthErrorMessage(error),
-        planKey,
-      });
-    }
+    const checkoutUrl = buildCheckoutLink(catalog, planKey);
+    return res.status(200).json({
+      success: true,
+      checkoutUrl,
+      planKey,
+      productId: catalog.productId,
+      variantId,
+      storefrontUrl: catalog.shopUrl,
+      mode: 'checkout-link',
+    });
   } catch (error) {
     console.error('Create checkout error:', error);
     return res.status(500).json({ error: error.message || 'Failed to start checkout' });

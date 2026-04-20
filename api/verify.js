@@ -2,11 +2,10 @@
 // Vercel serverless function — verifies SellAuth order then sets a signed cookie
 
 const crypto = require('crypto');
+const { fetchSellAuthJson, invoiceMatchesConfiguredProduct } = require('./sellauth-helper');
 
-const SELLAUTH_API_KEY = process.env.SELLAUTH_API_KEY;
 const SELLAUTH_SHOP_ID = process.env.SELLAUTH_SHOP_ID;
 const COOKIE_SECRET    = process.env.COOKIE_SECRET;      // random string you generate
-const PRODUCT_ID       = '634549';
 
 function sign(orderId) {
     return crypto
@@ -25,26 +24,11 @@ module.exports = async function handler(req, res) {
 
     try {
         // Ask SellAuth if this order is real and paid
-        const saRes = await fetch(
-            `https://api.sellauth.com/v1/shops/${SELLAUTH_SHOP_ID}/invoices/${order_id}`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${SELLAUTH_API_KEY}`,
-                    'Accept': 'application/json',
-                },
-            }
-        );
-
-        if (!saRes.ok) {
-            console.error('SellAuth API error:', saRes.status);
-            return res.redirect(302, '/?error=invalid');
-        }
-
-        const invoice = await saRes.json();
+        const invoice = await fetchSellAuthJson(`/shops/${SELLAUTH_SHOP_ID}/invoices/${order_id}`);
 
         // Check it's paid and for the right product
         const isPaid    = invoice?.status === 'completed';
-        const isProduct = invoice?.product_id?.toString() === PRODUCT_ID;
+        const isProduct = invoiceMatchesConfiguredProduct(invoice);
 
         if (!isPaid || !isProduct) {
             return res.redirect(302, '/?error=invalid');

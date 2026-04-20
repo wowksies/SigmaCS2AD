@@ -2,6 +2,7 @@ const net = require('net');
 const { validateOrigin, validateUserAgent } = require('./auth-helper');
 const {
   buildCheckoutLink,
+  buildProductLink,
   resolveCheckoutCatalog,
   resolvePlanKey,
 } = require('./sellauth-helper');
@@ -98,8 +99,15 @@ module.exports = async function handler(req, res) {
 
     const catalog = await resolveCheckoutCatalog();
     const variantId = catalog.variants[planKey];
-    if (!variantId) {
-      return res.status(500).json({ error: 'SellAuth variant is not configured for this plan.' });
+    if (!variantId || !catalog.productId || !catalog.shopUrl) {
+      const productUrl = buildProductLink(catalog);
+      return res.status(200).json({
+        success: true,
+        checkoutUrl: productUrl,
+        planKey,
+        mode: 'product-page',
+        note: 'Direct product page fallback',
+      });
     }
 
     const checkoutUrl = buildCheckoutLink(catalog, planKey);
@@ -114,6 +122,16 @@ module.exports = async function handler(req, res) {
     });
   } catch (error) {
     console.error('Create checkout error:', error);
-    return res.status(500).json({ error: error.message || 'Failed to start checkout' });
+    try {
+      const productUrl = buildProductLink({ productUrl: 'https://omniscs2.mysellauth.com/product/omnis-cs2' });
+      return res.status(200).json({
+        success: true,
+        checkoutUrl: productUrl,
+        mode: 'product-page',
+        note: 'Emergency product page fallback',
+      });
+    } catch (fallbackError) {
+      return res.status(500).json({ error: error.message || 'Failed to start checkout' });
+    }
   }
 };

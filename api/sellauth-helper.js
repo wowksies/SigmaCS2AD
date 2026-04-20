@@ -2,9 +2,9 @@ const SELLAUTH_API_BASE = 'https://api.sellauth.com/v1';
 
 const PLAN_CONFIG = Object.freeze({
   three_days: {
-    label: '3 Days',
+    label: '4 Days',
     envKey: 'SELLAUTH_VARIANT_3_DAYS_ID',
-    aliases: ['3 days', '3 day', '3d', 'trial'],
+    aliases: ['4 days', '4 day', '4d', '3 days', '3 day', '3d', 'trial'],
     legacyVariantIds: [995693],
   },
   one_week: {
@@ -14,7 +14,7 @@ const PLAN_CONFIG = Object.freeze({
     legacyVariantIds: [995694],
   },
   one_month: {
-    label: '1 Month',
+    label: 'Month',
     envKey: 'SELLAUTH_VARIANT_1_MONTH_ID',
     aliases: ['1 month', '30 days', '30 day', 'month', 'monthly'],
     legacyVariantIds: [995695],
@@ -62,6 +62,13 @@ function getConfiguredProductId() {
 function getConfiguredStorefrontUrl() {
   const value = String(process.env.SELLAUTH_STOREFRONT_URL || '').trim();
   return value ? value.replace(/\/+$/, '') : '';
+}
+
+function getConfiguredProductUrl() {
+  const explicit = String(process.env.SELLAUTH_PRODUCT_URL || '').trim();
+  if (explicit) return explicit.replace(/\/+$/, '');
+
+  return 'https://omniscs2.mysellauth.com/product/omnis-cs2';
 }
 
 function getConfiguredProductNameCandidates() {
@@ -189,6 +196,9 @@ function resolvePlanKey(value) {
   if (!normalized) return null;
 
   const directMap = {
+    '4 days': 'three_days',
+    '4 day': 'three_days',
+    '4d': 'three_days',
     '3 days': 'three_days',
     '3 day': 'three_days',
     '3d': 'three_days',
@@ -272,6 +282,7 @@ async function resolveCheckoutCatalog(options = {}) {
     catalogCache = {
       shopId,
       shopUrl: configuredStorefrontUrl,
+      productUrl: getConfiguredProductUrl(),
       productId: configuredProductId,
       productName: String(process.env.SELLAUTH_PRODUCT_NAME || '').trim(),
       variants: configuredVariants,
@@ -294,19 +305,13 @@ async function resolveCheckoutCatalog(options = {}) {
     variants[planKey] = resolveVariantIdFromProduct(product, planKey);
   });
 
-  const missingPlans = Object.entries(variants)
-    .filter(([, variantId]) => !variantId)
-    .map(([planKey]) => PLAN_CONFIG[planKey].label);
-
-  if (missingPlans.length) {
-    throw new Error(`SellAuth variants could not be resolved for: ${missingPlans.join(', ')}`);
-  }
-
   catalogCache = {
     shopId,
     shopUrl: getConfiguredStorefrontUrl() || String(shop && shop.url || '').replace(/\/+$/, ''),
+    productUrl: getConfiguredProductUrl(),
     productId: parseOptionalInt(product && product.id),
     productName: product && product.name ? String(product.name) : '',
+    productPath: product && product.path ? String(product.path) : '',
     variants,
   };
   catalogCacheExpiresAt = Date.now() + (5 * 60 * 1000);
@@ -329,6 +334,19 @@ function buildCheckoutLink(catalog, planKey) {
   url.searchParams.set('cart[0][variantId]', String(variantId));
   url.searchParams.set('cart[0][quantity]', '1');
   return url.toString();
+}
+
+function buildProductLink(catalog) {
+  const explicitProductUrl = catalog && catalog.productUrl ? String(catalog.productUrl).trim() : '';
+  if (explicitProductUrl) {
+    return explicitProductUrl.replace(/\/+$/, '');
+  }
+
+  if (catalog && catalog.shopUrl && catalog.productPath) {
+    return `${String(catalog.shopUrl).replace(/\/+$/, '')}/product/${String(catalog.productPath).replace(/^\/+|\/+$/g, '')}`;
+  }
+
+  throw new Error('SellAuth product page URL is unavailable');
 }
 
 function collectInvoiceProductMetadata(invoice) {
@@ -383,7 +401,9 @@ function invoiceMatchesConfiguredProduct(invoice) {
 module.exports = {
   PLAN_CONFIG,
   buildCheckoutLink,
+  buildProductLink,
   fetchSellAuthJson,
+  getConfiguredProductUrl,
   getConfiguredProductId,
   getConfiguredShopId,
   invoiceMatchesConfiguredProduct,

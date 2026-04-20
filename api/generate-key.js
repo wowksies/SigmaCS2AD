@@ -1,19 +1,15 @@
-// api/generate-key.js — HARDENED: DB-based auth, rate limiting, audit logging
 const crypto = require('crypto');
 const { resolveUser, fbGet } = require('./auth-helper');
+const {
+  BRANDS,
+  VALID_DURATIONS,
+  getConfiguredPrice,
+  getResellerCutRate,
+  normalizeMoney,
+} = require('./pricing-helper');
 
-const BRANDS = {
-  voltaris:        { name: 'Voltaris',         prefix: 'VOLTARIS-', path: '/keys/voltaris/' },
-  projectservices: { name: 'Project Services', prefix: 'PS-',       path: '/keys/projectservices/' },
-  corvus:          { name: 'Corvus',           prefix: 'CORVUS-',   path: '/keys/corvus/' },
-  omnis:           { name: 'Omnis',            prefix: 'OMNIS-',    path: '/keys/omnis/' },
-};
-
-const VALID_DURATIONS = [1, 3, 7, 14, 30, 90, 365, 99999];
-
-// In-memory rate limiter: max 10 key-gen requests per user per 5 minutes
 const rateLimitMap = new Map();
-const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes
+const RATE_LIMIT_WINDOW = 5 * 60 * 1000;
 const RATE_LIMIT_MAX = 10;
 
 function checkRateLimit(userId) {
@@ -24,42 +20,43 @@ function checkRateLimit(userId) {
     return true;
   }
   if (now - entry.windowStart > RATE_LIMIT_WINDOW) {
-    // Reset window
     rateLimitMap.set(userId, { count: 1, windowStart: now });
     return true;
   }
   if (entry.count >= RATE_LIMIT_MAX) {
-    return false; // Rate limited
+    return false;
   }
   entry.count++;
   return true;
 }
 
 function generateKeyId(prefix) {
-  // Use crypto.randomBytes for secure randomness (not Math.random)
   const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-  const seg = () => {
+  const segment = () => {
     const bytes = crypto.randomBytes(4);
-    return Array.from(bytes).map(b => chars[b % chars.length]).join('');
+    return Array.from(bytes).map((byte) => chars[byte % chars.length]).join('');
   };
-  return `${prefix}${seg()}-${seg()}-${seg()}-${seg()}`;
+  return `${prefix}${segment()}-${segment()}-${segment()}-${segment()}`;
 }
 
 async function fbPut(path, data) {
   const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
-  const r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-  if (!r.ok) throw new Error(`Firebase PUT failed: ${r.status}`);
-  return r.json();
-}
-
-async function fbPatch(path, data) {
-  const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
-  await fetch(url, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error(`Firebase PUT failed: ${response.status}`);
+  return response.json();
 }
 
 async function fbPost(path, data) {
   const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
-  await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+  await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
 }
 
 module.exports = async function handler(req, res) {
@@ -74,8 +71,6 @@ module.exports = async function handler(req, res) {
     return res.status(403).json({ error: 'Account suspended' });
   }
 
-  // SECURITY: Verify reseller actually exists in the database
-  // Prevents ghost sessions from generating keys
   const resellerProfile = await fbGet(`/resellers/${user.id}`);
   if (!resellerProfile) {
     console.warn(`KEY GEN BLOCKED: User ${user.id} has no reseller profile in DB`);
@@ -85,73 +80,76 @@ module.exports = async function handler(req, res) {
     return res.status(403).json({ error: 'Account suspended' });
   }
 
-  // Rate limit check — 5 requests per 5 minutes
   if (!checkRateLimit(user.id)) {
     console.warn(`RATE LIMIT HIT: User ${user.id} (${user.username}) exceeded key generation limit`);
     return res.status(429).json({ error: 'Too many requests. Try again in a few minutes.' });
   }
 
   const { brand, duration, quantity } = req.body || {};
-
   const brandConfig = BRANDS[brand];
   if (!brandConfig) {
     return res.status(400).json({ error: 'Invalid brand' });
   }
 
-  // Strict brand access check — from DB profile, not JWT
   const dbBrands = resellerProfile.brands || [];
-  if (!user.isAdmin) {
-    if (!dbBrands.includes(brand)) {
-      console.warn(`UNAUTHORIZED KEY GEN ATTEMPT: User ${user.id} (${user.username}) tried brand ${brand} without access. DB brands: ${dbBrands}`);
-      return res.status(403).json({ error: 'No access to this brand' });
-    }
+  if (!user.isAdmin && !dbBrands.includes(brand)) {
+    console.warn(`UNAUTHORIZED KEY GEN ATTEMPT: User ${user.id} (${user.username}) tried brand ${brand} without access. DB brands: ${dbBrands}`);
+    return res.status(403).json({ error: 'No access to this brand' });
   }
 
-  const dur = parseInt(duration);
-  if (!VALID_DURATIONS.includes(dur)) {
+  const durationDays = parseInt(duration, 10);
+  if (!VALID_DURATIONS.includes(durationDays)) {
     return res.status(400).json({ error: 'Invalid duration' });
   }
 
-  // Cap quantity strictly
-  const qty = Math.min(Math.max(parseInt(quantity) || 1, 1), 25);
+  const qty = Math.min(Math.max(parseInt(quantity, 10) || 1, 1), 25);
 
   try {
     const keys = [];
     const now = Math.floor(Date.now() / 1000);
     const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
+    const cutRate = user.isAdmin ? 0 : getResellerCutRate(resellerProfile);
+    const unitPrice = user.isAdmin ? 0 : getConfiguredPrice(resellerProfile, brand, durationDays);
+    const owedAmount = user.isAdmin ? 0 : normalizeMoney(unitPrice * cutRate, 0);
 
     for (let i = 0; i < qty; i++) {
       const keyId = generateKeyId(brandConfig.prefix);
       const keyData = {
         hwid: '',
         expires_at: 0,
-        duration_days: dur,
+        duration_days: durationDays,
         active: true,
         created_at: now,
         created_by: user.id,
         created_by_name: user.nickname || user.username || 'Unknown',
+        is_admin: user.isAdmin === true,
+        sale_price: unitPrice,
+        cut_rate: cutRate,
+        owed_amount: owedAmount,
       };
       await fbPut(brandConfig.path + keyId, keyData);
       keys.push({ key: keyId, brand: brandConfig.name });
     }
 
-    // Audit log — record every key generation event
     try {
       await fbPost('/audit_logs/key_generation', {
         user_id: user.id,
         username: user.nickname || user.username,
-        brand: brand,
+        brand,
         quantity: qty,
-        duration: dur,
-        keys_generated: keys.map(k => k.key),
-        ip: ip,
+        duration: durationDays,
+        keys_generated: keys.map((entry) => entry.key),
+        ip,
         timestamp: now,
         is_admin: user.isAdmin || false,
         source: 'reseller_panel',
+        unit_price: unitPrice,
+        cut_rate: cutRate,
       });
-    } catch (e) { /* audit log failure should not block key gen */ }
+    } catch (error) {
+      // Audit logging should not block key generation.
+    }
 
-    // DISCORD SECURITY WEBHOOK — notify owner on every key generation
     try {
       const alertWebhook = process.env.SECURITY_WEBHOOK_URL;
       if (alertWebhook) {
@@ -161,13 +159,13 @@ module.exports = async function handler(req, res) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             embeds: [{
-              title: '🔑 Keys Generated',
-              color: color,
+              title: 'Keys Generated',
+              color,
               fields: [
                 { name: 'User', value: `${user.nickname || user.username}\n\`${user.id}\``, inline: true },
                 { name: 'Brand', value: brandConfig.name, inline: true },
                 { name: 'Quantity', value: String(qty), inline: true },
-                { name: 'Duration', value: dur === 99999 ? 'Lifetime' : dur + ' days', inline: true },
+                { name: 'Duration', value: durationDays === 99999 ? 'Lifetime' : durationDays + ' days', inline: true },
                 { name: 'Source', value: user.isAdmin ? 'Admin Panel' : 'Reseller Panel', inline: true },
                 { name: 'IP', value: '`' + ip + '`', inline: true },
               ],
@@ -177,15 +175,18 @@ module.exports = async function handler(req, res) {
           }),
         });
       }
-    } catch (e) { /* webhook failure should not block */ }
+    } catch (error) {
+      // Webhook alerts should not block key generation.
+    }
 
     return res.status(200).json({
       success: true,
-      keys: keys.map(k => k.key),
+      keys: keys.map((entry) => entry.key),
       brand: brandConfig.name,
-      duration: dur,
+      duration: durationDays,
+      unitPrice,
+      cutRate,
     });
-
   } catch (error) {
     console.error('Generate Key Error:', error);
     return res.status(500).json({ error: 'Failed to generate keys' });

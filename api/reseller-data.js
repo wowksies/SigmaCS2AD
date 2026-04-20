@@ -1,103 +1,96 @@
-// api/reseller-data.js — uses DB-based role lookup (not JWT claims)
 const { resolveUser, fbGet } = require('./auth-helper');
-
-const DURATION_MAP = {
-  1: { label: '1 Day', price: 3 },
-  3: { label: '3 Days', price: 5 },
-  7: { label: '1 Week', price: 7 },
-  14: { label: '14 Days', price: 10 },
-  30: { label: '1 Month', price: 12 },
-  90: { label: '90 Days', price: 20 },
-  365: { label: '1 Year', price: 25 },
-  99999: { label: 'Lifetime', price: 30 },
-};
-const CUT = 0.30;
-
-const BRANDS = {
-  voltaris:        { name: 'Voltaris',         prefix: 'VOLTARIS-', color: '#FF3344' },
-  projectservices: { name: 'Project Services', prefix: 'PS-',       color: '#1E50C8' },
-  corvus:          { name: 'Corvus',           prefix: 'CORVUS-',   color: '#7832C8' },
-  omnis:           { name: 'Omnis',            prefix: 'OMNIS-',    color: '#A040FF' },
-};
-
-// Internal paths — NEVER exposed to frontend
-const BRAND_PATHS = {
-  voltaris: '/keys/voltaris/',
-  projectservices: '/keys/projectservices/',
-  corvus: '/keys/corvus/',
-  omnis: '/keys/omnis/',
-};
-
-function getDurationInfo(days) {
-  const d = parseInt(days) || 0;
-  return DURATION_MAP[d] || { label: d + ' Days', price: 5 };
-}
+const {
+  BRANDS,
+  formatMoney,
+  getDurationEntries,
+  getKeyFinancials,
+  getResellerPricingProfile,
+} = require('./pricing-helper');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
-  // Resolve user from JWT + Firebase (roles from DB, not JWT)
   const user = await resolveUser(req);
   if (!user || (!user.isReseller && !user.isAdmin)) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
-  if (user.suspended) {
-    return res.status(403).json({ error: 'Account suspended' });
-  }
 
   try {
+    const profile = await fbGet(`/resellers/${user.id}`) || {};
     const userBrands = user.isAdmin ? Object.keys(BRANDS) : (user.brands || []);
+    const accessibleBrands = userBrands.filter((brandId) => Object.prototype.hasOwnProperty.call(BRANDS, brandId));
 
     const allKeys = [];
-    for (const [brandId, brand] of Object.entries(BRANDS)) {
-      if (!userBrands.includes(brandId)) continue;
-      const data = await fbGet(BRAND_PATHS[brandId]);
-      if (data && typeof data === 'object') {
-        Object.entries(data).forEach(([keyId, k]) => {
-          if (k && typeof k === 'object') {
-            const info = getDurationInfo(k.duration_days);
-            allKeys.push({
-              id: brandId + '/' + keyId,
-              key: keyId,
-              brand: brand.name,
-              brandId: brandId,
-              brandColor: brand.color,
-              durationDays: k.duration_days || 0,
-              planLabel: info.label,
-              price: info.price,
-              owedAmount: (k.hwid && k.hwid.length > 0) ? (info.price * CUT).toFixed(2) : '0.00',
-              active: k.active !== false,
-              hwid: k.hwid || '',
-              activated: !!(k.hwid && k.hwid.length > 0),
-              expiresAt: k.expires_at || 0,
-              createdAt: k.created_at || 0,
-              excluded: k.excluded || false,
-              createdBy: k.created_by || '',
-              createdByName: k.created_by_name || '',
-            });
-          }
+    for (const brandId of accessibleBrands) {
+      const brand = BRANDS[brandId];
+      const data = await fbGet(brand.path);
+      if (!data || typeof data !== 'object') continue;
+
+      Object.entries(data).forEach(([keyId, keyRecord]) => {
+        if (!keyRecord || typeof keyRecord !== 'object') return;
+
+        const activated = !!(keyRecord.hwid && keyRecord.hwid.length > 0);
+        const ownerProfile = keyRecord.created_by === user.id ? profile : null;
+        const financials = getKeyFinancials(keyRecord, ownerProfile, brandId);
+        const isAdminKey = keyRecord.is_admin === true;
+        const owedAmountValue = activated && !keyRecord.excluded && !isAdminKey ? financials.owedAmount : 0;
+
+        allKeys.push({
+          id: brandId + '/' + keyId,
+          key: keyId,
+          brand: brand.name,
+          brandId,
+          brandColor: brand.color,
+          durationDays: financials.durationDays,
+          planLabel: financials.planLabel,
+          price: financials.unitPrice,
+          cutRate: financials.cutRate,
+          cutPercent: financials.cutPercent,
+          owedAmount: formatMoney(owedAmountValue),
+          owedAmountValue,
+          active: keyRecord.active !== false,
+          hwid: keyRecord.hwid || '',
+          activated,
+          expiresAt: keyRecord.expires_at || 0,
+          createdAt: keyRecord.created_at || 0,
+          excluded: keyRecord.excluded || false,
+          createdBy: keyRecord.created_by || '',
+          createdByName: keyRecord.created_by_name || '',
+          isAdminKey,
         });
-      }
+      });
     }
 
-    // Resellers see: their own keys + legacy keys (no created_by). Admins see all.
-    const myKeys = user.isAdmin ? allKeys : allKeys.filter(k => k.createdBy === user.id || !k.createdBy);
+    const myKeys = user.isAdmin
+      ? allKeys
+      : allKeys.filter((key) => key.createdBy === user.id || !key.createdBy);
     myKeys.sort((a, b) => b.createdAt - a.createdAt);
 
-    const profile = await fbGet(`/resellers/${user.id}`) || {};
     const allPayments = await fbGet('/payments') || {};
     const myPayments = [];
-    Object.entries(allPayments).forEach(([id, p]) => {
-      if (p && p.resellerId === user.id) myPayments.push({ id, ...p });
+    Object.entries(allPayments).forEach(([id, payment]) => {
+      if (payment && payment.resellerId === user.id) {
+        myPayments.push({ id, ...payment });
+      }
     });
 
-    const now = Math.floor(Date.now() / 1000);
-    const activatedKeys = myKeys.filter(k => k.activated && !k.excluded);
-    const totalOwed = activatedKeys.reduce((sum, k) => sum + (k.price * CUT), 0);
-    const totalPaid = myPayments.filter(p => p.confirmedByAdmin).reduce((s, p) => s + (parseFloat(p.amount) || 0), 0);
+    const activatedKeys = myKeys.filter((key) => key.activated && !key.excluded && !key.isAdminKey);
+    const totalOwed = activatedKeys.reduce((sum, key) => sum + key.owedAmountValue, 0);
+    const totalPaid = myPayments
+      .filter((payment) => payment.confirmedByAdmin)
+      .reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0);
 
-    // Response — NO internal paths exposed
+    const pricingProfile = getResellerPricingProfile(profile);
+    const pricingBrands = {};
+    accessibleBrands.forEach((brandId) => {
+      pricingBrands[brandId] = {
+        name: BRANDS[brandId].name,
+        color: BRANDS[brandId].color,
+        prices: pricingProfile.brandPrices[brandId],
+      };
+    });
+
     return res.status(200).json({
       reseller: {
         id: user.id,
@@ -108,24 +101,31 @@ module.exports = async function handler(req, res) {
       stats: {
         totalKeys: myKeys.length,
         activatedKeys: activatedKeys.length,
-        unusedKeys: myKeys.filter(k => !k.activated).length,
-        salesToday: activatedKeys.filter(k => (now - k.createdAt) < 86400).length,
-        totalOwed: totalOwed.toFixed(2),
-        totalPaid: totalPaid.toFixed(2),
-        balance: Math.max(0, totalOwed - totalPaid).toFixed(2),
+        unusedKeys: myKeys.filter((key) => !key.activated).length,
+        totalOwed: formatMoney(totalOwed),
+        totalPaid: formatMoney(totalPaid),
+        balance: formatMoney(Math.max(0, totalOwed - totalPaid)),
         suspended: profile.suspended || false,
         paymentDeadline: profile.paymentDeadline || null,
       },
-      keys: myKeys.slice(0, 200),
+      keys: myKeys.slice(0, 200).map((key) => ({
+        ...key,
+        price: formatMoney(key.price),
+      })),
       payments: myPayments.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 50),
       paymentMethods: {
         paypal: 'paypal.me/kayazskrdens',
         bitcoin: 'bc1qx68swgpyapa03tka8q6yaf9w03g6tshfrjqskc',
         litecoin: 'LbBLPFSzeXYYXxf7YD2B8SqcxTAc9Rk1u1',
       },
-      userBrands: userBrands,
+      userBrands: accessibleBrands,
+      pricing: {
+        cutRate: pricingProfile.cutRate,
+        cutPercent: pricingProfile.cutPercent,
+        brands: pricingBrands,
+        durations: getDurationEntries(),
+      },
     });
-
   } catch (error) {
     console.error('Reseller Data Error:', error);
     return res.status(500).json({ error: 'Failed to fetch data' });

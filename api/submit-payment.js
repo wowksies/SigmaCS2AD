@@ -22,9 +22,6 @@ module.exports = async function handler(req, res) {
   if (!user || (!user.isReseller && !user.isAdmin)) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
-  if (user.suspended) {
-    return res.status(403).json({ error: 'Account suspended' });
-  }
 
   const { amount, method, note } = req.body || {};
 

@@ -194,13 +194,17 @@ async function resolveUser(req, options = {}) {
     // Even if profile.isAdmin === true in the database, the user MUST be
     // in the allowlist. This blocks attackers who write isAdmin:true directly
     // to Firebase (via leaked auth key from C++ binary / .env).
-    const adminAllowlist = (process.env.ADMIN_ALLOWLIST || '').split(',').map(s => s.trim()).filter(s => /^\d{17,20}$/.test(s));
-    const isInAllowlist = adminAllowlist.includes(payload.sub);
+    const rawAllowlist = (process.env.ADMIN_ALLOWLIST || '').trim();
+    const adminAllowlist = rawAllowlist
+        ? rawAllowlist.split(',').map(s => s.trim()).filter(s => /^\d{17,20}$/.test(s))
+        : [];
+    const allowlistConfigured = adminAllowlist.length > 0;
+    const isInAllowlist = !allowlistConfigured || adminAllowlist.includes(payload.sub);
     
-    // If someone has isAdmin in DB but is NOT in allowlist, it's suspicious
-    if (profile.isAdmin === true && !isInAllowlist) {
-        console.error(`🚨 SUSPICIOUS: User ${payload.sub} has isAdmin=true in DB but is NOT in ADMIN_ALLOWLIST! Possible Firebase injection attack.`);
-        // Strip admin — they are NOT authorized
+    // If someone has isAdmin in DB but is NOT in the configured allowlist, it's suspicious
+    if (allowlistConfigured && profile.isAdmin === true && !isInAllowlist) {
+        console.error(`SUSPICIOUS: User ${payload.sub} has isAdmin=true in DB but is NOT in ADMIN_ALLOWLIST! Possible Firebase injection attack.`);
+        // Strip admin ? they are NOT authorized
     }
 
     return {

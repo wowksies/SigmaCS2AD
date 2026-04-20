@@ -85,11 +85,14 @@ module.exports = async function handler(req, res) {
 
         const userRoles = memberData.roles || [];
 
-        // Detect admin — REQUIRES both the Discord role AND being in the allowlist
+        // Detect admin — if ADMIN_ALLOWLIST is set, REQUIRES both Discord role + allowlist
+        // If ADMIN_ALLOWLIST is NOT set, falls back to just the Discord role
         const adminRoleId = (process.env.DISCORD_ADMIN_ROLE_ID || '').trim();
         const hasAdminRole = userRoles.includes(adminRoleId);
-        const adminAllowlist = (process.env.ADMIN_ALLOWLIST || '').split(',').map(s => s.trim()).filter(s => /^\d{17,20}$/.test(s));
-        const isInAllowlist = adminAllowlist.includes(userData.id);
+        const rawAllowlist = (process.env.ADMIN_ALLOWLIST || '').trim();
+        const adminAllowlist = rawAllowlist ? rawAllowlist.split(',').map(s => s.trim()).filter(s => /^\d{17,20}$/.test(s)) : [];
+        const allowlistConfigured = adminAllowlist.length > 0;
+        const isInAllowlist = !allowlistConfigured || adminAllowlist.includes(userData.id);
         const isAdmin = hasAdminRole && isInAllowlist;
 
         // SECURITY ALERT: Someone has admin role but is NOT in the allowlist

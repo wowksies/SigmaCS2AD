@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { resolveUser, fbGet, sanitize } = require('./auth-helper');
+const { resolveUser, fbGet, sanitize } = require('../lib/auth-helper');
 const {
   BRANDS,
   DEFAULT_CUT_RATE,
@@ -7,7 +7,7 @@ const {
   buildDefaultPriceMap,
   normalizeMoney,
   normalizeRate,
-} = require('./pricing-helper');
+} = require('../lib/pricing-helper');
 
 const KEY_CHARSET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 

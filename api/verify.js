@@ -2,7 +2,7 @@
 // Vercel serverless function — verifies SellAuth order then sets a signed cookie
 
 const crypto = require('crypto');
-const { fetchSellAuthJson, invoiceMatchesConfiguredProduct } = require('./sellauth-helper');
+const { fetchSellAuthJson, invoiceMatchesConfiguredProduct } = require('../lib/sellauth-helper');
 
 const SELLAUTH_SHOP_ID = process.env.SELLAUTH_SHOP_ID;
 const COOKIE_SECRET    = process.env.COOKIE_SECRET;      // random string you generate

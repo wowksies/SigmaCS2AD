@@ -1,5 +1,5 @@
 // api/submit-payment.js — SECURED: uses DB-based role lookup
-const { resolveUser } = require('./auth-helper');
+const { resolveUser } = require('../lib/auth-helper');
 
 async function fbPost(path, data) {
   const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;

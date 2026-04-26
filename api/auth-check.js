@@ -1,7 +1,7 @@
 // api/auth-check.js — Quick session validity check
 // Returns 200 if session is valid, 401 if not.
 // Used by admin.html and dashboard.html to kick out unauthenticated visitors.
-const { resolveUser } = require('./auth-helper');
+const { resolveUser } = require('../lib/auth-helper');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');

@@ -226,16 +226,10 @@ function resolvePlanKey(value) {
   ))?.[0] || null;
 }
 
-function resolveVariantIdFromProduct(product, planKey) {
-  const envOverride = getVariantEnvOverride(planKey);
-  if (envOverride) {
-    return envOverride;
-  }
-
+function resolveVariantIdFromList(variants, planKey) {
   const config = PLAN_CONFIG[planKey];
   if (!config) return null;
 
-  const variants = Array.isArray(product && product.variants) ? product.variants : [];
   const normalizedAliases = config.aliases.map(normalizeText);
 
   let bestVariant = null;
@@ -257,7 +251,32 @@ function resolveVariantIdFromProduct(product, planKey) {
     }
   });
 
-  return bestVariant && bestScore > 0 ? parseOptionalInt(bestVariant.id) : null;
+  if (!bestVariant || bestScore <= 0) return null;
+
+  // SellAuth may return the ID under different field names depending on API version
+  return parseOptionalInt(bestVariant.id ?? bestVariant.variant_id ?? bestVariant.variantId ?? null);
+}
+
+function resolveVariantIdFromProduct(product, planKey) {
+  const envOverride = getVariantEnvOverride(planKey);
+  if (envOverride) {
+    return envOverride;
+  }
+
+  const variants = Array.isArray(product && product.variants) ? product.variants : [];
+  return resolveVariantIdFromList(variants, planKey);
+}
+
+async function fetchProductVariants(shopId, productId) {
+  try {
+    const response = await fetchSellAuthJson(`/shops/${shopId}/products/${productId}/variants`);
+    if (Array.isArray(response)) return response;
+    if (Array.isArray(response && response.data)) return response.data;
+    return [];
+  } catch (error) {
+    console.warn('SellAuth variants endpoint failed:', error.message);
+    return [];
+  }
 }
 
 async function resolveCheckoutCatalog(options = {}) {
@@ -300,16 +319,32 @@ async function resolveCheckoutCatalog(options = {}) {
     fetchConfiguredProduct(shopId),
   ]);
 
-  const variants = {};
+  const productId = parseOptionalInt(product && product.id);
+
+  // First pass: try to resolve variant IDs from the product response itself
+  let variants = {};
   Object.keys(PLAN_CONFIG).forEach((planKey) => {
     variants[planKey] = resolveVariantIdFromProduct(product, planKey);
   });
+
+  // If no variant IDs were resolved, the product endpoint may not include them —
+  // fetch from the dedicated variants endpoint as a fallback
+  const anyResolved = Object.values(variants).some(Boolean);
+  if (!anyResolved && productId && shopId) {
+    const variantList = await fetchProductVariants(shopId, productId);
+    if (variantList.length > 0) {
+      Object.keys(PLAN_CONFIG).forEach((planKey) => {
+        const envOverride = getVariantEnvOverride(planKey);
+        variants[planKey] = envOverride || resolveVariantIdFromList(variantList, planKey);
+      });
+    }
+  }
 
   catalogCache = {
     shopId,
     shopUrl: getConfiguredStorefrontUrl() || String(shop && shop.url || '').replace(/\/+$/, ''),
     productUrl: getConfiguredProductUrl(),
-    productId: parseOptionalInt(product && product.id),
+    productId,
     productName: product && product.name ? String(product.name) : '',
     productPath: product && product.path ? String(product.path) : '',
     variants,

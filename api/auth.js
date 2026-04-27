@@ -61,14 +61,17 @@ async function handleRegister(req, res) {
     const password = body.password || '';
 
     // Validation
-    if (!validateUsername(username)) {
-      return res.status(400).json({ error: 'Username must be 3-24 characters (letters, numbers, underscores only)' });
+    const usernameError = validateUsername(username);
+    if (usernameError) {
+      return res.status(400).json({ error: usernameError });
     }
-    if (!validateEmail(email)) {
-      return res.status(400).json({ error: 'Invalid email address' });
+    const emailError = validateEmail(email);
+    if (emailError) {
+      return res.status(400).json({ error: emailError });
     }
-    if (!validatePassword(password)) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      return res.status(400).json({ error: passwordError });
     }
 
     // Check duplicates

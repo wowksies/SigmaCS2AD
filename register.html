@@ -6,6 +6,7 @@
 <title>Omnis CS2 — Register</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -135,6 +136,12 @@ input::placeholder{color:var(--muted);}
 </main>
 
 <script>
+// Initialize Supabase
+const supabase = supabase.createClient(
+  'https://euxtyzhcijdpueajvsvd.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1eHR5emhjaWpkcHVlYWp2c3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDkwNTcsImV4cCI6MjA5Mjg4NTA1N30._rARSmYe7Sp40dvccuL-A9ZSnD_BcdFTHX4SXtxxp88'
+);
+
 // Navbar scroll effect
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
@@ -142,7 +149,7 @@ window.addEventListener('scroll', () => {
   else navbar.classList.remove('sc');
 }, { passive: true });
 
-// Form submission
+// Form handling
 const form = document.getElementById('registerForm');
 const submitBtn = document.getElementById('submitBtn');
 const errorMsg = document.getElementById('errorMsg');
@@ -169,28 +176,12 @@ form.addEventListener('submit', async (e) => {
   const confirmPassword = document.getElementById('confirmPassword').value;
   
   // Validation
-  if (!username || !email || !password) {
-    showError('Please fill in all fields');
-    return;
-  }
-  
-  if (username.length < 3) {
-    showError('Username must be at least 3 characters');
-    return;
-  }
-  
-  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-    showError('Username can only contain letters, numbers, and underscores');
-    return;
-  }
-  
-  if (password.length < 6) {
-    showError('Password must be at least 6 characters');
-    return;
-  }
-  
   if (password !== confirmPassword) {
     showError('Passwords do not match');
+    return;
+  }
+  if (password.length < 6) {
+    showError('Password must be at least 6 characters');
     return;
   }
   
@@ -198,24 +189,29 @@ form.addEventListener('submit', async (e) => {
   submitBtn.innerHTML = '<span class="spinner"></span>Creating account...';
   
   try {
-    const response = await fetch('/api/auth?action=register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, email, password }),
+    // Sign up with Supabase Auth
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          username: username
+        }
+      }
     });
     
-    const data = await response.json();
-    
-    if (response.ok && data.success) {
-      showSuccess('Account created! Redirecting to login...');
-      setTimeout(() => {
-        window.location.href = '/login.html';
-      }, 1500);
-    } else {
-      showError(data.error || 'Registration failed. Try again.');
+    if (error) {
+      showError(error.message || 'Registration failed. Try again.');
       submitBtn.disabled = false;
       submitBtn.textContent = 'Create Account';
+      return;
     }
+    
+    showSuccess('Account created! Redirecting to login...');
+    setTimeout(() => {
+      window.location.href = '/login.html';
+    }, 1500);
+    
   } catch (err) {
     showError('Cannot connect to server. Please check your internet or try again later.');
     console.error('Registration error:', err);

@@ -217,8 +217,8 @@ form.addEventListener('submit', async (e) => {
       submitBtn.textContent = 'Create Account';
     }
   } catch (err) {
-    showError('Network error. Please try again.');
-    console.error(err);
+    showError('Cannot connect to server. Please check your internet or try again later.');
+    console.error('Registration error:', err);
     submitBtn.disabled = false;
     submitBtn.textContent = 'Create Account';
   }

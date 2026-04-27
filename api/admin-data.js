@@ -1,11 +1,11 @@
-const { resolveUser, fbGet } = require('./auth-helper');
+const { resolveUser, fbGet } = require('../lib/auth-helper');
 const {
   BRANDS,
   formatMoney,
   getDurationEntries,
   getKeyFinancials,
   getResellerPricingProfile,
-} = require('./pricing-helper');
+} = require('../lib/pricing-helper');
 
 function getKeyStatus(key) {
   if (!key.active) return 'Disabled';

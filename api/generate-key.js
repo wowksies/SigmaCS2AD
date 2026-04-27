@@ -1,12 +1,12 @@
 const crypto = require('crypto');
-const { resolveUser, fbGet } = require('./auth-helper');
+const { resolveUser, fbGet } = require('../lib/auth-helper');
 const {
   BRANDS,
   VALID_DURATIONS,
   getConfiguredPrice,
   getResellerCutRate,
   normalizeMoney,
-} = require('./pricing-helper');
+} = require('../lib/pricing-helper');
 
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW = 5 * 60 * 1000;

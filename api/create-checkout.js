@@ -1,11 +1,11 @@
 const net = require('net');
-const { validateOrigin, validateUserAgent } = require('./auth-helper');
+const { validateOrigin, validateUserAgent } = require('../lib/auth-helper');
 const {
   buildCheckoutLink,
   buildProductLink,
   resolveCheckoutCatalog,
   resolvePlanKey,
-} = require('./sellauth-helper');
+} = require('../lib/sellauth-helper');
 
 const checkoutRateLimit = new Map();
 const RATE_LIMIT_WINDOW = 60 * 1000;

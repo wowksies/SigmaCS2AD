@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omnis CS2 — User Dashboard</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p:#8b5cf6;--p2:#a78bfa;--p3:#7c3aed;--p4:#5b21b6;
+  --pglow:rgba(139,92,246,0.5);
+  --bg:#03020a;--bg2:#07041a;--bg3:#0b0820;--bg4:#100d28;
+  --border:rgba(139,92,246,0.12);--borderM:rgba(139,92,246,0.24);--borderH:rgba(139,92,246,0.42);
+  --text:#ede9fe;--muted:#4e4268;--muted2:#9183b5;
+  --green:#34d399;--red:#f87171;--amber:#fbbf24;
+  --bebas:'Bebas Neue',sans-serif;
+  --display:'Syne',sans-serif;
+  --body:'DM Sans',sans-serif;
+  --sidebar:220px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--body);overflow-x:hidden;line-height:1.6;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.12;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");}
+
+/* Loading */
+#loading{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.ld-logo{width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 0 24px var(--pglow));animation:ldPulse 1.8s ease-in-out infinite;}
+@keyframes ldPulse{0%,100%{opacity:.7;transform:scale(.95);}50%{opacity:1;transform:scale(1.04);}}
+.ld-text{font-family:var(--display);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:var(--muted);}
+#app{display:none;min-height:100vh;}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh;}
+.sidebar{position:sticky;top:0;height:100vh;background:rgba(7,4,26,0.96);backdrop-filter:blur(24px);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;overflow:hidden;}
+.sb-brand{display:flex;align-items:center;gap:10px;padding:20px 18px 16px;border-bottom:1px solid var(--border);}
+.sb-brand img{width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 0 8px var(--pglow));}
+.sb-brand-text{font-family:var(--bebas);font-size:1.1rem;letter-spacing:.08em;}
+.sb-brand-text em{background:linear-gradient(135deg,var(--p2),#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:normal;}
+.sb-tag{font-family:var(--display);font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;padding:1px 6px;border-radius:3px;background:rgba(139,92,246,0.15);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25);margin-left:auto;}
+.sb-user{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border);}
+.sb-avatar{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--borderM);background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:.8rem;font-weight:700;color:var(--p2);}
+.sb-name{font-family:var(--display);font-size:.78rem;font-weight:700;line-height:1.3;}
+.sb-disc{font-size:.65rem;color:var(--muted);}
+.sb-nav{flex:1;padding:10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
+.sb-link{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;font-family:var(--display);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);cursor:pointer;transition:all .18s;border:1px solid transparent;background:transparent;}
+.sb-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0;}
+.sb-link:hover{color:var(--muted2);background:rgba(139,92,246,0.06);}
+.sb-link.active{color:#c4b5fd;background:rgba(139,92,246,0.12);border-color:rgba(139,92,246,0.2);}
+.sb-footer{padding:12px 18px;border-top:1px solid var(--border);}
+.sb-logout{display:flex;align-items:center;gap:7px;font-family:var(--display);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);cursor:pointer;transition:color .18s;background:none;border:none;padding:0;}
+.sb-logout:hover{color:var(--red);}
+.sb-logout svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;}
+
+/* Main */
+.main{background:var(--bg);position:relative;z-index:1;overflow-y:auto;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--border);background:rgba(7,4,26,0.7);backdrop-filter:blur(16px);position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:var(--bebas);font-size:1.4rem;letter-spacing:.06em;}
+.topbar-sub{font-size:.75rem;color:var(--muted2);margin-top:1px;}
+.content{padding:24px 28px;display:flex;flex-direction:column;gap:24px;}
+
+/* Stats */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
+.stat-card{border:1px solid var(--border);border-radius:10px;padding:18px 16px;background:rgba(7,4,26,0.65);position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(91,33,182,.05),transparent 65%);pointer-events:none;}
+.stat-label{font-family:var(--display);font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin-bottom:8px;}
+.stat-val{font-family:var(--bebas);font-size:2rem;line-height:1;letter-spacing:.04em;background:linear-gradient(135deg,var(--p2),#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-card.green .stat-val{background:linear-gradient(135deg,var(--green),#6ee7b7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-card.red .stat-val{background:linear-gradient(135deg,var(--red),#fca5a5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-card.amber .stat-val{background:linear-gradient(135deg,var(--amber),#fde68a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* Panels */
+.panel{border:1px solid var(--border);border-radius:10px;background:rgba(7,4,26,0.65);padding:20px 22px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.panel-title{font-family:var(--bebas);font-size:1.1rem;letter-spacing:.06em;}
+.panel-sub{font-size:.75rem;color:var(--muted2);margin-top:1px;}
+
+/* Key display */
+.key-display{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:8px;margin-bottom:16px;}
+.key-info{display:flex;flex-direction:column;gap:4px;}
+.key-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-family:var(--display);font-weight:700;}
+.key-value{font-family:monospace;font-size:.9rem;color:#c4b5fd;letter-spacing:.05em;}
+.key-status{display:flex;align-items:center;gap:6px;}
+.status-dot{width:8px;height:8px;border-radius:50%;}
+.status-dot.active{background:var(--green);box-shadow:0 0 8px var(--green);}
+.status-dot.expired{background:var(--red);box-shadow:0 0 8px var(--red);}
+.status-dot.none{background:var(--muted);}
+.status-text{font-family:var(--display);font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;}
+
+/* Activate key section */
+.activate-section{margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
+.activate-hdr{font-family:var(--display);font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px;}
+.input-row{display:flex;gap:10px;}
+.input-row input{flex:1;height:44px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);padding:0 14px;color:var(--text);font-family:var(--body);font-size:.9rem;}
+.input-row input:focus{outline:none;border-color:var(--p2);box-shadow:0 0 0 3px rgba(139,92,246,0.15);}
+.input-row input::placeholder{color:var(--muted);}
+.btn-sm{height:44px;padding:0 18px;border:none;border-radius:8px;background:var(--p3);color:#fff;font-family:var(--display);font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .18s;box-shadow:0 0 14px rgba(124,58,237,0.35);}
+.btn-sm:hover{background:var(--p);box-shadow:0 0 22px rgba(139,92,246,0.5);}
+.btn-sm:disabled{opacity:.6;cursor:not-allowed;}
+
+/* Messages */
+.msg{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.18);border-radius:8px;padding:12px 16px;color:var(--red);font-size:.85rem;margin-top:16px;}
+.msg.success{background:rgba(52,211,153,0.08);border-color:rgba(52,211,153,0.18);color:var(--green);}
+
+/* Progress bar */
+.progress-wrap{margin-top:12px;}
+.progress-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--p3),var(--p2));border-radius:3px;transition:width .3s ease;}
+.progress-text{font-size:.7rem;color:var(--muted2);margin-top:6px;text-align:right;}
+
+/* Responsive */
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--border);}
+  .sb-nav{flex-direction:row;flex-wrap:wrap;}
+}
+
+/* Loading spinner */
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loading">
+  <img class="ld-logo" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png" alt="Omnis">
+  <div class="ld-text">Loading dashboard...</div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sb-brand">
+        <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png" alt="Omnis">
+        <span class="sb-brand-text"><em>OMNIS</em></span>
+        <span class="sb-tag">USER</span>
+      </div>
+      <div class="sb-user">
+        <div class="sb-avatar" id="userAvatar">?</div>
+        <div>
+          <div class="sb-name" id="userName">Loading...</div>
+          <div class="sb-disc">User Account</div>
+        </div>
+      </div>
+      <div class="sb-nav">
+        <div class="sb-link active" onclick="showPanel('overview')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Overview
+        </div>
+      </div>
+      <div class="sb-footer">
+        <button class="sb-logout" onclick="logout()">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </button>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title">Dashboard</div>
+          <div class="topbar-sub">Manage your Omnis CS2 account and key</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Stats -->
+        <div class="stat-grid">
+          <div class="stat-card" id="keyStatusCard">
+            <div class="stat-label">Key Status</div>
+            <div class="stat-val" id="keyStatus">--</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Time Remaining</div>
+            <div class="stat-val" id="timeRemaining">--</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Account Created</div>
+            <div class="stat-val" id="accountCreated">--</div>
+          </div>
+        </div>
+
+        <!-- Key Panel -->
+        <div class="panel">
+          <div class="panel-hdr">
+            <div>
+              <div class="panel-title">Your Key</div>
+              <div class="panel-sub">Active key on your account</div>
+            </div>
+          </div>
+
+          <div id="keySection">
+            <!-- Key display or "no key" message goes here -->
+            <div style="text-align:center;padding:40px;color:var(--muted);">
+              <div style="font-family:var(--display);font-size:.9rem;font-weight:700;margin-bottom:8px;">No Active Key</div>
+              <div style="font-size:.8rem;">Purchase a key and activate it here</div>
+            </div>
+          </div>
+
+          <!-- Activate Key Section -->
+          <div class="activate-section">
+            <div class="activate-hdr">Activate a Key</div>
+            <div class="input-row">
+              <input type="text" id="keyInput" placeholder="Enter your key (e.g., OMNIS-XXXX-XXXX-XXXX-XXXX)" maxlength="30">
+              <button class="btn-sm" id="activateBtn" onclick="activateKey()">Activate</button>
+            </div>
+            <div id="activateMsg"></div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="panel">
+          <div class="panel-hdr">
+            <div>
+              <div class="panel-title">Quick Actions</div>
+              <div class="panel-sub">Download and support links</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a href="/download.html" class="btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;">Download Loader</a>
+            <a href="https://discord.gg/5qZ4PN5FTx" target="_blank" class="btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;background:rgba(88,101,242,0.88);">Discord Support</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Global user data
+let userData = null;
+
+// Check auth on load
+async function checkAuth() {
+  try {
+    const response = await fetch('/api/user/status');
+    if (!response.ok) {
+      // Not logged in, redirect to login
+      window.location.href = '/login.html';
+      return;
+    }
+    
+    const data = await response.json();
+    if (data.error) {
+      window.location.href = '/login.html';
+      return;
+    }
+    
+    userData = data;
+    renderDashboard(data);
+    
+    // Hide loading, show app
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  } catch (err) {
+    console.error('Auth check failed:', err);
+    window.location.href = '/login.html';
+  }
+}
+
+// Render dashboard
+function renderDashboard(data) {
+  // User info
+  document.getElementById('userName').textContent = data.username || 'Unknown';
+  document.getElementById('userAvatar').textContent = (data.username || '?')[0].toUpperCase();
+  
+  // Account created date
+  if (data.createdAt) {
+    const date = new Date(data.createdAt * 1000);
+    document.getElementById('accountCreated').textContent = date.toLocaleDateString();
+  }
+  
+  // Key info
+  if (data.key && data.key.keyId) {
+    renderKeyInfo(data.key);
+  } else {
+    document.getElementById('keyStatus').textContent = 'None';
+    document.getElementById('timeRemaining').textContent = '--';
+    document.getElementById('keyStatusCard').classList.remove('green', 'red', 'amber');
+  }
+}
+
+function renderKeyInfo(key) {
+  const statusCard = document.getElementById('keyStatusCard');
+  const statusEl = document.getElementById('keyStatus');
+  const timeEl = document.getElementById('timeRemaining');
+  const keySection = document.getElementById('keySection');
+  
+  // Status badge
+  let statusText = 'Unknown';
+  let statusClass = '';
+  let dotClass = 'none';
+  
+  if (key.status === 'active') {
+    statusText = 'Active';
+    statusClass = 'green';
+    dotClass = 'active';
+  } else if (key.status === 'expired') {
+    statusText = 'Expired';
+    statusClass = 'red';
+    dotClass = 'expired';
+  } else if (key.status === 'disabled') {
+    statusText = 'Disabled';
+    statusClass = 'red';
+    dotClass = 'expired';
+  }
+  
+  statusCard.className = 'stat-card ' + statusClass;
+  statusEl.textContent = statusText;
+  
+  // Time remaining
+  if (key.isLifetime) {
+    timeEl.textContent = 'Lifetime';
+  } else if (key.daysLeft !== undefined) {
+    if (key.daysLeft < 0) {
+      timeEl.textContent = 'Expired';
+    } else if (key.daysLeft === 0) {
+      const hours = Math.max(0, Math.floor((key.secondsLeft || 0) / 3600));
+      timeEl.textContent = hours + 'h';
+    } else {
+      timeEl.textContent = key.daysLeft + 'd';
+    }
+  }
+  
+  // Key display section
+  let progressHtml = '';
+  if (!key.isLifetime && key.durationDays > 0 && key.status === 'active') {
+    const elapsed = (key.durationDays * 86400) - (key.secondsLeft || 0);
+    const percentUsed = Math.min(100, Math.max(0, (elapsed / (key.durationDays * 86400)) * 100));
+    const percentLeft = 100 - percentUsed;
+    progressHtml = `
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" style="width:${percentLeft}%"></div></div>
+        <div class="progress-text">${key.daysLeft} days remaining</div>
+      </div>
+    `;
+  }
+  
+  const expiresText = key.isLifetime ? 'Lifetime' : (key.expiresAt ? new Date(key.expiresAt * 1000).toLocaleDateString() : 'Unknown');
+  
+  keySection.innerHTML = `
+    <div class="key-display">
+      <div class="key-info">
+        <div class="key-label">Key ID</div>
+        <div class="key-value">${key.keyId}</div>
+      </div>
+      <div class="key-status">
+        <div class="status-dot ${dotClass}"></div>
+        <div class="status-text" style="color:${key.status==='active'?'var(--green)':key.status==='expired'?'var(--red)':'var(--muted)'};">${statusText.toUpperCase()}</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:.8rem;">
+      <div>
+        <div style="color:var(--muted);font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;font-family:var(--display);font-weight:700;">Activated</div>
+        <div style="color:#c4b5fd;">${key.activatedAt ? new Date(key.activatedAt * 1000).toLocaleDateString() : 'Unknown'}</div>
+      </div>
+      <div>
+        <div style="color:var(--muted);font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;font-family:var(--display);font-weight:700;">Expires</div>
+        <div style="color:#c4b5fd;">${expiresText}</div>
+      </div>
+    </div>
+    ${progressHtml}
+  `;
+}
+
+// Activate key
+async function activateKey() {
+  const keyInput = document.getElementById('keyInput');
+  const activateBtn = document.getElementById('activateBtn');
+  const msgDiv = document.getElementById('activateMsg');
+  
+  const key = keyInput.value.trim().toUpperCase();
+  
+  if (!key) {
+    msgDiv.innerHTML = '<div class="msg">Please enter a key</div>';
+    return;
+  }
+  
+  if (!key.startsWith('OMNIS-')) {
+    msgDiv.innerHTML = '<div class="msg">Key must start with OMNIS-</div>';
+    return;
+  }
+  
+  activateBtn.disabled = true;
+  activateBtn.innerHTML = '<span class="spinner"></span>Activating...';
+  msgDiv.innerHTML = '';
+  
+  try {
+    const response = await fetch('/api/keys/activate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key }),
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok && data.success) {
+      msgDiv.innerHTML = '<div class="msg success">Key activated successfully! Refreshing...</div>';
+      setTimeout(() => window.location.reload(), 1000);
+    } else {
+      msgDiv.innerHTML = `<div class="msg">${data.error || 'Activation failed'}</div>`;
+      activateBtn.disabled = false;
+      activateBtn.textContent = 'Activate';
+    }
+  } catch (err) {
+    msgDiv.innerHTML = '<div class="msg">Network error. Try again.</div>';
+    console.error(err);
+    activateBtn.disabled = false;
+    activateBtn.textContent = 'Activate';
+  }
+}
+
+// Logout
+async function logout() {
+  // Clear cookie by setting it expired
+  document.cookie = 'omnis_user=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict';
+  window.location.href = '/login.html';
+}
+
+// Show panel (stub for future expansion)
+function showPanel(name) {
+  // Currently only overview panel exists
+  document.querySelectorAll('.sb-link').forEach(el => el.classList.remove('active'));
+  event.target.closest('.sb-link').classList.add('active');
+}
+
+// Start
+window.addEventListener('DOMContentLoaded', checkAuth);
+</script>
+
+</body>
+</html>

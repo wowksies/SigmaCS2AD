@@ -236,6 +236,17 @@ function generateUserId() {
   return 'u_' + crypto.randomBytes(12).toString('hex');
 }
 
+// ── Set cookie helper ───────────────────────────────────────────
+function setCookie(res, name, value, options = {}) {
+  const maxAge = options.maxAge || 3600;
+  const httpOnly = options.httpOnly !== false ? 'HttpOnly;' : '';
+  const secure = 'Secure;';
+  const sameSite = 'SameSite=Strict;';
+  const path = 'Path=/;';
+  const cookieValue = `${name}=${value}; ${path} Max-Age=${maxAge}; ${httpOnly} ${secure} ${sameSite}`;
+  res.setHeader('Set-Cookie', cookieValue);
+}
+
 module.exports = {
   fbGet, fbPatch, fbPut, fbPost,
   signClientJWT, verifyClientJWT,
@@ -246,4 +257,5 @@ module.exports = {
   resolveClientUser,
   generateUserId,
   isUserLockedOut, recordUserFailedAuth, clearUserFailedAuth,
+  setCookie,
 };

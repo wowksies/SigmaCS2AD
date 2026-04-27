@@ -157,25 +157,37 @@ async function handleLogin(req, res) {
 
     clearUserFailedAuth(username);
 
-    // Check if user has active key
-    if (!user.activeKey || !user.activeKey.keyId) {
-      return res.status(403).json({ error: 'no_key', message: 'No active key on account' });
-    }
-
-    // Check key status
-    const keyData = await fbGet(`/keys/omnis/${user.activeKey.keyId}`);
-    if (!keyData) {
-      return res.status(403).json({ error: 'key_not_found', message: 'Active key not found' });
-    }
-
-    if (keyData.active === false) {
-      return res.status(403).json({ error: 'key_disabled', message: 'Key has been disabled' });
-    }
-
     const now = Math.floor(Date.now() / 1000);
-    const isLifetime = (keyData.duration_days >= 99999);
-    if (!isLifetime && keyData.expires_at > 0 && keyData.expires_at < now) {
-      return res.status(403).json({ error: 'key_expired', message: 'Key has expired' });
+    let keyData = null;
+    let hasValidKey = false;
+
+    // Check if user has active key
+    if (user.activeKey && user.activeKey.keyId) {
+      keyData = await fbGet(`/keys/omnis/${user.activeKey.keyId}`);
+      if (keyData && keyData.active !== false) {
+        const isLifetime = (keyData.duration_days >= 99999);
+        const notExpired = isLifetime || !keyData.expires_at || keyData.expires_at >= now;
+        if (notExpired) {
+          hasValidKey = true;
+        }
+      }
+    }
+
+    // For C++ client, a valid key is required
+    if (source === 'client' && !hasValidKey) {
+      if (!user.activeKey || !user.activeKey.keyId) {
+        return res.status(403).json({ error: 'no_key', message: 'No active key on account' });
+      }
+      if (!keyData) {
+        return res.status(403).json({ error: 'key_not_found', message: 'Active key not found' });
+      }
+      if (keyData.active === false) {
+        return res.status(403).json({ error: 'key_disabled', message: 'Key has been disabled' });
+      }
+      const isLifetime = (keyData.duration_days >= 99999);
+      if (!isLifetime && keyData.expires_at > 0 && keyData.expires_at < now) {
+        return res.status(403).json({ error: 'key_expired', message: 'Key has expired' });
+      }
     }
 
     // Issue token
@@ -183,7 +195,7 @@ async function handleLogin(req, res) {
       sub: user.id,
       exp: now + 3600,
       src: source === 'client' ? 'client' : 'user',
-      key: user.activeKey.keyId,
+      key: hasValidKey ? user.activeKey.keyId : null,
     });
 
     // Website gets cookie, client gets body
@@ -191,17 +203,24 @@ async function handleLogin(req, res) {
       setCookie(res, 'omnis_user', token, { maxAge: 7 * 24 * 60 * 60 });
     }
 
-    return res.status(200).json({
+    const response = {
       success: true,
       token: token,
       username: user.username,
       userId: user.id,
-      keyId: user.activeKey.keyId,
-      tier: keyData.tier || 'standard',
-      secondsLeft: isLifetime ? -1 : Math.max(0, keyData.expires_at - now),
-      isLifetime: isLifetime,
-      durationDays: keyData.duration_days || 30,
-    });
+      hasKey: hasValidKey,
+    };
+
+    if (hasValidKey && keyData) {
+      const isLifetime = (keyData.duration_days >= 99999);
+      response.keyId = user.activeKey.keyId;
+      response.tier = keyData.tier || 'standard';
+      response.secondsLeft = isLifetime ? -1 : Math.max(0, keyData.expires_at - now);
+      response.isLifetime = isLifetime;
+      response.durationDays = keyData.duration_days || 30;
+    }
+
+    return res.status(200).json(response);
 
   } catch (error) {
     console.error('Login error:', error);

@@ -234,24 +234,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
   </div>
 </div>
 
+<script src="/lib/session.js"></script>
 <script>
 // Global user data
 let userData = null;
 
-// Check auth on load (Supabase session from localStorage)
+OmnisSession.startBackgroundRefresh();
+
+// Check auth on load (Supabase session from localStorage, with refresh)
 async function checkAuth() {
-  const stored = localStorage.getItem('omnis_user');
-  if (!stored) {
-    window.location.href = '/login.html';
-    return;
-  }
-  let user;
-  try { user = JSON.parse(stored); } catch (e) {
-    localStorage.removeItem('omnis_user');
-    window.location.href = '/login.html';
-    return;
-  }
-  if (!user.id || !user.access_token || !user.email) {
+  const user = await OmnisSession.getValid();
+  if (!user || !user.id || !user.access_token || !user.email) {
     window.location.href = '/login.html';
     return;
   }
@@ -264,11 +257,9 @@ async function checkAuth() {
     key: null,
   };
 
-  // Best-effort: fetch real user/key state from server (uses Supabase token)
+  // Best-effort: fetch real user/key state from server (auto-retries on 401)
   try {
-    const r = await fetch('/api/user?action=status', {
-      headers: { 'Authorization': 'Bearer ' + user.access_token },
-    });
+    const r = await OmnisSession.authedFetch('/api/user?action=status');
     if (r.ok) {
       const data = await r.json();
       if (!data.error) userData = data;
@@ -400,17 +391,8 @@ async function removeKey() {
   msgDiv.innerHTML = '';
 
   try {
-    const stored = localStorage.getItem('omnis_user');
-    const session = stored ? JSON.parse(stored) : null;
-    const token = session && session.access_token;
-    if (!token) {
-      msgDiv.innerHTML = '<div class="msg">Session expired. Log in again.</div>';
-      return;
-    }
-
-    const r = await fetch('/api/keys?action=remove', {
+    const r = await OmnisSession.authedFetch('/api/keys?action=remove', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token },
     });
     const data = await r.json();
 
@@ -452,22 +434,9 @@ async function activateKey() {
   msgDiv.innerHTML = '';
   
   try {
-    const stored = localStorage.getItem('omnis_user');
-    const session = stored ? JSON.parse(stored) : null;
-    const token = session && session.access_token;
-    if (!token) {
-      msgDiv.innerHTML = '<div class="msg">Session expired. Please log in again.</div>';
-      activateBtn.disabled = false;
-      activateBtn.textContent = 'Activate';
-      return;
-    }
-
-    const response = await fetch('/api/keys?action=activate', {
+    const response = await OmnisSession.authedFetch('/api/keys?action=activate', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token,
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key }),
     });
     
@@ -491,7 +460,7 @@ async function activateKey() {
 
 // Logout
 async function logout() {
-  localStorage.removeItem('omnis_user');
+  OmnisSession.clear();
   document.cookie = 'omnis_user=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict';
   window.location.href = '/login.html';
 }

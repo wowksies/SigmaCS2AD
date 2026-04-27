@@ -188,11 +188,12 @@ form.addEventListener('submit', async (e) => {
     }
     
     showSuccess('Login successful! Redirecting...');
-    // Store session info
     localStorage.setItem('omnis_user', JSON.stringify({
       email: data.user.email,
       id: data.user.id,
-      access_token: data.session.access_token
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+      expires_at: data.session.expires_at,
     }));
     // Redirect to user dashboard after 500ms
     setTimeout(() => {

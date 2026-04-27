@@ -20,7 +20,7 @@ const cookie = require('cookie');
 const registerRateLimit = new Map();
 const loginRateLimit = new Map();
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
-const RATE_LIMIT_MAX = 8;
+const RATE_LIMIT_MAX = 20; // Temporarily increased for testing
 
 function checkRateLimit(map, ip) {
   const now = Date.now();

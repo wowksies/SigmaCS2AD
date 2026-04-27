@@ -188,6 +188,41 @@ function sanitize(input, maxLen = 500) {
   return input.replace(/<[^>]*>/g, '').replace(/[^\x20-\x7E]/g, '').substring(0, maxLen);
 }
 
+// ── Supabase token validator ───────────────────────────────────
+const SUPABASE_URL = 'https://euxtyzhcijdpueajvsvd.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1eHR5emhjaWpkcHVlYWp2c3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDkwNTcsImV4cCI6MjA5Mjg4NTA1N30._rARSmYe7Sp40dvccuL-A9ZSnD_BcdFTHX4SXtxxp88';
+
+async function resolveSupabaseUser(token) {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!r.ok) return null;
+    const data = await r.json();
+    if (!data || !data.id) return null;
+
+    // Fetch existing Firebase profile (for activeKey, etc.) — may not exist
+    const profile = await getUserById(data.id);
+
+    return {
+      id: data.id,
+      email: data.email || '',
+      username: (data.user_metadata && data.user_metadata.username)
+        || (profile && profile.username)
+        || (data.email || '').split('@')[0],
+      activeKey: profile ? profile.activeKey : null,
+      createdAt: profile ? profile.createdAt : Math.floor(Date.now() / 1000),
+      _supabase: true,
+    };
+  } catch (e) {
+    console.error('resolveSupabaseUser error:', e);
+    return null;
+  }
+}
+
 // ── Resolve user from client JWT (for website dashboard) ──────
 async function resolveClientUser(req) {
   const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
@@ -217,18 +252,25 @@ async function resolveClientUser(req) {
 
   if (!token) return null;
 
-  const payload = verifyClientJWT(token);
-  if (!payload || !payload.sub) {
-    recordUserFailedAuth(ip);
-    return null;
+  // First try legacy custom JWT
+  if (CLIENT_JWT_SECRET) {
+    const payload = verifyClientJWT(token);
+    if (payload && payload.sub) {
+      clearUserFailedAuth(ip);
+      const profile = await getUserById(payload.sub);
+      if (profile) return profile;
+    }
   }
 
-  clearUserFailedAuth(ip);
+  // Fall through to Supabase access token validation
+  const supaUser = await resolveSupabaseUser(token);
+  if (supaUser) {
+    clearUserFailedAuth(ip);
+    return supaUser;
+  }
 
-  const profile = await getUserById(payload.sub);
-  if (!profile) return null;
-
-  return profile;
+  recordUserFailedAuth(ip);
+  return null;
 }
 
 // ── Generate unique user ID ────────────────────────────────────

@@ -263,6 +263,18 @@ async function checkAuth() {
     createdAt: Math.floor(Date.now() / 1000),
     key: null,
   };
+
+  // Best-effort: fetch real user/key state from server (uses Supabase token)
+  try {
+    const r = await fetch('/api/user?action=status', {
+      headers: { 'Authorization': 'Bearer ' + user.access_token },
+    });
+    if (r.ok) {
+      const data = await r.json();
+      if (!data.error) userData = data;
+    }
+  } catch (e) { /* offline / api down — render fallback */ }
+
   renderDashboard(userData);
 
   document.getElementById('loading').style.display = 'none';
@@ -397,9 +409,22 @@ async function activateKey() {
   msgDiv.innerHTML = '';
   
   try {
+    const stored = localStorage.getItem('omnis_user');
+    const session = stored ? JSON.parse(stored) : null;
+    const token = session && session.access_token;
+    if (!token) {
+      msgDiv.innerHTML = '<div class="msg">Session expired. Please log in again.</div>';
+      activateBtn.disabled = false;
+      activateBtn.textContent = 'Activate';
+      return;
+    }
+
     const response = await fetch('/api/keys?action=activate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+      },
       body: JSON.stringify({ key }),
     });
     

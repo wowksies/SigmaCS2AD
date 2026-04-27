@@ -1,11 +1,10 @@
-// api/keys/purchase.js — Generate a new key after a verified purchase
-// Called after SellAuth payment is confirmed. Creates an unused key and
-// optionally auto-activates it if the user is logged in.
-const crypto = require('crypto');
+// api/keys.js — Combined keys endpoint (activate/purchase in one)
 const {
   resolveClientUser, fbGet, fbPut, fbPatch, fbPost,
-} = require('../user-auth-helper');
-const { resolveUser } = require('../auth-helper');
+  sanitize,
+} = require('./user-auth-helper');
+const { resolveUser } = require('./auth-helper');
+const crypto = require('crypto');
 
 const KEY_CHARSET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 
@@ -33,33 +32,122 @@ async function parseJsonBody(req) {
 
 const VALID_DURATIONS = [1, 3, 7, 14, 30, 90, 365, 99999];
 
-module.exports = async function handler(req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Cache-Control', 'no-store');
-
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-  // Two auth paths:
-  // 1. Reseller generating a key for a customer (uses Discord reseller auth)
-  // 2. System auto-generating after a purchase (called by verify.js with a secret)
-  // For now, we support the reseller path. The purchase auto-gen will be added
-  // when we integrate with the SellAuth verification flow.
-
-  // Try reseller auth first
-  const resellerUser = await resolveUser(req);
-  if (resellerUser && (resellerUser.isReseller || resellerUser.isAdmin)) {
-    // Reseller is generating a key — same as generate-key.js but with user-binding fields
-    return await handleResellerGeneration(req, res, resellerUser);
+// ─── ACTIVATE KEY ──────────────────────────────────────────────
+async function handleActivate(req, res) {
+  const user = await resolveClientUser(req);
+  if (!user) {
+    return res.status(401).json({ error: 'Not logged in' });
   }
 
-  // Try client user auth (for future auto-activation after purchase)
+  try {
+    const body = await parseJsonBody(req);
+    const keyValue = sanitize((body.key || '').trim().toUpperCase(), 30);
+
+    if (!keyValue) {
+      return res.status(400).json({ error: 'Key is required' });
+    }
+
+    if (!keyValue.startsWith('OMNIS-')) {
+      return res.status(400).json({ error: 'Invalid key format. Key must start with OMNIS-' });
+    }
+
+    const keyData = await fbGet(`/keys/omnis/${keyValue}`);
+    if (!keyData) {
+      return res.status(404).json({ error: 'Key not found. Check you typed it correctly.' });
+    }
+
+    if (keyData.boundToUser && keyData.boundToUser !== user.id) {
+      return res.status(403).json({ error: 'This key is already activated on another account.' });
+    }
+
+    if (keyData.boundToUser === user.id && keyData.status === 'activated') {
+      return res.status(200).json({
+        success: true,
+        message: 'Key is already active on your account.',
+        keyId: keyValue,
+        expiresAt: keyData.expires_at || 0,
+        durationDays: keyData.duration_days || 0,
+      });
+    }
+
+    if (keyData.active === false) {
+      return res.status(403).json({ error: 'This key has been disabled.' });
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    const isLifetime = (keyData.duration_days >= 99999);
+    if (!isLifetime && keyData.expires_at > 0 && keyData.expires_at < now) {
+      return res.status(403).json({ error: 'This key has expired.' });
+    }
+
+    if (user.activeKey && user.activeKey.keyId) {
+      const existingKey = await fbGet(`/keys/omnis/${user.activeKey.keyId}`);
+      const existingExpired = existingKey &&
+        existingKey.duration_days < 99999 &&
+        existingKey.expires_at > 0 &&
+        existingKey.expires_at < now;
+
+      if (!existingExpired) {
+        return res.status(409).json({
+          error: 'You already have an active key. Contact support if you need to change it.',
+          currentKey: user.activeKey.keyId,
+        });
+      }
+    }
+
+    const activatedAt = now;
+    let expiresAt = keyData.expires_at || 0;
+
+    if (!keyData.hwid && expiresAt === 0) {
+      expiresAt = now + (keyData.duration_days || 30) * 86400;
+    }
+
+    await fbPatch(`/keys/omnis/${keyValue}`, {
+      status: 'activated',
+      boundToUser: user.id,
+      activatedAt: activatedAt,
+      expires_at: expiresAt,
+    });
+
+    await fbPatch(`/users/${user.id}`, {
+      activeKey: {
+        keyId: keyValue,
+        expiresAt: expiresAt,
+        activatedAt: activatedAt,
+        durationDays: keyData.duration_days || 30,
+        status: 'activated',
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Key activated successfully!',
+      keyId: keyValue,
+      expiresAt: expiresAt,
+      durationDays: keyData.duration_days || 30,
+      isLifetime: isLifetime,
+    });
+
+  } catch (error) {
+    console.error('Activate key error:', error);
+    return res.status(500).json({ error: 'Activation failed. Try again.' });
+  }
+}
+
+// ─── PURCHASE/GENERATE KEY ─────────────────────────────────────
+async function handlePurchase(req, res) {
+  const resellerUser = await resolveUser(req);
+  if (resellerUser && (resellerUser.isReseller || resellerUser.isAdmin)) {
+    return handleResellerGeneration(req, res, resellerUser);
+  }
+
   const clientUser = await resolveClientUser(req);
   if (clientUser) {
-    return await handleUserPurchase(req, res, clientUser);
+    return handleUserPurchase(req, res, clientUser);
   }
 
   return res.status(401).json({ error: 'Not authenticated' });
-};
+}
 
 async function handleResellerGeneration(req, res, resellerUser) {
   const body = await parseJsonBody(req);
@@ -94,21 +182,6 @@ async function handleResellerGeneration(req, res, resellerUser) {
       keys.push(keyId);
     }
 
-    // Audit
-    try {
-      await fbPost('/audit_logs/key_generation', {
-        user_id: resellerUser.id,
-        username: resellerUser.nickname || resellerUser.username,
-        brand: 'omnis',
-        quantity,
-        duration: durationDays,
-        keys_generated: keys,
-        ip,
-        timestamp: now,
-        source: 'reseller_panel',
-      });
-    } catch (e) { /* don't block */ }
-
     return res.status(200).json({
       success: true,
       keys: keys,
@@ -121,7 +194,6 @@ async function handleResellerGeneration(req, res, resellerUser) {
 }
 
 async function handleUserPurchase(req, res, clientUser) {
-  // After SellAuth payment confirmed, auto-generate + activate a key for this user
   const body = await parseJsonBody(req);
   const durationDays = parseInt(body.duration, 10);
   const orderId = body.orderId || '';
@@ -130,7 +202,6 @@ async function handleUserPurchase(req, res, clientUser) {
     return res.status(400).json({ error: 'Invalid duration' });
   }
 
-  // Check user doesn't already have an active key
   if (clientUser.activeKey && clientUser.activeKey.keyId) {
     const existingKey = await fbGet(`/keys/omnis/${clientUser.activeKey.keyId}`);
     const now = Math.floor(Date.now() / 1000);
@@ -152,7 +223,6 @@ async function handleUserPurchase(req, res, clientUser) {
   const keyId = generateKeyId();
 
   try {
-    // Create key (already activated)
     await fbPut(`/keys/omnis/${keyId}`, {
       hwid: '',
       expires_at: expiresAt,
@@ -168,7 +238,6 @@ async function handleUserPurchase(req, res, clientUser) {
       orderId: orderId,
     });
 
-    // Bind to user
     await fbPatch(`/users/${clientUser.id}`, {
       activeKey: {
         keyId: keyId,
@@ -178,18 +247,6 @@ async function handleUserPurchase(req, res, clientUser) {
         status: 'activated',
       },
     });
-
-    // Audit
-    try {
-      await fbPost('/audit_logs/key_purchase', {
-        userId: clientUser.id,
-        username: clientUser.username,
-        keyId,
-        durationDays,
-        orderId,
-        timestamp: now,
-      });
-    } catch (e) { /* don't block */ }
 
     return res.status(200).json({
       success: true,
@@ -205,3 +262,24 @@ async function handleUserPurchase(req, res, clientUser) {
     return res.status(500).json({ error: 'Failed to process purchase' });
   }
 }
+
+// ─── MAIN HANDLER ──────────────────────────────────────────────
+module.exports = async function handler(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Cache-Control', 'no-store');
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const { action } = req.query;
+
+  switch (action) {
+    case 'activate':
+      return handleActivate(req, res);
+    case 'purchase':
+      return handlePurchase(req, res);
+    default:
+      return res.status(400).json({ error: 'Invalid action. Use: activate, purchase' });
+  }
+};

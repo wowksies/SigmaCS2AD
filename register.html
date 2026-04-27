@@ -198,7 +198,7 @@ form.addEventListener('submit', async (e) => {
   submitBtn.innerHTML = '<span class="spinner"></span>Creating account...';
   
   try {
-    const response = await fetch('/api/auth/register', {
+    const response = await fetch('/api/auth?action=register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, email, password }),

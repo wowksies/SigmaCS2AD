@@ -241,7 +241,7 @@ let userData = null;
 // Check auth on load
 async function checkAuth() {
   try {
-    const response = await fetch('/api/user/status');
+    const response = await fetch('/api/user?action=status');
     if (!response.ok) {
       // Not logged in, redirect to login
       window.location.href = '/login.html';
@@ -394,7 +394,7 @@ async function activateKey() {
   msgDiv.innerHTML = '';
   
   try {
-    const response = await fetch('/api/keys/activate', {
+    const response = await fetch('/api/keys?action=activate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key }),

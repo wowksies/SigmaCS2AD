@@ -137,7 +137,7 @@ input::placeholder{color:var(--muted);}
 
 <script>
 // Initialize Supabase
-const supabase = supabase.createClient(
+const supaClient = window.supabase.createClient(
   'https://euxtyzhcijdpueajvsvd.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1eHR5emhjaWpkcHVlYWp2c3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDkwNTcsImV4cCI6MjA5Mjg4NTA1N30._rARSmYe7Sp40dvccuL-A9ZSnD_BcdFTHX4SXtxxp88'
 );
@@ -190,7 +190,7 @@ form.addEventListener('submit', async (e) => {
   
   try {
     // Sign up with Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supaClient.auth.signUp({
       email: email,
       password: password,
       options: {

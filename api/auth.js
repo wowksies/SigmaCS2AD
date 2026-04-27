@@ -248,13 +248,13 @@ async function handleValidateClient(req, res) {
     // Find user
     const user = await findUserByUsername(username);
     if (!user) {
-      return res.status(401).json({ error: 'invalid_credentials' });
+      return res.status(401).json({ error: 'invalid_credentials', message: 'Invalid username or password' });
     }
 
     // Verify password
     const valid = await verifyPassword(password, user.passwordHash);
     if (!valid) {
-      return res.status(401).json({ error: 'invalid_credentials' });
+      return res.status(401).json({ error: 'invalid_credentials', message: 'Invalid username or password' });
     }
 
     // Check active key
@@ -265,18 +265,18 @@ async function handleValidateClient(req, res) {
     // Fetch key data
     const keyData = await fbGet(`/keys/omnis/${user.activeKey.keyId}`);
     if (!keyData) {
-      return res.status(403).json({ error: 'key_not_found' });
+      return res.status(403).json({ error: 'key_not_found', message: 'Active key not found in database' });
     }
 
     // Check key status
     if (keyData.active === false) {
-      return res.status(403).json({ error: 'key_disabled' });
+      return res.status(403).json({ error: 'key_disabled', message: 'Key has been disabled by admin' });
     }
 
     const now = Math.floor(Date.now() / 1000);
     const isLifetime = (keyData.duration_days >= 99999);
     if (!isLifetime && keyData.expires_at > 0 && keyData.expires_at < now) {
-      return res.status(403).json({ error: 'key_expired' });
+      return res.status(403).json({ error: 'key_expired', message: 'Key has expired' });
     }
 
     // HWID check

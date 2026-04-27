@@ -134,6 +134,43 @@ async function handleActivate(req, res) {
   }
 }
 
+// ─── REMOVE KEY FROM ACCOUNT ───────────────────────────────────
+async function handleRemove(req, res) {
+  const user = await resolveClientUser(req);
+  if (!user) {
+    return res.status(401).json({ error: 'Not logged in' });
+  }
+
+  try {
+    if (!user.activeKey || !user.activeKey.keyId) {
+      return res.status(400).json({ error: 'No active key on your account.' });
+    }
+
+    const keyId = user.activeKey.keyId;
+    const keyData = await fbGet(`/keys/omnis/${keyId}`);
+
+    if (keyData && keyData.boundToUser === user.id) {
+      await fbPatch(`/keys/omnis/${keyId}`, {
+        boundToUser: null,
+        hwid: '',
+        status: 'unused',
+        activatedAt: 0,
+      });
+    }
+
+    await fbPatch(`/users/${user.id}`, { activeKey: null });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Key removed from your account.',
+      keyId: keyId,
+    });
+  } catch (error) {
+    console.error('Remove key error:', error);
+    return res.status(500).json({ error: 'Failed to remove key. Try again.' });
+  }
+}
+
 // ─── PURCHASE/GENERATE KEY ─────────────────────────────────────
 async function handlePurchase(req, res) {
   const resellerUser = await resolveUser(req);
@@ -277,9 +314,11 @@ module.exports = async function handler(req, res) {
   switch (action) {
     case 'activate':
       return handleActivate(req, res);
+    case 'remove':
+      return handleRemove(req, res);
     case 'purchase':
       return handlePurchase(req, res);
     default:
-      return res.status(400).json({ error: 'Invalid action. Use: activate, purchase' });
+      return res.status(400).json({ error: 'Invalid action. Use: activate, remove, purchase' });
   }
 };

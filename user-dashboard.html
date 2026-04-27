@@ -383,7 +383,50 @@ function renderKeyInfo(key) {
       </div>
     </div>
     ${progressHtml}
+    <div style="margin-top:14px;display:flex;justify-content:flex-end;">
+      <button class="btn-sm" id="removeKeyBtn" onclick="removeKey()" style="background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.3);color:#fca5a5;">Remove Key from Account</button>
+    </div>
+    <div id="removeKeyMsg" style="margin-top:10px;"></div>
   `;
+}
+
+async function removeKey() {
+  const btn = document.getElementById('removeKeyBtn');
+  const msgDiv = document.getElementById('removeKeyMsg');
+  if (!confirm('Remove your active key from this account? You will need to re-activate it later.')) return;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Removing...';
+  msgDiv.innerHTML = '';
+
+  try {
+    const stored = localStorage.getItem('omnis_user');
+    const session = stored ? JSON.parse(stored) : null;
+    const token = session && session.access_token;
+    if (!token) {
+      msgDiv.innerHTML = '<div class="msg">Session expired. Log in again.</div>';
+      return;
+    }
+
+    const r = await fetch('/api/keys?action=remove', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+    });
+    const data = await r.json();
+
+    if (r.ok && data.success) {
+      msgDiv.innerHTML = '<div class="msg success">Key removed. Refreshing...</div>';
+      setTimeout(() => window.location.reload(), 800);
+    } else {
+      msgDiv.innerHTML = `<div class="msg">${data.error || 'Remove failed'}</div>`;
+      btn.disabled = false;
+      btn.textContent = 'Remove Key from Account';
+    }
+  } catch (e) {
+    msgDiv.innerHTML = '<div class="msg">Network error. Try again.</div>';
+    btn.disabled = false;
+    btn.textContent = 'Remove Key from Account';
+  }
 }
 
 // Activate key

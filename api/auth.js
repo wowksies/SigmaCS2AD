@@ -13,7 +13,7 @@ const {
   resolveClientUser, setCookie
 } = require('./user-auth-helper');
 
-const { resolveUser } = require('./auth-helper');
+const { resolveUser } = require('../lib/auth-helper');
 const cookie = require('cookie');
 
 // Rate limit maps

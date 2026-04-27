@@ -238,32 +238,35 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 // Global user data
 let userData = null;
 
-// Check auth on load
+// Check auth on load (Supabase session from localStorage)
 async function checkAuth() {
-  try {
-    const response = await fetch('/api/user?action=status');
-    if (!response.ok) {
-      // Not logged in, redirect to login
-      window.location.href = '/login.html';
-      return;
-    }
-    
-    const data = await response.json();
-    if (data.error) {
-      window.location.href = '/login.html';
-      return;
-    }
-    
-    userData = data;
-    renderDashboard(data);
-    
-    // Hide loading, show app
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-  } catch (err) {
-    console.error('Auth check failed:', err);
+  const stored = localStorage.getItem('omnis_user');
+  if (!stored) {
     window.location.href = '/login.html';
+    return;
   }
+  let user;
+  try { user = JSON.parse(stored); } catch (e) {
+    localStorage.removeItem('omnis_user');
+    window.location.href = '/login.html';
+    return;
+  }
+  if (!user.id || !user.access_token || !user.email) {
+    window.location.href = '/login.html';
+    return;
+  }
+
+  userData = {
+    userId: user.id,
+    username: user.email.split('@')[0],
+    email: user.email,
+    createdAt: Math.floor(Date.now() / 1000),
+    key: null,
+  };
+  renderDashboard(userData);
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
 }
 
 // Render dashboard
@@ -420,7 +423,7 @@ async function activateKey() {
 
 // Logout
 async function logout() {
-  // Clear cookie by setting it expired
+  localStorage.removeItem('omnis_user');
   document.cookie = 'omnis_user=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=Strict';
   window.location.href = '/login.html';
 }

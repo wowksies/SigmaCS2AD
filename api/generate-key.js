@@ -8,25 +8,49 @@ const {
   normalizeMoney,
 } = require('../lib/pricing-helper');
 
-const rateLimitMap = new Map();
-const RATE_LIMIT_WINDOW = 5 * 60 * 1000;
+// Firebase-backed rate limit. Survives serverless cold starts and is shared
+// across all Vercel function instances. Entry shape:
+//   /rate_limits/key_gen/{userId}: { bucket, count, updatedAt }
+// Window is bucketed into 5-minute slots; each slot allows RATE_LIMIT_MAX calls.
+const RATE_LIMIT_WINDOW_SEC = 5 * 60;
 const RATE_LIMIT_MAX = 10;
 
-function checkRateLimit(userId) {
-  const now = Date.now();
-  const entry = rateLimitMap.get(userId);
-  if (!entry) {
-    rateLimitMap.set(userId, { count: 1, windowStart: now });
-    return true;
+function rateLimitBucket() {
+  return Math.floor(Date.now() / 1000 / RATE_LIMIT_WINDOW_SEC);
+}
+
+async function _fbWriteRateLimit(path, data) {
+  const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
+  await fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+}
+
+// Returns true if the call is allowed and increments the counter.
+// Read-modify-write — race-tolerant; under heavy contention an attacker
+// might gain a couple of extra calls per bucket, which is acceptable for
+// a key-gen throttle (the actual key-gen is also gated by reseller role).
+async function checkRateLimit(userId) {
+  const bucket = rateLimitBucket();
+  const path = `/rate_limits/key_gen/${userId}`;
+  let entry = null;
+  try { entry = await fbGet(path); } catch (_) { entry = null; }
+
+  let count = 1;
+  if (entry && entry.bucket === bucket && typeof entry.count === 'number') {
+    count = entry.count + 1;
   }
-  if (now - entry.windowStart > RATE_LIMIT_WINDOW) {
-    rateLimitMap.set(userId, { count: 1, windowStart: now });
-    return true;
-  }
-  if (entry.count >= RATE_LIMIT_MAX) {
+  if (count > RATE_LIMIT_MAX) {
     return false;
   }
-  entry.count++;
+  try {
+    await _fbWriteRateLimit(path, { bucket, count, updatedAt: Math.floor(Date.now() / 1000) });
+  } catch (e) {
+    // Don't block legitimate key-gen on a transient counter write failure.
+    console.warn(`[generate-key checkRateLimit] write failed for ${userId}:`, e.message);
+  }
   return true;
 }
 
@@ -80,7 +104,7 @@ module.exports = async function handler(req, res) {
     return res.status(403).json({ error: 'Account suspended' });
   }
 
-  if (!checkRateLimit(user.id)) {
+  if (!(await checkRateLimit(user.id))) {
     console.warn(`RATE LIMIT HIT: User ${user.id} (${user.username}) exceeded key generation limit`);
     return res.status(429).json({ error: 'Too many requests. Try again in a few minutes.' });
   }

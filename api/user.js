@@ -2,6 +2,16 @@
 const {
   resolveClientUser, fbGet,
 } = require('./user-auth-helper');
+const { BRANDS } = require('../lib/pricing-helper');
+
+function detectBrandFromKey(keyValue) {
+  if (!keyValue) return null;
+  const entries = Object.entries(BRANDS).sort((a, b) => b[1].prefix.length - a[1].prefix.length);
+  for (const [id, cfg] of entries) {
+    if (keyValue.startsWith(cfg.prefix)) return { id, config: cfg };
+  }
+  return null;
+}
 
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -28,7 +38,11 @@ module.exports = async function handler(req, res) {
       };
 
       if (user.activeKey && user.activeKey.keyId) {
-        const keyData = await fbGet(`/keys/omnis/${user.activeKey.keyId}`);
+        const brand = detectBrandFromKey(user.activeKey.keyId);
+        const keyPath = brand
+          ? `${brand.config.path}${user.activeKey.keyId}`
+          : `/keys/omnis/${user.activeKey.keyId}`;
+        const keyData = await fbGet(keyPath);
 
         if (keyData) {
           const isLifetime = (keyData.duration_days >= 99999);
@@ -52,6 +66,9 @@ module.exports = async function handler(req, res) {
 
           result.key = {
             keyId: user.activeKey.keyId,
+            brand: brand ? brand.id : 'omnis',
+            brandName: brand ? brand.config.name : 'Omnis',
+            brandColor: brand ? brand.config.color : '#A040FF',
             status: status,
             durationDays: keyData.duration_days || 0,
             isLifetime: isLifetime,
@@ -65,6 +82,8 @@ module.exports = async function handler(req, res) {
         } else {
           result.key = {
             keyId: user.activeKey.keyId,
+            brand: brand ? brand.id : null,
+            brandName: brand ? brand.config.name : null,
             status: 'not_found',
           };
         }

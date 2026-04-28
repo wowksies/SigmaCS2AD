@@ -4,6 +4,7 @@ const {
   sanitize,
 } = require('./user-auth-helper');
 const { resolveUser } = require('../lib/auth-helper');
+const { BRANDS } = require('../lib/pricing-helper');
 const crypto = require('crypto');
 
 const KEY_CHARSET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -13,8 +14,19 @@ function generateKeyChunk() {
   return Array.from(bytes).map((b) => KEY_CHARSET[b % KEY_CHARSET.length]).join('');
 }
 
-function generateKeyId() {
-  return 'OMNIS-' + generateKeyChunk() + '-' + generateKeyChunk() + '-' + generateKeyChunk() + '-' + generateKeyChunk();
+// Detect brand from key prefix. Returns { id, config } or null.
+function detectBrandFromKey(keyValue) {
+  // Sort prefixes longest-first so PROJECTSERVICES- wins over PS- if any overlap.
+  const entries = Object.entries(BRANDS).sort((a, b) => b[1].prefix.length - a[1].prefix.length);
+  for (const [id, cfg] of entries) {
+    if (keyValue.startsWith(cfg.prefix)) return { id, config: cfg };
+  }
+  return null;
+}
+
+function generateKeyId(prefix) {
+  const p = prefix || 'OMNIS-';
+  return p + generateKeyChunk() + '-' + generateKeyChunk() + '-' + generateKeyChunk() + '-' + generateKeyChunk();
 }
 
 async function parseJsonBody(req) {
@@ -32,6 +44,46 @@ async function parseJsonBody(req) {
 
 const VALID_DURATIONS = [1, 3, 7, 14, 30, 90, 365, 99999];
 
+// Activation rate limits — Firebase-backed so they survive cold starts.
+// Window is 24h; counters live at /rate_limits/activations/{bucket}.
+const ACTIVATE_PER_IP_PER_DAY = 5;
+const ACTIVATE_PER_USER_PER_DAY = 5;
+const RATE_WINDOW_SEC = 24 * 60 * 60;
+
+function dayBucket() {
+  return Math.floor(Date.now() / 1000 / RATE_WINDOW_SEC);
+}
+
+function safeBucketKey(s) {
+  // Firebase keys can't contain . # $ [ ] /
+  return String(s).replace(/[.#$\[\]\/]/g, '_').substring(0, 64);
+}
+
+// Read-modify-write counter. Race-tolerant: worst case a couple of
+// extra activations per IP under heavy concurrency, which is fine
+// since the underlying key-bind logic still rejects re-binds.
+async function bumpRateCounter(scope, id, limit) {
+  const bucket = dayBucket();
+  const path = `/rate_limits/activations/${scope}/${safeBucketKey(id)}`;
+  let entry = null;
+  try { entry = await fbGet(path); } catch (_) { entry = null; }
+
+  let count = 1;
+  if (entry && entry.bucket === bucket && typeof entry.count === 'number') {
+    count = entry.count + 1;
+  }
+  if (count > limit) {
+    return { allowed: false, count, retryAfter: ((bucket + 1) * RATE_WINDOW_SEC) - Math.floor(Date.now() / 1000) };
+  }
+  try {
+    await fbPut(path, { bucket, count, updatedAt: Math.floor(Date.now() / 1000) });
+  } catch (e) {
+    // Counter write failure should NOT block activation (availability > strict counting).
+    console.warn(`[bumpRateCounter] write failed for ${scope}/${id}:`, e.message);
+  }
+  return { allowed: true, count };
+}
+
 // ─── ACTIVATE KEY ──────────────────────────────────────────────
 async function handleActivate(req, res) {
   const user = await resolveClientUser(req);
@@ -39,19 +91,51 @@ async function handleActivate(req, res) {
     return res.status(401).json({ error: 'Not logged in' });
   }
 
+  // Require a confirmed email before any activation is allowed.
+  // Open Supabase signup means anyone can create an account; gating
+  // activation on a real, confirmable email significantly raises the
+  // cost of mass-account abuse.
+  if (user._supabase && user.emailConfirmed === false) {
+    return res.status(403).json({
+      error: 'Please confirm your email before activating a key.',
+      code: 'email_not_confirmed',
+    });
+  }
+
+  const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
+
+  // Per-IP daily cap
+  const ipCheck = await bumpRateCounter('ip', ip, ACTIVATE_PER_IP_PER_DAY);
+  if (!ipCheck.allowed) {
+    return res.status(429).json({
+      error: `Too many activations from this IP today. Try again in ${Math.ceil(ipCheck.retryAfter / 3600)}h.`,
+      code: 'rate_limited',
+    });
+  }
+  // Per-account daily cap
+  const userCheck = await bumpRateCounter('user', user.id, ACTIVATE_PER_USER_PER_DAY);
+  if (!userCheck.allowed) {
+    return res.status(429).json({
+      error: `Too many activations on this account today. Try again in ${Math.ceil(userCheck.retryAfter / 3600)}h.`,
+      code: 'rate_limited',
+    });
+  }
+
   try {
     const body = await parseJsonBody(req);
-    const keyValue = sanitize((body.key || '').trim().toUpperCase(), 30);
+    const keyValue = sanitize((body.key || '').trim().toUpperCase(), 40);
 
     if (!keyValue) {
       return res.status(400).json({ error: 'Key is required' });
     }
 
-    if (!keyValue.startsWith('OMNIS-')) {
-      return res.status(400).json({ error: 'Invalid key format. Key must start with OMNIS-' });
+    const brand = detectBrandFromKey(keyValue);
+    if (!brand) {
+      return res.status(400).json({ error: 'Invalid key format. Unknown brand prefix.' });
     }
 
-    const keyData = await fbGet(`/keys/omnis/${keyValue}`);
+    const keyPath = `${brand.config.path}${keyValue}`;
+    const keyData = await fbGet(keyPath);
     if (!keyData) {
       return res.status(404).json({ error: 'Key not found. Check you typed it correctly.' });
     }
@@ -81,7 +165,11 @@ async function handleActivate(req, res) {
     }
 
     if (user.activeKey && user.activeKey.keyId) {
-      const existingKey = await fbGet(`/keys/omnis/${user.activeKey.keyId}`);
+      const existingBrand = detectBrandFromKey(user.activeKey.keyId);
+      const existingPath = existingBrand
+        ? `${existingBrand.config.path}${user.activeKey.keyId}`
+        : `/keys/omnis/${user.activeKey.keyId}`;
+      const existingKey = await fbGet(existingPath);
       const existingExpired = existingKey &&
         existingKey.duration_days < 99999 &&
         existingKey.expires_at > 0 &&
@@ -102,7 +190,7 @@ async function handleActivate(req, res) {
       expiresAt = now + (keyData.duration_days || 30) * 86400;
     }
 
-    await fbPatch(`/keys/omnis/${keyValue}`, {
+    await fbPatch(keyPath, {
       status: 'activated',
       boundToUser: user.id,
       activatedAt: activatedAt,
@@ -112,6 +200,8 @@ async function handleActivate(req, res) {
     await fbPatch(`/users/${user.id}`, {
       activeKey: {
         keyId: keyValue,
+        brand: brand.id,
+        brandName: brand.config.name,
         expiresAt: expiresAt,
         activatedAt: activatedAt,
         durationDays: keyData.duration_days || 30,
@@ -119,10 +209,25 @@ async function handleActivate(req, res) {
       },
     });
 
+    // Audit trail — best-effort, never blocks activation
+    try {
+      await fbPost('/audit_logs/key_activations', {
+        userId: user.id,
+        email: user.email || '',
+        keyId: keyValue,
+        brand: brand.id,
+        ip: ip,
+        userAgent: (req.headers['user-agent'] || '').substring(0, 200),
+        timestamp: now,
+      });
+    } catch (_) { /* audit failure is non-fatal */ }
+
     return res.status(200).json({
       success: true,
       message: 'Key activated successfully!',
       keyId: keyValue,
+      brand: brand.id,
+      brandName: brand.config.name,
       expiresAt: expiresAt,
       durationDays: keyData.duration_days || 30,
       isLifetime: isLifetime,
@@ -147,10 +252,12 @@ async function handleRemove(req, res) {
     }
 
     const keyId = user.activeKey.keyId;
-    const keyData = await fbGet(`/keys/omnis/${keyId}`);
+    const brand = detectBrandFromKey(keyId);
+    const keyPath = brand ? `${brand.config.path}${keyId}` : `/keys/omnis/${keyId}`;
+    const keyData = await fbGet(keyPath);
 
     if (keyData && keyData.boundToUser === user.id) {
-      await fbPatch(`/keys/omnis/${keyId}`, {
+      await fbPatch(keyPath, {
         boundToUser: null,
         hwid: '',
         status: 'unused',

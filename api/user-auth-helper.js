@@ -74,6 +74,10 @@ function verifyClientJWT(token) {
 
 // ── Firebase helpers for /users ─────────────────────────────────
 async function fbGet(path) {
+  if (!process.env.DATABASE_URL || !process.env.DATABASE_KEY) {
+    console.error('[fbGet] Missing DATABASE_URL or DATABASE_KEY env var');
+    return null;
+  }
   const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
   const r = await fetch(url);
   if (!r.ok) return null;
@@ -193,6 +197,7 @@ const SUPABASE_URL = 'https://euxtyzhcijdpueajvsvd.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1eHR5emhjaWpkcHVlYWp2c3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDkwNTcsImV4cCI6MjA5Mjg4NTA1N30._rARSmYe7Sp40dvccuL-A9ZSnD_BcdFTHX4SXtxxp88';
 
 async function resolveSupabaseUser(token) {
+  let supaData = null;
   try {
     const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
       headers: {
@@ -200,27 +205,40 @@ async function resolveSupabaseUser(token) {
         'Authorization': `Bearer ${token}`,
       },
     });
-    if (!r.ok) return null;
-    const data = await r.json();
-    if (!data || !data.id) return null;
-
-    // Fetch existing Firebase profile (for activeKey, etc.) — may not exist
-    const profile = await getUserById(data.id);
-
-    return {
-      id: data.id,
-      email: data.email || '',
-      username: (data.user_metadata && data.user_metadata.username)
-        || (profile && profile.username)
-        || (data.email || '').split('@')[0],
-      activeKey: profile ? profile.activeKey : null,
-      createdAt: profile ? profile.createdAt : Math.floor(Date.now() / 1000),
-      _supabase: true,
-    };
+    if (!r.ok) {
+      console.error(`[resolveSupabaseUser] /auth/v1/user returned ${r.status}`);
+      return null;
+    }
+    supaData = await r.json();
+    if (!supaData || !supaData.id) {
+      console.error('[resolveSupabaseUser] response missing id');
+      return null;
+    }
   } catch (e) {
-    console.error('resolveSupabaseUser error:', e);
+    console.error('[resolveSupabaseUser] supabase fetch threw:', e.message);
     return null;
   }
+
+  // Firebase profile lookup is best-effort. If env vars are missing or RTDB
+  // is unreachable, we still authenticate the user from Supabase alone.
+  let profile = null;
+  try {
+    profile = await getUserById(supaData.id);
+  } catch (e) {
+    console.error('[resolveSupabaseUser] firebase profile fetch failed (non-fatal):', e.message);
+  }
+
+  return {
+    id: supaData.id,
+    email: supaData.email || '',
+    emailConfirmed: !!(supaData.email_confirmed_at || supaData.confirmed_at),
+    username: (supaData.user_metadata && supaData.user_metadata.username)
+      || (profile && profile.username)
+      || (supaData.email || '').split('@')[0],
+    activeKey: profile ? profile.activeKey : null,
+    createdAt: profile ? profile.createdAt : Math.floor(Date.now() / 1000),
+    _supabase: true,
+  };
 }
 
 // ── Resolve user from client JWT (for website dashboard) ──────

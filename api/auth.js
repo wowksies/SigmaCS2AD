@@ -312,12 +312,29 @@ async function handleValidateClient(req, res) {
 }
 
 // ─── MAIN HANDLER ──────────────────────────────────────────────
+//
+// SECURITY: legacy username/password auth is disabled by default.
+// Website + C++ loader now authenticate via Supabase. The handlers
+// in this file (handleRegister/handleLogin/handleValidateClient) issue
+// custom JWTs against the Firebase /users tree which uses the legacy
+// password-hash store — a parallel auth surface that must not be
+// callable in production. To temporarily re-enable (e.g. migration),
+// set ENABLE_LEGACY_AUTH=true in Vercel env.
+const LEGACY_AUTH_ENABLED = (process.env.ENABLE_LEGACY_AUTH || '').toLowerCase() === 'true';
+
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Cache-Control', 'no-store');
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!LEGACY_AUTH_ENABLED) {
+    return res.status(410).json({
+      error: 'This endpoint has been removed. Use Supabase auth at /login.html.',
+      code: 'legacy_auth_disabled',
+    });
   }
 
   const { action } = req.query;

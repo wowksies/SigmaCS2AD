@@ -24,6 +24,13 @@ async function fbPatch(path, data) {
     });
 }
 
+async function fbGet(path) {
+    const url = `${process.env.DATABASE_URL}${path}.json?auth=${process.env.DATABASE_KEY}`;
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    return r.json();
+}
+
 module.exports = async function handler(req, res) {
     const protocol = req.headers['x-forwarded-proto'] || 'http';
     const host = req.headers['x-forwarded-host'] || req.headers.host;
@@ -132,10 +139,20 @@ module.exports = async function handler(req, res) {
         }
 
         // Also check generic reseller roles
-        const allowedRoleIds = process.env.DISCORD_RESELLER_ROLE_IDS 
-            ? process.env.DISCORD_RESELLER_ROLE_IDS.split(',').map(id => id.trim()) 
+        const allowedRoleIds = process.env.DISCORD_RESELLER_ROLE_IDS
+            ? process.env.DISCORD_RESELLER_ROLE_IDS.split(',').map(id => id.trim())
             : [];
-        const isReseller = userBrands.length > 0 || userRoles.some(role => allowedRoleIds.includes(role));
+
+        // Authorization gate also honors admin-panel manual grants: a user
+        // who was added by an admin (existing record with brands) is still
+        // a reseller even if they lack the Discord roles.
+        let existingProfile = null;
+        try { existingProfile = await fbGet(`/resellers/${userData.id}`); } catch (_) {}
+        const hasManualBrands = !!(existingProfile && Array.isArray(existingProfile.brands) && existingProfile.brands.length > 0);
+
+        const isReseller = userBrands.length > 0
+            || userRoles.some(role => allowedRoleIds.includes(role))
+            || hasManualBrands;
 
         if (!isReseller && !isAdmin) {
             console.error('Role check failed. User:', userData.id, 'roles:', userRoles);
@@ -143,8 +160,16 @@ module.exports = async function handler(req, res) {
             return res.end();
         }
 
-        // Admin gets all brands
-        const brands = isAdmin ? ['voltaris', 'projectservices', 'corvus', 'omnis'] : userBrands;
+        // Admin gets all brands; non-admin gets whatever their Discord roles imply.
+        const discordBrands = isAdmin ? ['voltaris', 'projectservices', 'corvus', 'omnis'] : userBrands;
+
+        // Merge Discord-derived brands with any brands an admin granted manually
+        // via the panel (so /api/admin-action?action=updateResellerBrands grants
+        // don't get wiped on the next Discord login).
+        let finalBrands = discordBrands;
+        if (existingProfile && Array.isArray(existingProfile.brands)) {
+            finalBrands = Array.from(new Set([...existingProfile.brands, ...discordBrands]));
+        }
 
         // JWT only contains user ID + expiry — NEVER store roles in the token
         const payload = {
@@ -161,8 +186,8 @@ module.exports = async function handler(req, res) {
                 nickname: memberData.nick || userData.global_name || userData.username,
                 avatar: userData.avatar,
                 isAdmin: isAdmin,
-                isReseller: isReseller || isAdmin,
-                brands: brands,
+                isReseller: isReseller || isAdmin || finalBrands.length > 0,
+                brands: finalBrands,
                 lastLogin: Date.now(),
                 lastLoginIP: req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown',
             });

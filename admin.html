@@ -598,6 +598,7 @@ function renderResellersTable(resellers) {
     }
     var statusBadge = reseller.suspended ? '<span class="badge badge-red">Suspended</span>' : '<span class="badge badge-green">Active</span>';
     var actions = '<button class="btn btn-ghost" onclick="openPricing(' + attrJs(reseller.id) + ')">Pricing</button> ';
+    actions += '<button class="btn btn-ghost" onclick="openBrands(' + attrJs(reseller.id) + ')">Brands</button> ';
     actions += reseller.suspended
       ? '<button class="btn btn-green" onclick="doAction(\'unsuspendReseller\',{resellerId:' + attrJs(reseller.id) + '})">Unsuspend</button> '
       : '<button class="btn btn-danger" onclick="doAction(\'suspendReseller\',{resellerId:' + attrJs(reseller.id) + '})">Suspend</button> ';
@@ -762,6 +763,30 @@ function openPricing(resellerId) {
   if (selector) selector.value = resellerId;
   showPanel('pricing');
   renderPricingEditor();
+}
+
+// Brand access editor. Calls /api/admin-action updateResellerBrands.
+// Backend rejects unknown brand ids, so the worst the user can do here
+// is submit nonsense and get an error toast.
+function openBrands(resellerId) {
+  var r = getResellerById(resellerId);
+  if (!r) { alert('Reseller not found'); return; }
+  var VALID = ['omnis', 'voltaris', 'projectservices', 'corvus'];
+  var current = (r.brands || []).slice();
+  var msg = 'Brand access for ' + r.username + '\n\n';
+  msg += 'Valid brand IDs: ' + VALID.join(', ') + '\n';
+  msg += 'Currently has: ' + (current.length ? current.join(', ') : 'none') + '\n\n';
+  msg += 'Enter comma-separated brand IDs (leave blank to revoke all):';
+  var input = prompt(msg, current.join(','));
+  if (input === null) return; // cancelled
+  var parsed = input.split(',').map(function(s){ return s.trim().toLowerCase(); }).filter(Boolean);
+  var invalid = parsed.filter(function(b){ return VALID.indexOf(b) === -1; });
+  if (invalid.length) {
+    alert('Unknown brand(s): ' + invalid.join(', ') + '\nValid: ' + VALID.join(', '));
+    return;
+  }
+  var unique = Array.from(new Set(parsed));
+  doAction('updateResellerBrands', { resellerId: resellerId, brands: unique });
 }
 
 function filterKeys() {

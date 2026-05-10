@@ -262,6 +262,27 @@ module.exports = async function handler(req, res) {
         if (validBrands.length === 0) {
           return res.status(400).json({ error: 'Must select at least one valid brand' });
         }
+
+        // If the reseller already exists (e.g. they logged in via Discord
+        // before being formally added), MERGE the brands and update the
+        // username/role flags rather than overwriting their pricing,
+        // payment history pointers, lastLogin, avatar, etc.
+        const existing = await fbGet(`/resellers/${discordId}`);
+        if (existing) {
+          const mergedBrands = Array.from(new Set([...(existing.brands || []), ...validBrands]));
+          await fbPatch(`/resellers/${discordId}`, {
+            username: safeUsername,
+            nickname: existing.nickname || safeUsername,
+            brands: mergedBrands,
+            isReseller: true,
+            updatedAt: Date.now(),
+            updatedBy: user.id,
+            updatedByName: user.nickname || user.username,
+          });
+          await auditLog('addReseller', user, { discordId, username: safeUsername, brands: mergedBrands, mergedExisting: true }, req);
+          return res.json({ success: true, message: 'Reseller ' + safeUsername + ' updated. Brands now: ' + mergedBrands.join(', ') });
+        }
+
         await fbPut(`/resellers/${discordId}`, {
           username: safeUsername,
           nickname: safeUsername,
@@ -280,6 +301,28 @@ module.exports = async function handler(req, res) {
         });
         await auditLog('addReseller', user, { discordId, username: safeUsername, brands: validBrands }, req);
         return res.json({ success: true, message: 'Reseller ' + safeUsername + ' added with brands: ' + validBrands.join(', ') });
+      }
+
+      case 'updateResellerBrands': {
+        // Replace the brands array on an existing reseller. Use this from
+        // the admin UI to grant or revoke brand access without touching
+        // pricing, payments, or login state.
+        const { resellerId, brands } = req.body;
+        if (!isValidDiscordId(resellerId)) return res.status(400).json({ error: 'Invalid resellerId' });
+        const validBrands = (brands || []).filter((brandId) => isValidBrandId(brandId));
+
+        const existing = await fbGet(`/resellers/${resellerId}`);
+        if (!existing) return res.status(404).json({ error: 'Reseller not found. Use Add Reseller first.' });
+
+        await fbPatch(`/resellers/${resellerId}`, {
+          brands: validBrands,
+          isReseller: validBrands.length > 0 || existing.isAdmin === true,
+          updatedAt: Date.now(),
+          updatedBy: user.id,
+          updatedByName: user.nickname || user.username,
+        });
+        await auditLog('updateResellerBrands', user, { resellerId, brands: validBrands }, req);
+        return res.json({ success: true, message: 'Brands updated: ' + (validBrands.length ? validBrands.join(', ') : 'none') });
       }
 
       case 'removeReseller': {

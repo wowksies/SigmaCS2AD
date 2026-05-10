@@ -1,7 +1,7 @@
 // api/user.js — Combined user endpoint (status in one)
 const {
   resolveClientUser, fbGet,
-} = require('./user-auth-helper');
+} = require('../lib/user-auth-helper');
 const { BRANDS } = require('../lib/pricing-helper');
 
 function detectBrandFromKey(keyValue) {

@@ -2,7 +2,7 @@
 const {
   resolveClientUser, fbGet, fbPut, fbPatch, fbPost,
   sanitize,
-} = require('./user-auth-helper');
+} = require('../lib/user-auth-helper');
 const { resolveUser } = require('../lib/auth-helper');
 const { BRANDS } = require('../lib/pricing-helper');
 const crypto = require('crypto');

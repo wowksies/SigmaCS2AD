@@ -11,7 +11,7 @@ const {
   isUserLockedOut, recordUserFailedAuth, clearUserFailedAuth,
   fbGet, fbPatch,
   resolveClientUser, setCookie
-} = require('./user-auth-helper');
+} = require('../lib/user-auth-helper');
 
 const { resolveUser } = require('../lib/auth-helper');
 const cookie = require('cookie');

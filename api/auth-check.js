@@ -1,13 +1,33 @@
 // api/auth-check.js
-// Lightweight session probe used by dashboard.html and admin.html on load.
-// Reads the omnis_reseller cookie, validates it through the shared
-// resolveUser helper, and returns the role flags. The handler is GET-only
-// so it bypasses the Origin/Referer enforcement in resolveUser (which only
-// fires for mutating verbs).
+// Combined endpoint:
+//   - Default (no action): GET-only session probe used by dashboard.html
+//     and admin.html on load. Reads the omnis_reseller cookie, validates
+//     it through resolveUser, returns the role flags.
+//   - ?action=logout: clears the omnis_reseller cookie and 302s to '/'.
+//     Triggered by the Log Out button via /api/reseller-logout, which is
+//     rewritten in vercel.json to /api/auth-check?action=logout.
+//
+// Two routes share one serverless function file to stay under the
+// Hobby-plan 12-function cap.
 
 const { resolveUser } = require('../lib/auth-helper');
 
+function handleLogout(res) {
+    res.setHeader(
+        'Set-Cookie',
+        'omnis_reseller=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    );
+    res.writeHead(302, { Location: '/' });
+    res.end();
+}
+
 module.exports = async function handler(req, res) {
+    const action = (req.query && req.query.action) || '';
+
+    if (action === 'logout') {
+        return handleLogout(res);
+    }
+
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Cache-Control', 'no-store');
 

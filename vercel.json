@@ -25,6 +25,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/api/reseller-logout", "destination": "/api/auth-check?action=logout" },
     { "source": "/api/auth/:path*", "destination": "/api/auth/:path*" },
     { "source": "/api/keys/:path*", "destination": "/api/keys/:path*" },
     { "source": "/api/user/:path*", "destination": "/api/user/:path*" },

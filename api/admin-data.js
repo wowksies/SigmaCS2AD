@@ -19,6 +19,13 @@ function resellerTracksBrand(reseller, brandId) {
   return Array.isArray(reseller && reseller.brands) && reseller.brands.includes(brandId);
 }
 
+function brandIdsToNames(brandIds) {
+  if (!Array.isArray(brandIds)) return [];
+  return brandIds
+    .filter((id) => Object.prototype.hasOwnProperty.call(BRANDS, id))
+    .map((id) => BRANDS[id].name);
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
@@ -109,25 +116,54 @@ module.exports = async function handler(req, res) {
         .reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0);
       const pendingPayments = resellerPayments.filter((payment) => !payment.confirmedByAdmin);
       const pricingProfile = getResellerPricingProfile(reseller);
-      const resellerKeys = allKeys.filter((key) => (
-        resellerTracksBrand(reseller, key.brandId) &&
+
+      // Reseller owes for keys THEY generated. Filter on created_by so each
+      // reseller is responsible only for their own output, not every key in
+      // a brand they happen to have access to.
+      const myKeys = allKeys.filter((key) => (
+        key.createdBy === reseller.id &&
         key.activated &&
         !key.excluded &&
         !key.isAdminKey
       ));
-      const resellerOwed = resellerKeys.reduce((sum, key) => (
+      const resellerOwed = myKeys.reduce((sum, key) => (
         sum + getKeyFinancials(key, reseller, key.brandId, { useStoredPricing: false }).owedAmount
       ), 0);
+
+      // Breakdown of activated owed keys grouped by brand — lets the admin
+      // panel show "Omnis: 12 ($60), Voltaris: 5 ($25)" per reseller.
+      const ownedByBrand = {};
+      myKeys.forEach((key) => {
+        const entry = ownedByBrand[key.brandId] || {
+          brandId: key.brandId,
+          brandName: key.brand,
+          brandColor: key.brandColor,
+          activatedCount: 0,
+          owedAmountValue: 0,
+        };
+        entry.activatedCount += 1;
+        entry.owedAmountValue += getKeyFinancials(key, reseller, key.brandId, { useStoredPricing: false }).owedAmount;
+        ownedByBrand[key.brandId] = entry;
+      });
+      const ownedKeysByBrand = Object.values(ownedByBrand).map((b) => ({
+        ...b,
+        owedAmount: formatMoney(b.owedAmountValue),
+      }));
+
+      const brandIds = reseller.brands || [];
 
       return {
         id: reseller.id,
         username: reseller.username || 'Unknown',
         avatar: reseller.avatar || null,
-        brands: reseller.brands || [],
+        brands: brandIds,
+        brandNames: brandIdsToNames(brandIds),
+        brandLabel: brandIdsToNames(brandIds).join(', ') || 'No brands',
         cutRate: pricingProfile.cutRate,
         cutPercent: pricingProfile.cutPercent,
         pricing: pricingProfile,
-        trackedKeys: resellerKeys.length,
+        trackedKeys: myKeys.length,
+        ownedKeysByBrand,
         totalOwed: formatMoney(resellerOwed),
         totalPaid: formatMoney(resellerPaid),
         balance: formatMoney(Math.max(0, resellerOwed - resellerPaid)),

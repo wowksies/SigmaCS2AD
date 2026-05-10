@@ -30,6 +30,10 @@ module.exports = async function handler(req, res) {
       Object.entries(data).forEach(([keyId, keyRecord]) => {
         if (!keyRecord || typeof keyRecord !== 'object') return;
 
+        // Non-admin resellers only see keys THEY generated.
+        // Admins see every key across every brand.
+        if (!user.isAdmin && keyRecord.created_by !== user.id) return;
+
         const activated = !!(keyRecord.hwid && keyRecord.hwid.length > 0);
         const financials = getKeyFinancials(keyRecord, profile, brandId, { useStoredPricing: user.isAdmin });
         const isAdminKey = keyRecord.is_admin === true;

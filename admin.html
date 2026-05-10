@@ -586,6 +586,16 @@ function renderResellersTable(resellers) {
     var brandsStr = (reseller.brands || []).map(function(brandId) {
       return '<span class="badge" style="font-size:.55rem;padding:1px 5px;background:rgba(167,139,250,.15);color:#c4b5fd;">' + escapeHtml(getBrandName(brandId)) + '</span>';
     }).join(' ') || '-';
+
+    // Per-brand owed breakdown — shows admin which brands generated the debt
+    var owedBreakdown = '';
+    if (reseller.ownedKeysByBrand && reseller.ownedKeysByBrand.length) {
+      owedBreakdown = '<div style="font-size:.55rem;color:var(--muted2);margin-top:2px;line-height:1.4;">' +
+        reseller.ownedKeysByBrand.map(function(b) {
+          return '<span style="color:' + (b.brandColor || '#a78bfa') + ';">' + escapeHtml(b.brandName) + '</span>: ' +
+                 b.activatedCount + ' ($' + b.owedAmount + ')';
+        }).join(' &middot; ') + '</div>';
+    }
     var statusBadge = reseller.suspended ? '<span class="badge badge-red">Suspended</span>' : '<span class="badge badge-green">Active</span>';
     var actions = '<button class="btn btn-ghost" onclick="openPricing(' + attrJs(reseller.id) + ')">Pricing</button> ';
     actions += reseller.suspended
@@ -599,7 +609,7 @@ function renderResellersTable(resellers) {
       '<td style="font-size:.6rem;color:var(--muted2);font-family:monospace;">' + escapeHtml(reseller.id) + '</td>' +
       '<td>' + brandsStr + '</td>' +
       '<td>' + formatPercent(reseller.cutPercent) + '</td>' +
-      '<td>$' + reseller.totalOwed + '</td>' +
+      '<td>$' + reseller.totalOwed + owedBreakdown + '</td>' +
       '<td style="color:var(--green);">$' + reseller.totalPaid + '</td>' +
       '<td>$' + reseller.balance + '</td>' +
       '<td>' + deadlineStr + '</td>' +
@@ -705,7 +715,7 @@ function renderPricingEditor() {
         '<div class="form-label">Your Cut (%)</div>' +
         '<input type="number" class="form-input" id="pricingCutPercent" value="' + cutValue + '" min="0" max="100" step="0.01">' +
       '</div>' +
-      '<div style="font-size:.74rem;color:var(--muted2);padding-bottom:8px;">This reseller currently has access to: ' + escapeHtml((reseller.brands || []).map(getBrandName).join(', ') || 'No brands') + '. Activated keys in these brands count toward what they owe, even if someone else generated the key.</div>' +
+      '<div style="font-size:.74rem;color:var(--muted2);padding-bottom:8px;">This reseller currently has access to: ' + escapeHtml((reseller.brands || []).map(getBrandName).join(', ') || 'No brands') + '. They owe only for activated keys they themselves generated.</div>' +
     '</div>' +
     '<div class="table-wrap"><table class="tbl"><thead><tr><th>Duration</th>' + headerCells + '</tr></thead><tbody>' + bodyRows + '</tbody></table></div>';
 }

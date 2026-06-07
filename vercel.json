@@ -29,6 +29,7 @@
     { "source": "/api/auth/:path*", "destination": "/api/auth/:path*" },
     { "source": "/api/keys/:path*", "destination": "/api/keys/:path*" },
     { "source": "/api/user/:path*", "destination": "/api/user/:path*" },
+    { "source": "/key", "destination": "/key.html" },
     { "source": "/api/:path*", "destination": "/api/:path*" }
   ]
 }

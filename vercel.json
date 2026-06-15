@@ -30,6 +30,8 @@
     { "source": "/api/keys/:path*", "destination": "/api/keys/:path*" },
     { "source": "/api/user/:path*", "destination": "/api/user/:path*" },
     { "source": "/key", "destination": "/key.html" },
+    { "source": "/cs2", "destination": "/cs2.html" },
+    { "source": "/r6", "destination": "/r6.html" },
     { "source": "/api/:path*", "destination": "/api/:path*" }
   ]
 }

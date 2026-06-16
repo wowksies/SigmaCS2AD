@@ -533,28 +533,75 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
   </nav>
 </div>
 
+<!-- ══ PRODUCT HERO STYLES (distinct from homepage) ═══════════ -->
+<style>
+#hero{height:auto;min-height:100vh;justify-content:flex-start;}
+.pp-hero{position:relative;z-index:10;width:100%;max-width:1180px;margin:auto;padding:120px 32px 70px;display:grid;grid-template-columns:1.04fr .96fr;gap:54px;align-items:center;}
+.pp-left{display:flex;flex-direction:column;align-items:flex-start;gap:18px;animation:fu .9s .1s cubic-bezier(.22,1,.36,1) both;}
+.pp-kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-size:10px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--p2);background:rgba(139,92,246,.08);border:1px solid var(--border);padding:6px 13px;border-radius:6px;}
+.pp-title{font-family:var(--bebas);font-size:clamp(3.6rem,8vw,6rem);line-height:.86;letter-spacing:.03em;color:#fff;}
+.pp-title span{background:linear-gradient(135deg,#a78bfa,#c4b5fd 55%,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 40px rgba(167,139,250,.45));}
+.pp-tag{color:var(--muted2);font-size:1.02rem;line-height:1.65;max-width:500px;}
+.pp-feats{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:11px 24px;padding:0;margin:4px 0;width:100%;max-width:470px;}
+.pp-feats li{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--text);font-family:var(--display);font-weight:600;}
+.pp-feats svg{width:16px;height:16px;stroke:var(--p2);fill:none;stroke-width:2.5;flex-shrink:0;}
+.pp-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:8px;}
+.pp-price{display:flex;flex-direction:column;line-height:1;}
+.pp-price small{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-family:var(--display);font-weight:700;margin-bottom:5px;}
+.pp-price b{font-family:var(--display);font-weight:800;font-size:2.1rem;color:#fff;}
+.pp-trust{display:flex;gap:8px 18px;flex-wrap:wrap;color:var(--muted2);font-size:12px;margin-top:4px;}
+.pp-trust span{display:flex;align-items:center;gap:6px;}
+.pp-trust svg{width:13px;height:13px;stroke:var(--green);fill:none;stroke-width:2.5;}
+.pp-right{position:relative;perspective:1200px;animation:fu .9s .24s cubic-bezier(.22,1,.36,1) both;}
+.pp-visual{position:relative;border:1px solid var(--borderM);border-radius:22px;overflow:hidden;background:linear-gradient(160deg,rgba(139,92,246,.14),rgba(8,5,22,.55));box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(167,139,250,.06) inset;transform:rotateY(-7deg) rotateX(3deg);transition:transform .5s cubic-bezier(.22,1,.36,1);}
+.pp-right:hover .pp-visual{transform:rotateY(0) rotateX(0);}
+.pp-visual img{display:block;width:100%;height:auto;}
+.pp-vplace{display:flex;align-items:center;justify-content:center;min-height:320px;}
+.pp-vbadge{position:absolute;top:16px;left:16px;z-index:2;display:inline-flex;align-items:center;gap:6px;background:rgba(3,2,10,.7);backdrop-filter:blur(8px);border:1px solid var(--borderM);color:var(--p2);font-family:var(--display);font-size:9.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;padding:5px 11px;border-radius:6px;}
+.pp-vdot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:bp 2s infinite;}
+@media(max-width:900px){
+  .pp-hero{grid-template-columns:1fr;gap:34px;padding:118px 22px 46px;text-align:center;}
+  .pp-left{align-items:center;}
+  .pp-feats{grid-template-columns:1fr;width:fit-content;margin:4px auto;text-align:left;}
+  .pp-visual{transform:none;}
+}
+</style>
+
 <!-- ══ HERO ═══════════════════════════════════════════════════ -->
 <section id="hero">
   <div class="hero-bg"></div>
-  <canvas id="gl-canvas"></canvas>
-  <div class="hero-c">
-    <div class="h-pill"><span class="sdot"></span>Undetected &amp; Active</div>
-    <img class="h-logo" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png" alt="Omnis">
-    <h1 class="h-title"><span class="t1">OMNIS</span><span class="t2">CS2</span></h1>
-    <div class="h-rule"></div>
-    <p class="h-sub">Professional CS2 Enhancement &mdash; From $5</p>
-    <div class="h-btns">
-      <button class="btn-cta" onclick="openModal()">
-        <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        Get Omnis &mdash; From $5
-      </button>
-      <a href="/register.html" class="btn-ghost" style="border-color:#8b5cf6;color:#c4b5fd;">
-        <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-        Create Account
-      </a>
+  <div class="pp-hero">
+    <div class="pp-left">
+      <div class="pp-kicker"><span class="pp-vdot"></span>Product &middot; Counter-Strike 2</div>
+      <h1 class="pp-title">OMNIS <span>CS2</span></h1>
+      <p class="pp-tag">The most advanced affordable CS2 external. Humanised aimbot, clean ESP, skin &amp; knife changer and more &mdash; always undetected and updated daily.</p>
+      <ul class="pp-feats">
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Humanised Aimbot</li>
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Clean ESP &amp; Radar</li>
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Skin &amp; Knife Changer</li>
+        <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Kernel-Safe &amp; Undetected</li>
+      </ul>
+      <div class="pp-actions">
+        <div class="pp-price"><small>Starting at</small><b>$5</b></div>
+        <button class="btn-cta" onclick="openModal()">
+          <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Buy Now
+        </button>
+        <a href="#features" class="btn-ghost">See Features</a>
+      </div>
+      <div class="pp-trust">
+        <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Instant key delivery</span>
+        <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Card &middot; PayPal &middot; Crypto</span>
+        <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>One key unlocks R6 too</span>
+      </div>
+    </div>
+    <div class="pp-right">
+      <div class="pp-visual">
+        <span class="pp-vbadge"><span class="pp-vdot"></span>Undetected &amp; Active</span>
+        <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/OmnisProduct.jpeg" alt="Omnis CS2">
+      </div>
     </div>
   </div>
-  <div class="h-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
 </section>
 
 <!-- ══ FREE KEY BANNER ════════════════════════════════════════════ -->
@@ -572,16 +619,6 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
     </div>
   </div>
 </section>
-
-<!-- STAT BAR -->
-<div class="stat-bar">
-  <div class="stat-inner">
-    <div class="stat-it"><div class="stat-n">$5</div><div class="stat-l">Starting Price</div></div>
-    <div class="stat-it"><div class="stat-n">$30</div><div class="stat-l">Lifetime</div></div>
-    <div class="stat-it"><div class="stat-n">Daily</div><div class="stat-l">Updates</div></div>
-    <div class="stat-it"><div class="stat-n">0</div><div class="stat-l">Detected Bans</div></div>
-  </div>
-</div>
 
 <!-- ══ BUY SECTION ════════════════════════════════════════════ -->
 <section id="buy">

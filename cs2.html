@@ -402,7 +402,48 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
 .rp-step-d{font-size:.74rem;color:var(--muted);line-height:1.55;}
 @media(max-width:900px){.rp-wrap{grid-template-columns:1fr;}}
 
+/* ══ MOBILE NAV ══════════════════════════════════════════════ */
+.nav-toggle{display:none;align-items:center;justify-content:center;width:40px;height:36px;border-radius:8px;background:rgba(139,92,246,.08);border:1px solid var(--border);cursor:none;flex-shrink:0;transition:background .18s,border-color .18s;}
+.nav-toggle:hover{background:rgba(139,92,246,.16);border-color:var(--borderH);}
+.nav-toggle svg{width:19px;height:19px;stroke:var(--text);fill:none;stroke-width:2;}
+.mobile-menu{position:fixed;inset:0;z-index:950;background:rgba(3,2,10,.97);backdrop-filter:blur(22px);display:flex;flex-direction:column;padding:84px 26px 36px;opacity:0;pointer-events:none;transform:translateY(-10px);transition:opacity .26s ease,transform .26s ease;overflow-y:auto;}
+.mobile-menu.open{opacity:1;pointer-events:auto;transform:none;}
+.mm-brand{font-family:var(--bebas);font-size:1.2rem;letter-spacing:.1em;color:var(--muted2);position:absolute;top:28px;left:26px;}
+.mm-brand em{color:var(--p2);font-style:normal;}
+.mm-close{position:absolute;top:20px;right:20px;width:42px;height:42px;border-radius:9px;background:rgba(139,92,246,.1);border:1px solid var(--border);color:var(--text);font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:none;}
+.mobile-menu a.mm-link{font-family:var(--display);font-weight:700;font-size:1.15rem;letter-spacing:.03em;color:var(--text);text-decoration:none;padding:15px 6px;border-bottom:1px solid var(--border);cursor:none;transition:color .16s,padding-left .16s;}
+.mobile-menu a.mm-link:hover{color:var(--p2);padding-left:14px;}
+.mm-actions{display:flex;gap:10px;margin-top:22px;}
+.mm-actions a{flex:1;display:flex;align-items:center;justify-content:center;height:48px;border-radius:9px;font-family:var(--display);font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;cursor:none;}
+.mm-login{background:rgba(139,92,246,.1);border:1px solid var(--borderM);color:var(--p2);}
+.mm-register{background:var(--p3);color:#fff;box-shadow:0 0 18px rgba(124,58,237,.4);}
+@media(max-width:860px){.nav-links{display:none;}.nav-right .nav-link,.nav-disc,.nav-buy{display:none;}.nav-toggle{display:flex;}}
+
+/* ══ ACCESSIBILITY / POLISH ══════════════════════════════════ */
+a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visible{outline:2px solid var(--p2);outline-offset:3px;border-radius:6px;}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}}
+@media(hover:none){*{cursor:auto!important;}#cur,#cur-ring{display:none!important;}}
+
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Omnis CS2",
+  "description": "Advanced affordable undetected Counter-Strike 2 external — humanised aimbot, clean ESP, skin & knife changer, radar and more. Updated daily.",
+  "url": "https://omniscs2.xyz/cs2",
+  "image": "https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/OmnisProduct.jpeg",
+  "brand": { "@type": "Brand", "name": "Omnis Services" },
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": "USD",
+    "lowPrice": "5",
+    "highPrice": "30",
+    "offerCount": "4",
+    "availability": "https://schema.org/InStock"
+  }
+}
+</script>
 </head>
 <body>
 <div id="cur"></div>
@@ -414,7 +455,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
     <button class="co-x" id="coX">&#215;</button>
     <!-- left -->
     <div class="co-left">
-      <img class="co-img" id="coImg" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/OmnisProduct.jpeg" alt="Omnis CS2">
+      <img loading="lazy" decoding="async" class="co-img" id="coImg" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/OmnisProduct.jpeg" alt="Omnis CS2">
       <div class="co-caption">
         <div class="co-cap-dur" id="coCapDur">1 Week</div>
         <div class="co-cap-tag" id="coCapTag">Most Popular</div>
@@ -427,7 +468,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
       <div class="co-st">Instant key delivery via SellAuth. Card, PayPal &amp; crypto.</div>
       <div class="co-vars" id="coVars">
         <div class="cv" data-id="995693" data-img="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/3dayssss.webp" data-dur="4 Days" data-tag="Try it out" onclick="coSelect(this)">
-          <img class="cv-thumb" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/3dayssss.webp" alt="4 Days">
+          <img loading="lazy" decoding="async" class="cv-thumb" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/3dayssss.webp" alt="4 Days">
           <div class="cv-info">
             <div class="cv-dur">4 Days</div>
             <div class="cv-note">Try it out</div>
@@ -439,7 +480,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
           
         </div>
         <div class="cv cv-sel" data-id="995694" data-img="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/1week.webp" data-dur="1 Week" data-tag="Most Popular" onclick="coSelect(this)">
-          <img class="cv-thumb" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/1week.webp" alt="1 Week">
+          <img loading="lazy" decoding="async" class="cv-thumb" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/1week.webp" alt="1 Week">
           <div class="cv-info">
             <div class="cv-dur">1 Week</div>
             <div class="cv-note">Most Popular</div>
@@ -451,7 +492,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
           <span class="cv-pop">HOT</span>
         </div>
         <div class="cv" data-id="995695" data-img="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/1month.webp" data-dur="Month" data-tag="Best Value" onclick="coSelect(this)">
-          <img class="cv-thumb" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/1month.webp" alt="Month">
+          <img loading="lazy" decoding="async" class="cv-thumb" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/1month.webp" alt="Month">
           <div class="cv-info">
             <div class="cv-dur">Month</div>
             <div class="cv-note">Best Value</div>
@@ -463,7 +504,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
           
         </div>
         <div class="cv" data-id="995696" data-img="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/life.webp" data-dur="Lifetime" data-tag="Pay Once" onclick="coSelect(this)">
-          <img class="cv-thumb" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/life.webp" alt="Lifetime">
+          <img loading="lazy" decoding="async" class="cv-thumb" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/life.webp" alt="Lifetime">
           <div class="cv-info">
             <div class="cv-dur">Lifetime</div>
             <div class="cv-note">Pay Once</div>
@@ -529,8 +570,30 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
         Discord
       </a>
       <button class="nav-buy" onclick="openModal()">Buy Now</button>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
     </div>
   </nav>
+</div>
+
+<!-- ══ MOBILE MENU ════════════════════════════════════════════ -->
+<div class="mobile-menu" id="mobileMenu">
+  <span class="mm-brand"><em>OMNIS</em> SERVICES</span>
+  <button class="mm-close" id="mmClose" aria-label="Close menu">&times;</button>
+  <a class="mm-link" href="/cs2">Omnis CS2</a>
+  <a class="mm-link" href="/r6">Omnis R6</a>
+  <a class="mm-link" href="#buy">Buy</a>
+  <a class="mm-link" href="/key">Free Key</a>
+  <a class="mm-link" href="#features">Features</a>
+  <a class="mm-link" href="#showcase">Showcase</a>
+  <a class="mm-link" href="#faq">FAQ</a>
+  <a class="mm-link" href="#reseller-portal">Resellers</a>
+  <a class="mm-link" href="https://discord.gg/5qZ4PN5FTx" target="_blank" rel="noopener">Discord</a>
+  <div class="mm-actions">
+    <a class="mm-login" href="/login.html">Login</a>
+    <a class="mm-register" href="/register.html">Create Account</a>
+  </div>
 </div>
 
 <!-- ══ PRODUCT HERO STYLES (distinct from homepage) ═══════════ -->
@@ -598,7 +661,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
     <div class="pp-right">
       <div class="pp-visual">
         <span class="pp-vbadge"><span class="pp-vdot"></span>Undetected &amp; Active</span>
-        <img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/OmnisProduct.jpeg" alt="Omnis CS2">
+        <img loading="lazy" decoding="async" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/OmnisProduct.jpeg" alt="Omnis CS2">
       </div>
     </div>
   </div>
@@ -626,7 +689,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
     <div class="buy-wrap reveal">
       <!-- Product image -->
       <div class="buy-img-side" onclick="openModal()">
-        <img class="buy-main-img" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/OmnisProduct.jpeg" alt="Omnis CS2 Product" id="buyMainImg">
+        <img loading="lazy" decoding="async" class="buy-main-img" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/OmnisProduct.jpeg" alt="Omnis CS2 Product" id="buyMainImg">
         <div class="buy-img-overlay"></div>
         <div class="buy-img-badge">
           <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -691,7 +754,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
     </div>
     <div class="res-grid reveal">
       <div class="rc">
-        <div class="rc-logo"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/logos/voltaris.png" alt="Voltaris" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>V</span>'"></div>
+        <div class="rc-logo"><img loading="lazy" decoding="async" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/logos/voltaris.png" alt="Voltaris" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>V</span>'"></div>
         <div class="rc-info">
           <div class="rc-name">Voltaris</div>
           <div class="rc-desc">Trusted reseller. Buy Omnis keys directly with fast delivery and dedicated support.</div>
@@ -702,7 +765,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
         </div>
       </div>
       <div class="rc">
-        <div class="rc-logo"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/logos/corvus.webp" alt="Corvus" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>C</span>'"></div>
+        <div class="rc-logo"><img loading="lazy" decoding="async" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/logos/corvus.webp" alt="Corvus" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>C</span>'"></div>
         <div class="rc-info">
           <div class="rc-name">Corvus</div>
           <div class="rc-desc">Official Corvus network reseller with community support and instant delivery.</div>
@@ -713,7 +776,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
         </div>
       </div>
       <div class="rc">
-        <div class="rc-logo"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/refs/heads/main/pictures/logos/softaimlogo.png" alt="SoftAim" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>P</span>'"></div>
+        <div class="rc-logo"><img loading="lazy" decoding="async" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/refs/heads/main/pictures/logos/softaimlogo.png" alt="SoftAim" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>P</span>'"></div>
         <div class="rc-info">
           <div class="rc-name">SoftAim</div>
           <div class="rc-desc">Verified partner hub. Get Omnis CS2 keys through SoftAim with dedicated support.</div>
@@ -966,6 +1029,18 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
 
 <script>
 'use strict';
+
+// ── MOBILE NAV ───────────────────────────────────────────────
+(function(){
+  var t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu'),c=document.getElementById('mmClose');
+  if(!t||!m)return;
+  function close(){m.classList.remove('open');t.setAttribute('aria-expanded','false');document.body.style.overflow='';}
+  function open(){m.classList.add('open');t.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}
+  t.addEventListener('click',function(){m.classList.contains('open')?close():open();});
+  if(c)c.addEventListener('click',close);
+  m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',close);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+})();
 
 // ── CURSOR ───────────────────────────────────────────────────
 var cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');

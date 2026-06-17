@@ -402,7 +402,74 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
 .rp-step-d{font-size:.74rem;color:var(--muted);line-height:1.55;}
 @media(max-width:900px){.rp-wrap{grid-template-columns:1fr;}}
 
+/* ══ MOBILE NAV ══════════════════════════════════════════════ */
+.nav-toggle{display:none;align-items:center;justify-content:center;width:40px;height:36px;border-radius:8px;background:rgba(139,92,246,.08);border:1px solid var(--border);cursor:none;flex-shrink:0;transition:background .18s,border-color .18s;}
+.nav-toggle:hover{background:rgba(139,92,246,.16);border-color:var(--borderH);}
+.nav-toggle svg{width:19px;height:19px;stroke:var(--text);fill:none;stroke-width:2;}
+.mobile-menu{position:fixed;inset:0;z-index:950;background:rgba(3,2,10,.97);backdrop-filter:blur(22px);display:flex;flex-direction:column;padding:84px 26px 36px;opacity:0;pointer-events:none;transform:translateY(-10px);transition:opacity .26s ease,transform .26s ease;overflow-y:auto;}
+.mobile-menu.open{opacity:1;pointer-events:auto;transform:none;}
+.mm-brand{font-family:var(--bebas);font-size:1.2rem;letter-spacing:.1em;color:var(--muted2);position:absolute;top:28px;left:26px;}
+.mm-brand em{color:var(--p2);font-style:normal;}
+.mm-close{position:absolute;top:20px;right:20px;width:42px;height:42px;border-radius:9px;background:rgba(139,92,246,.1);border:1px solid var(--border);color:var(--text);font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:none;}
+.mobile-menu a.mm-link{font-family:var(--display);font-weight:700;font-size:1.15rem;letter-spacing:.03em;color:var(--text);text-decoration:none;padding:15px 6px;border-bottom:1px solid var(--border);cursor:none;transition:color .16s,padding-left .16s;}
+.mobile-menu a.mm-link:hover{color:var(--p2);padding-left:14px;}
+.mm-actions{display:flex;gap:10px;margin-top:22px;}
+.mm-actions a{flex:1;display:flex;align-items:center;justify-content:center;height:48px;border-radius:9px;font-family:var(--display);font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;cursor:none;}
+.mm-login{background:rgba(139,92,246,.1);border:1px solid var(--borderM);color:var(--p2);}
+.mm-register{background:var(--p3);color:#fff;box-shadow:0 0 18px rgba(124,58,237,.4);}
+@media(max-width:860px){.nav-links{display:none;}.nav-right .nav-link,.nav-disc,.nav-buy{display:none;}.nav-toggle{display:flex;}}
+
+/* ══ ACCESSIBILITY / POLISH ══════════════════════════════════ */
+a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visible{outline:2px solid var(--p2);outline-offset:3px;border-radius:6px;}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}}
+@media(hover:none){*{cursor:auto!important;}#cur,#cur-ring{display:none!important;}}
+
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Omnis Services",
+  "url": "https://omniscs2.xyz/",
+  "logo": "https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png",
+  "description": "Premium undetected game enhancements for CS2 and Rainbow Six Siege. One shared key unlocks both products.",
+  "sameAs": ["https://discord.gg/5qZ4PN5FTx"]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "Product",
+        "name": "Omnis CS2",
+        "description": "Advanced affordable undetected Counter-Strike 2 external — aimbot, ESP, skin & knife changer, radar.",
+        "url": "https://omniscs2.xyz/cs2",
+        "image": "https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/productimages/OmnisProduct.jpeg",
+        "brand": { "@type": "Brand", "name": "Omnis Services" },
+        "offers": { "@type": "AggregateOffer", "priceCurrency": "USD", "lowPrice": "5", "highPrice": "30", "offerCount": "4" }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "Product",
+        "name": "Omnis R6",
+        "description": "Cheap fully external undetected Rainbow Six Siege cheat — aimbot, operator ESP, no recoil, gadget intel.",
+        "url": "https://omniscs2.xyz/r6",
+        "image": "https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png",
+        "brand": { "@type": "Brand", "name": "Omnis Services" },
+        "offers": { "@type": "AggregateOffer", "priceCurrency": "USD", "lowPrice": "5", "highPrice": "30", "offerCount": "4" }
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <div id="cur"></div>
@@ -431,8 +498,28 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
         Discord
       </a>
       <a href="#products" class="nav-buy" style="text-decoration:none;">View Products</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
     </div>
   </nav>
+</div>
+
+<!-- ══ MOBILE MENU ════════════════════════════════════════════ -->
+<div class="mobile-menu" id="mobileMenu">
+  <span class="mm-brand"><em>OMNIS</em> SERVICES</span>
+  <button class="mm-close" id="mmClose" aria-label="Close menu">&times;</button>
+  <a class="mm-link" href="#products">Products</a>
+  <a class="mm-link" href="/cs2">Omnis CS2</a>
+  <a class="mm-link" href="/r6">Omnis R6</a>
+  <a class="mm-link" href="/key">Free Key</a>
+  <a class="mm-link" href="#faq">FAQ</a>
+  <a class="mm-link" href="#reseller-portal">Resellers</a>
+  <a class="mm-link" href="https://discord.gg/5qZ4PN5FTx" target="_blank" rel="noopener">Discord</a>
+  <div class="mm-actions">
+    <a class="mm-login" href="/login.html">Login</a>
+    <a class="mm-register" href="/register.html">Create Account</a>
+  </div>
 </div>
 
 <!-- ══ HERO ═══════════════════════════════════════════════════ -->
@@ -546,7 +633,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
     </div>
     <div class="res-grid reveal">
       <div class="rc">
-        <div class="rc-logo"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/logos/voltaris.png" alt="Voltaris" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>V</span>'"></div>
+        <div class="rc-logo"><img loading="lazy" decoding="async" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/logos/voltaris.png" alt="Voltaris" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>V</span>'"></div>
         <div class="rc-info">
           <div class="rc-name">Voltaris</div>
           <div class="rc-desc">Trusted reseller. Buy Omnis keys directly with fast delivery and dedicated support.</div>
@@ -557,7 +644,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
         </div>
       </div>
       <div class="rc">
-        <div class="rc-logo"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/logos/corvus.webp" alt="Corvus" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>C</span>'"></div>
+        <div class="rc-logo"><img loading="lazy" decoding="async" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/logos/corvus.webp" alt="Corvus" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>C</span>'"></div>
         <div class="rc-info">
           <div class="rc-name">Corvus</div>
           <div class="rc-desc">Official Corvus network reseller with community support and instant delivery.</div>
@@ -568,7 +655,7 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
         </div>
       </div>
       <div class="rc">
-        <div class="rc-logo"><img src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/refs/heads/main/pictures/logos/softaimlogo.png" alt="SoftAim" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>P</span>'"></div>
+        <div class="rc-logo"><img loading="lazy" decoding="async" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/refs/heads/main/pictures/logos/softaimlogo.png" alt="SoftAim" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:var(--bebas);font-size:1.6rem;color:var(--p2)&quot;>P</span>'"></div>
         <div class="rc-info">
           <div class="rc-name">SoftAim</div>
           <div class="rc-desc">Verified partner hub. Get Omnis CS2 &amp; R6 keys through SoftAim with dedicated support.</div>
@@ -705,6 +792,18 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
 
 <script>
 'use strict';
+
+// ── MOBILE NAV ───────────────────────────────────────────────
+(function(){
+  var t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu'),c=document.getElementById('mmClose');
+  if(!t||!m)return;
+  function close(){m.classList.remove('open');t.setAttribute('aria-expanded','false');document.body.style.overflow='';}
+  function open(){m.classList.add('open');t.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}
+  t.addEventListener('click',function(){m.classList.contains('open')?close():open();});
+  if(c)c.addEventListener('click',close);
+  m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',close);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+})();
 
 // ── CURSOR ───────────────────────────────────────────────────
 var cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');

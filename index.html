@@ -418,6 +418,16 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
 .mm-login{background:rgba(139,92,246,.1);border:1px solid var(--borderM);color:var(--p2);}
 .mm-register{background:var(--p3);color:#fff;box-shadow:0 0 18px rgba(124,58,237,.4);}
 @media(max-width:860px){.nav-links{display:none;}.nav-right .nav-link,.nav-disc,.nav-buy{display:none;}.nav-toggle{display:flex;}}
+/* ══ NAV DROPDOWN ════════════════════════════════════════════ */
+.nav-dd{position:relative;}
+.nav-dd-btn{display:flex;align-items:center;gap:4px;background:none;border:none;font-family:var(--display);cursor:none;}
+.nav-dd-btn svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:3;transition:transform .2s;}
+.nav-dd:hover .nav-dd-btn svg{transform:rotate(180deg);}
+.nav-dd-menu{position:absolute;top:calc(100% + 10px);right:0;min-width:180px;background:rgba(7,4,20,.98);backdrop-filter:blur(22px);border:1px solid var(--borderM);border-radius:12px;padding:8px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .2s,transform .2s,visibility .2s;box-shadow:0 20px 50px rgba(0,0,0,.6);z-index:900;}
+.nav-dd::after{content:"";position:absolute;top:100%;right:0;left:0;height:14px;}
+.nav-dd:hover .nav-dd-menu{opacity:1;visibility:visible;transform:translateY(0);}
+.nav-dd-menu a{padding:9px 12px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted2);text-decoration:none;white-space:nowrap;transition:all .15s;cursor:none;}
+.nav-dd-menu a:hover{background:rgba(139,92,246,.12);color:var(--text);}
 
 /* ══ ACCESSIBILITY / POLISH ══════════════════════════════════ */
 a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visible{outline:2px solid var(--p2);outline-offset:3px;border-radius:6px;}
@@ -469,10 +479,10 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
 
 /* ══ PRICING PREVIEW ═════════════════════════════════════════ */
 .price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1080px;margin:0 auto;}
-.price-card{position:relative;border:1px solid var(--border);border-radius:16px;padding:28px 22px 24px;background:rgba(7,4,26,.5);display:flex;flex-direction:column;align-items:flex-start;gap:5px;transition:transform .25s,border-color .25s,box-shadow .25s;}
+.price-card{position:relative;border:1px solid var(--border);border-radius:16px;padding:42px 22px 24px;background:rgba(7,4,26,.5);display:flex;flex-direction:column;align-items:flex-start;gap:5px;transition:transform .25s,border-color .25s,box-shadow .25s;}
 .price-card:hover{transform:translateY(-6px);border-color:var(--borderH);box-shadow:0 20px 50px rgba(124,58,237,.25);}
 .price-card.feat{border-color:var(--borderH);background:linear-gradient(165deg,rgba(124,58,237,.18),rgba(7,4,26,.6));}
-.price-pop{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--p3);color:#fff;font-family:var(--display);font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:5px 12px;border-radius:20px;box-shadow:0 4px 14px rgba(124,58,237,.5);white-space:nowrap;}
+.price-pop{position:absolute;top:13px;left:50%;transform:translateX(-50%);background:var(--p3);color:#fff;font-family:var(--display);font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:5px 12px;border-radius:20px;box-shadow:0 4px 14px rgba(124,58,237,.5);white-space:nowrap;z-index:2;}
 .price-dur{font-family:var(--display);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);}
 .price-amt{font-family:var(--bebas);font-size:3rem;color:#fff;line-height:1;letter-spacing:.02em;}
 .price-amt small{font-size:1rem;color:var(--muted);font-family:var(--display);}
@@ -557,7 +567,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
         "name": "Omnis CS2",
         "description": "Advanced affordable undetected Counter-Strike 2 external — aimbot, ESP, skin & knife changer, radar.",
         "url": "https://omniscs2.xyz/cs2",
-        "image": "https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/Cs2_omnos.jpg",
+        "image": "https://omniscs2.xyz/pictures/Cs2_omnos.jpg",
         "brand": { "@type": "Brand", "name": "Omnis Services" },
         "offers": { "@type": "AggregateOffer", "priceCurrency": "USD", "lowPrice": "5", "highPrice": "30", "offerCount": "4" }
       }
@@ -570,7 +580,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
         "name": "Omnis R6",
         "description": "Cheap fully external undetected Rainbow Six Siege cheat — aimbot, operator ESP, no recoil, gadget intel.",
         "url": "https://omniscs2.xyz/r6",
-        "image": "https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/R6_omnos.jpg",
+        "image": "https://omniscs2.xyz/pictures/R6_omnos.jpg",
         "brand": { "@type": "Brand", "name": "Omnis Services" },
         "offers": { "@type": "AggregateOffer", "priceCurrency": "USD", "lowPrice": "5", "highPrice": "30", "offerCount": "4" }
       }
@@ -591,12 +601,20 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
       <span class="nav-brand"><em>OMNIS</em> SERVICES</span>
     </a>
     <div class="nav-links">
-      <a href="#products" class="nav-link">Products</a>
       <a href="/cs2" class="nav-link">CS2</a>
       <a href="/r6" class="nav-link">R6</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
       <a href="/key" class="nav-link" style="color:#c084fc;">Free Key</a>
-      <a href="#faq" class="nav-link">FAQ</a>
-      <a href="#reseller-portal" class="nav-link">Resellers</a>
+      <div class="nav-dd">
+        <button class="nav-link nav-dd-btn">More <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="nav-dd-menu">
+          <a href="#products">Products</a>
+          <a href="#reviews">Reviews</a>
+          <a href="#status">Status</a>
+          <a href="#faq">FAQ</a>
+          <a href="#reseller-portal">Resellers</a>
+        </div>
+      </div>
     </div>
     <div class="nav-right">
       <a href="/login.html" class="nav-link" style="color:var(--muted2);">Login</a>
@@ -605,7 +623,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
         <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.014.043.031.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
         Discord
       </a>
-      <a href="#products" class="nav-buy" style="text-decoration:none;">View Products</a>
+      <a href="#products" class="nav-buy" style="text-decoration:none;">Buy</a>
       <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
         <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
@@ -695,7 +713,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
       <!-- CS2 card -->
       <a href="/cs2" class="pcard">
         <div class="pcard-media">
-          <img loading="lazy" decoding="async" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/Cs2_omnos.jpg" alt="Omnis CS2">
+          <img loading="lazy" decoding="async" src="/pictures/Cs2_omnos.jpg" alt="Omnis CS2">
           <div class="pc-tags"><span class="pc-chip"><span class="pp-vdot"></span>Undetected</span></div>
         </div>
         <div class="pc-body">
@@ -712,7 +730,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
       <!-- R6 card -->
       <a href="/r6" class="pcard">
         <div class="pcard-media">
-          <img loading="lazy" decoding="async" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/R6_omnos.jpg" alt="Omnis R6">
+          <img loading="lazy" decoding="async" src="/pictures/R6_omnos.jpg" alt="Omnis R6">
           <div class="pc-tags"><span class="pc-chip"><span class="pp-vdot"></span>Undetected</span><span class="pc-chip alt">New</span></div>
         </div>
         <div class="pc-body">

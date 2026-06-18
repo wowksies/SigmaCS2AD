@@ -15,10 +15,10 @@
 <meta property="og:url" content="https://omniscs2.xyz/cs2">
 <meta property="og:title" content="Omnis CS2 — Undetected CS2 Cheat | From $5">
 <meta property="og:description" content="Aimbot, ESP, Skin Changer. Trusted by Voltaris, Corvus & SoftAim. Always undetected.">
-<meta property="og:image" content="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/Cs2_omnos.jpg">
+<meta property="og:image" content="https://omniscs2.xyz/pictures/Cs2_omnos.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Omnis CS2 — Undetected CS2 Cheat">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/Cs2_omnos.jpg">
+<meta name="twitter:image" content="https://omniscs2.xyz/pictures/Cs2_omnos.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
@@ -418,6 +418,16 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
 .mm-login{background:rgba(139,92,246,.1);border:1px solid var(--borderM);color:var(--p2);}
 .mm-register{background:var(--p3);color:#fff;box-shadow:0 0 18px rgba(124,58,237,.4);}
 @media(max-width:860px){.nav-links{display:none;}.nav-right .nav-link,.nav-disc,.nav-buy{display:none;}.nav-toggle{display:flex;}}
+/* ══ NAV DROPDOWN ════════════════════════════════════════════ */
+.nav-dd{position:relative;}
+.nav-dd-btn{display:flex;align-items:center;gap:4px;background:none;border:none;font-family:var(--display);cursor:none;}
+.nav-dd-btn svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:3;transition:transform .2s;}
+.nav-dd:hover .nav-dd-btn svg{transform:rotate(180deg);}
+.nav-dd-menu{position:absolute;top:calc(100% + 10px);right:0;min-width:180px;background:rgba(7,4,20,.98);backdrop-filter:blur(22px);border:1px solid var(--borderM);border-radius:12px;padding:8px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .2s,transform .2s,visibility .2s;box-shadow:0 20px 50px rgba(0,0,0,.6);z-index:900;}
+.nav-dd::after{content:"";position:absolute;top:100%;right:0;left:0;height:14px;}
+.nav-dd:hover .nav-dd-menu{opacity:1;visibility:visible;transform:translateY(0);}
+.nav-dd-menu a{padding:9px 12px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted2);text-decoration:none;white-space:nowrap;transition:all .15s;cursor:none;}
+.nav-dd-menu a:hover{background:rgba(139,92,246,.12);color:var(--text);}
 
 /* ══ ACCESSIBILITY / POLISH ══════════════════════════════════ */
 a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visible{outline:2px solid var(--p2);outline-offset:3px;border-radius:6px;}
@@ -491,7 +501,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
   "name": "Omnis CS2",
   "description": "Advanced affordable undetected Counter-Strike 2 external — humanised aimbot, clean ESP, skin & knife changer, radar and more. Updated daily.",
   "url": "https://omniscs2.xyz/cs2",
-  "image": "https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/Cs2_omnos.jpg",
+  "image": "https://omniscs2.xyz/pictures/Cs2_omnos.jpg",
   "brand": { "@type": "Brand", "name": "Omnis Services" },
   "offers": {
     "@type": "AggregateOffer",
@@ -514,7 +524,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
     <button class="co-x" id="coX">&#215;</button>
     <!-- left -->
     <div class="co-left">
-      <img loading="lazy" decoding="async" class="co-img" id="coImg" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/Cs2_omnos.jpg" alt="Omnis CS2">
+      <img loading="lazy" decoding="async" class="co-img" id="coImg" src="/pictures/Cs2_omnos.jpg" alt="Omnis CS2">
       <div class="co-caption">
         <div class="co-cap-dur" id="coCapDur">1 Week</div>
         <div class="co-cap-tag" id="coCapTag">Most Popular</div>
@@ -614,12 +624,18 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
       <a href="/cs2" class="nav-link" style="color:#c4b5fd;">CS2</a>
       <a href="/r6" class="nav-link">R6</a>
       <a href="#buy" class="nav-link">Buy</a>
-      <a href="/key" class="nav-link" style="color:#c084fc;">Free Key</a>
       <a href="#features" class="nav-link">Features</a>
-      <a href="#menu-demo" class="nav-link">Menu</a>
-      <a href="#showcase" class="nav-link">Showcase</a>
-      <a href="#faq" class="nav-link">FAQ</a>
-      <a href="#reseller-portal" class="nav-link">Resellers</a>
+      <a href="/key" class="nav-link" style="color:#c084fc;">Free Key</a>
+      <div class="nav-dd">
+        <button class="nav-link nav-dd-btn">More <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="nav-dd-menu">
+          <a href="#showcase">Showcase</a>
+          <a href="#menu-demo">Menu</a>
+          <a href="#reviews">Reviews</a>
+          <a href="#faq">FAQ</a>
+          <a href="#reseller-portal">Resellers</a>
+        </div>
+      </div>
     </div>
     <div class="nav-right">
       <a href="/login.html" class="nav-link" style="color:var(--muted2);">Login</a>
@@ -721,7 +737,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
     <div class="pp-right">
       <div class="pp-visual">
         <span class="pp-vbadge"><span class="pp-vdot"></span>Undetected &amp; Active</span>
-        <img loading="lazy" decoding="async" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/Cs2_omnos.jpg" alt="Omnis CS2">
+        <img loading="lazy" decoding="async" src="/pictures/Cs2_omnos.jpg" alt="Omnis CS2">
       </div>
     </div>
   </div>
@@ -749,7 +765,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
     <div class="buy-wrap reveal">
       <!-- Product image -->
       <div class="buy-img-side" onclick="openModal()">
-        <img loading="lazy" decoding="async" class="buy-main-img" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/Cs2_omnos.jpg" alt="Omnis CS2 Product" id="buyMainImg">
+        <img loading="lazy" decoding="async" class="buy-main-img" src="/pictures/Cs2_omnos.jpg" alt="Omnis CS2 Product" id="buyMainImg">
         <div class="buy-img-overlay"></div>
         <div class="buy-img-badge">
           <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>

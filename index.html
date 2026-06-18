@@ -424,6 +424,49 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}}
 @media(hover:none){*{cursor:auto!important;}#cur,#cur-ring{display:none!important;}}
 
+/* ══ AURORA HERO GLOW ════════════════════════════════════════ */
+.aurora{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;}
+.aurora b{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45;mix-blend-mode:screen;}
+.aurora b:nth-child(1){width:46vw;height:46vw;left:-8vw;top:-14vw;background:radial-gradient(circle,#7c3aed,transparent 70%);animation:au1 18s ease-in-out infinite;}
+.aurora b:nth-child(2){width:42vw;height:42vw;right:-10vw;top:-8vw;background:radial-gradient(circle,#a855f7,transparent 70%);animation:au2 23s ease-in-out infinite;}
+.aurora b:nth-child(3){width:40vw;height:40vw;left:28vw;top:4vw;background:radial-gradient(circle,#5b21b6,transparent 70%);animation:au3 27s ease-in-out infinite;}
+@keyframes au1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(8vw,6vw) scale(1.15);}}
+@keyframes au2{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-6vw,8vw) scale(1.2);}}
+@keyframes au3{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-4vw,-5vw) scale(1.1);}}
+
+/* ══ PREMIUM PRODUCT CARDS ═══════════════════════════════════ */
+.pcard{position:relative;display:flex;flex-direction:column;text-decoration:none;border-radius:20px;overflow:hidden;background:linear-gradient(165deg,rgba(20,12,45,.7),rgba(8,5,20,.85));border:1px solid var(--borderM);transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s,border-color .35s;}
+.pcard:hover{transform:translateY(-8px);box-shadow:0 30px 70px rgba(124,58,237,.32);border-color:var(--borderH);}
+.pcard-media{position:relative;height:210px;overflow:hidden;}
+.pcard-media img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.22,1,.36,1);}
+.pcard:hover .pcard-media img{transform:scale(1.07);}
+.pcard-media .ph-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a0f33,#2a1a4d);font-family:var(--bebas);font-size:3.6rem;letter-spacing:.08em;color:rgba(196,181,253,.4);}
+.pcard-media::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(8,5,20,.99) 4%,rgba(8,5,20,.25) 62%,transparent);}
+.pc-tags{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;z-index:2;}
+.pc-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(3,2,10,.6);backdrop-filter:blur(8px);border:1px solid var(--borderM);font-family:var(--display);font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;padding:5px 10px;border-radius:6px;color:var(--green);}
+.pc-chip.alt{color:var(--p2);}
+.pc-body{padding:0 26px 26px;margin-top:-44px;position:relative;z-index:2;display:flex;flex-direction:column;gap:14px;flex:1;}
+.pc-name{font-family:var(--bebas);font-size:2.3rem;letter-spacing:.05em;color:#fff;line-height:1;}
+.pc-name span{background:linear-gradient(135deg,var(--p2),#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.pc-desc{color:var(--muted2);font-size:14px;line-height:1.6;flex:1;}
+.pc-feats{display:flex;flex-wrap:wrap;gap:7px;}
+.pc-feats span{font-size:11px;font-family:var(--display);font-weight:600;color:var(--text);background:rgba(139,92,246,.1);border:1px solid var(--border);padding:5px 10px;border-radius:20px;}
+.pc-foot{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border);}
+.pc-price small{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-family:var(--display);font-weight:700;margin-bottom:2px;}
+.pc-price b{font-family:var(--display);font-weight:800;font-size:1.5rem;color:#fff;}
+.pc-go{display:inline-flex;align-items:center;gap:7px;font-family:var(--display);font-weight:800;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:#fff;background:var(--p3);padding:11px 18px;border-radius:9px;box-shadow:0 0 18px rgba(124,58,237,.4);transition:gap .2s,background .2s;}
+.pcard:hover .pc-go{gap:11px;background:var(--p);}
+
+/* ══ WHY OMNIS ═══════════════════════════════════════════════ */
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;max-width:1080px;margin:0 auto;}
+.why-card{border:1px solid var(--border);border-radius:14px;padding:26px 22px;background:rgba(7,4,26,.5);transition:border-color .25s,transform .25s,background .25s;}
+.why-card:hover{border-color:var(--borderH);transform:translateY(-4px);background:rgba(13,8,34,.6);}
+.why-ico{width:44px;height:44px;border-radius:11px;background:rgba(139,92,246,.12);border:1px solid var(--borderM);display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+.why-ico svg{width:21px;height:21px;stroke:var(--p2);fill:none;stroke-width:2;}
+.why-t{font-family:var(--display);font-weight:700;font-size:1rem;color:#fff;margin-bottom:7px;}
+.why-d{font-size:13px;color:var(--muted2);line-height:1.6;}
+@media(max-width:560px){.pc-name{font-size:2rem;}}
+
 </style>
 <script type="application/ld+json">
 {
@@ -525,6 +568,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
 <!-- ══ HERO ═══════════════════════════════════════════════════ -->
 <section id="hero">
   <div class="hero-bg"></div>
+  <div class="aurora"><b></b><b></b><b></b></div>
   <canvas id="gl-canvas"></canvas>
   <div class="hero-c">
     <div class="h-pill"><span class="sdot"></span>Undetected &amp; Active</div>
@@ -584,35 +628,35 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
     <div class="prod-grid reveal" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:1080px;margin:0 auto;">
 
       <!-- CS2 card -->
-      <a href="/cs2" class="prod-card" style="display:flex;flex-direction:column;text-decoration:none;background:linear-gradient(160deg,rgba(139,92,246,0.1),rgba(10,6,28,0.5));border:1px solid var(--borderM);border-radius:18px;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;" onmouseover="this.style.transform='translateY(-6px)';this.style.borderColor='var(--borderH)';this.style.boxShadow='0 24px 60px rgba(124,58,237,0.3)'" onmouseout="this.style.transform='';this.style.borderColor='var(--borderM)';this.style.boxShadow='none'">
-        <div style="position:relative;height:200px;background:url('https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/heroimage.webp') center/cover;">
-          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,6,28,0.95),rgba(10,6,28,0.2));"></div>
-          <span style="position:absolute;top:14px;left:14px;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);color:var(--green);font-family:var(--display);font-size:9px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;padding:4px 11px;border-radius:5px;">Undetected</span>
+      <a href="/cs2" class="pcard">
+        <div class="pcard-media">
+          <img loading="lazy" decoding="async" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/pictures/heroimage.webp" alt="Omnis CS2">
+          <div class="pc-tags"><span class="pc-chip"><span class="pp-vdot"></span>Undetected</span></div>
         </div>
-        <div style="padding:26px 26px 28px;flex:1;display:flex;flex-direction:column;">
-          <h3 style="font-family:var(--bebas);font-size:2rem;letter-spacing:0.06em;color:#fff;margin-bottom:8px;">OMNIS <span style="color:var(--p2);">CS2</span></h3>
-          <p style="color:var(--muted2);font-size:14px;line-height:1.6;margin-bottom:18px;flex:1;">The most advanced affordable CS2 external. Humanised aimbot, clean ESP, skin &amp; knife changer, radar and more.</p>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div><span style="color:var(--muted);font-size:12px;">From </span><span style="font-family:var(--display);font-weight:800;font-size:1.3rem;color:#fff;">$5</span></div>
-            <span class="btn-cta" style="height:40px;padding:0 22px;pointer-events:none;">View CS2 &rarr;</span>
+        <div class="pc-body">
+          <h3 class="pc-name">OMNIS <span>CS2</span></h3>
+          <p class="pc-desc">The most advanced affordable Counter-Strike 2 external. Humanised aimbot, clean ESP, skin &amp; knife changer, radar and more.</p>
+          <div class="pc-feats"><span>Aimbot</span><span>ESP</span><span>Skin Changer</span><span>Radar</span></div>
+          <div class="pc-foot">
+            <div class="pc-price"><small>Starting at</small><b>$5</b></div>
+            <span class="pc-go">View CS2 &rarr;</span>
           </div>
         </div>
       </a>
 
       <!-- R6 card -->
-      <a href="/r6" class="prod-card" style="display:flex;flex-direction:column;text-decoration:none;background:linear-gradient(160deg,rgba(139,92,246,0.1),rgba(10,6,28,0.5));border:1px solid var(--borderM);border-radius:18px;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;" onmouseover="this.style.transform='translateY(-6px)';this.style.borderColor='var(--borderH)';this.style.boxShadow='0 24px 60px rgba(124,58,237,0.3)'" onmouseout="this.style.transform='';this.style.borderColor='var(--borderM)';this.style.boxShadow='none'">
-        <div style="position:relative;height:200px;background:linear-gradient(135deg,#1a0f33,#2a1a4d);display:flex;align-items:center;justify-content:center;">
-          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,6,28,0.95),rgba(10,6,28,0.2));"></div>
-          <span style="position:relative;font-family:var(--bebas);font-size:3.4rem;letter-spacing:0.08em;color:rgba(196,181,253,0.4);">R6</span>
-          <span style="position:absolute;top:14px;left:14px;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);color:var(--green);font-family:var(--display);font-size:9px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;padding:4px 11px;border-radius:5px;">Undetected</span>
-          <span style="position:absolute;top:14px;right:14px;background:rgba(124,58,237,0.18);border:1px solid var(--borderH);color:var(--p2);font-family:var(--display);font-size:9px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;padding:4px 11px;border-radius:5px;">New</span>
+      <a href="/r6" class="pcard">
+        <div class="pcard-media">
+          <div class="ph-fallback">R6</div>
+          <div class="pc-tags"><span class="pc-chip"><span class="pp-vdot"></span>Undetected</span><span class="pc-chip alt">New</span></div>
         </div>
-        <div style="padding:26px 26px 28px;flex:1;display:flex;flex-direction:column;">
-          <h3 style="font-family:var(--bebas);font-size:2rem;letter-spacing:0.06em;color:#fff;margin-bottom:8px;">OMNIS <span style="color:var(--p2);">R6</span></h3>
-          <p style="color:var(--muted2);font-size:14px;line-height:1.6;margin-bottom:18px;flex:1;">A cheap, fully external Rainbow Six Siege cheat built for undetectability. Aimbot, operator ESP, no recoil &amp; gadget intel.</p>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div><span style="color:var(--muted);font-size:12px;">From </span><span style="font-family:var(--display);font-weight:800;font-size:1.3rem;color:#fff;">$5</span></div>
-            <span class="btn-cta" style="height:40px;padding:0 22px;pointer-events:none;">View R6 &rarr;</span>
+        <div class="pc-body">
+          <h3 class="pc-name">OMNIS <span>R6</span></h3>
+          <p class="pc-desc">A cheap, fully external Rainbow Six Siege cheat built for undetectability. Aimbot, operator ESP, no recoil &amp; gadget intel.</p>
+          <div class="pc-feats"><span>Aimbot</span><span>Operator ESP</span><span>No Recoil</span><span>Gadget ESP</span></div>
+          <div class="pc-foot">
+            <div class="pc-price"><small>Starting at</small><b>$5</b></div>
+            <span class="pc-go">View R6 &rarr;</span>
           </div>
         </div>
       </a>
@@ -620,6 +664,39 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
     </div>
 
     <p class="reveal" style="text-align:center;color:var(--muted2);font-size:13px;margin-top:26px;">One purchase, one shared key &mdash; works on both Omnis CS2 and Omnis R6.</p>
+  </div>
+</section>
+
+<!-- ══ WHY OMNIS ══════════════════════════════════════════════ -->
+<section id="why" style="padding-top:0;">
+  <div class="inner">
+    <div class="reveal" style="text-align:center;margin-bottom:38px;">
+      <div class="eyebrow" style="justify-content:center;">Why Omnis Services</div>
+      <h2 class="sec-h">Built different.</h2>
+      <p class="sec-p" style="max-width:480px;margin:0 auto;">Premium quality at the lowest prices &mdash; backed by daily updates and real support.</p>
+    </div>
+    <div class="why-grid reveal">
+      <div class="why-card">
+        <div class="why-ico"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="why-t">Always Undetected</div>
+        <div class="why-d">Daily updates and signature rotations keep both products clean and ahead of anti-cheat.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-ico"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <div class="why-t">Instant Delivery</div>
+        <div class="why-d">Your key and loader land in your inbox the second checkout completes &mdash; no waiting.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-ico"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+        <div class="why-t">One Key, Two Games</div>
+        <div class="why-d">A single Omnis key unlocks both CS2 and R6 for the full duration you buy.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-ico"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+        <div class="why-t">Real Support</div>
+        <div class="why-d">An active Discord with fast ticket response and a verified reseller network worldwide.</div>
+      </div>
+    </div>
   </div>
 </section>
 

@@ -426,6 +426,16 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}}
 @media(hover:none){*{cursor:auto!important;}#cur,#cur-ring{display:none!important;}}
 
+/* ══ AURORA HERO GLOW ════════════════════════════════════════ */
+.aurora{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;}
+.aurora b{position:absolute;border-radius:50%;filter:blur(90px);opacity:.4;mix-blend-mode:screen;}
+.aurora b:nth-child(1){width:44vw;height:44vw;left:-10vw;top:-16vw;background:radial-gradient(circle,#7c3aed,transparent 70%);animation:au1 18s ease-in-out infinite;}
+.aurora b:nth-child(2){width:40vw;height:40vw;right:-12vw;top:-8vw;background:radial-gradient(circle,#a855f7,transparent 70%);animation:au2 23s ease-in-out infinite;}
+.aurora b:nth-child(3){width:38vw;height:38vw;left:24vw;top:2vw;background:radial-gradient(circle,#5b21b6,transparent 70%);animation:au3 27s ease-in-out infinite;}
+@keyframes au1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(8vw,6vw) scale(1.15);}}
+@keyframes au2{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-6vw,8vw) scale(1.2);}}
+@keyframes au3{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-4vw,-5vw) scale(1.1);}}
+
 </style>
 <script type="application/ld+json">
 {
@@ -639,6 +649,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
 <!-- ══ HERO ═══════════════════════════════════════════════════ -->
 <section id="hero">
   <div class="hero-bg"></div>
+  <div class="aurora"><b></b><b></b><b></b></div>
   <div class="pp-hero">
     <div class="pp-right">
       <div class="pp-visual">

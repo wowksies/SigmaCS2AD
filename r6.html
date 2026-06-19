@@ -1289,14 +1289,15 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
   audio.addEventListener('play',function(){if(btn)btn.classList.add('playing');});
   audio.addEventListener('pause',function(){if(btn)btn.classList.remove('playing');});
   audio.addEventListener('ended',function(){if(btn)btn.classList.remove('playing');});
-  function play(){try{audio.currentTime=0;}catch(e){}audio.muted=false;var p=audio.play();if(p&&p.catch)p.catch(function(){});}
+  var evs=['pointerdown','pointerup','touchstart','keydown','scroll','mousemove','wheel'];
+  function cleanup(){evs.forEach(function(e){window.removeEventListener(e,attempt,true);});}
+  function attempt(){var p=audio.play();if(p&&p.then){p.then(function(){sessionStorage.setItem('omnisVoicePlayed','1');cleanup();}).catch(function(){});}}
   if(!sessionStorage.getItem('omnisVoicePlayed')){
-    var evs=['pointerdown','keydown','touchstart'],done=false;
-    function fire(){if(done)return;done=true;sessionStorage.setItem('omnisVoicePlayed','1');play();evs.forEach(function(e){window.removeEventListener(e,fire);});}
-    evs.forEach(function(e){window.addEventListener(e,fire,{passive:true});});
-    var p=audio.play();if(p&&p.then)p.then(function(){fire();}).catch(function(){});
+    evs.forEach(function(e){window.addEventListener(e,attempt,true);});
+    attempt();
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)attempt();});
   }
-  if(btn)btn.addEventListener('click',function(){play();});
+  if(btn)btn.addEventListener('click',function(e){e.stopPropagation();try{audio.currentTime=0;}catch(_){}audio.muted=false;audio.play();});
 })();
 
 // ── MOBILE NAV ───────────────────────────────────────────────

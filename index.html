@@ -681,7 +681,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
     <h1 class="h-title"><span class="t1">OMNIS</span><span class="t2">SERVICES</span></h1>
     <div class="h-rule"></div>
     <p class="h-sub">Premium Undetected Game Enhancements &mdash; CS2 &amp; Rainbow Six Siege</p>
-    <p class="h-slogan">They think they’re hidden. <span>See everyone.</span> Be <em>Omnymous.</em></p>
+    <p class="h-slogan">They think they’re hidden, they aren’t. <span>See everyone.</span> Be <em>Omnymous.</em></p>
     <div class="h-btns">
       <a href="#products" class="btn-cta" style="text-decoration:none;">
         <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -1153,14 +1153,15 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
   audio.addEventListener('play',function(){if(btn)btn.classList.add('playing');});
   audio.addEventListener('pause',function(){if(btn)btn.classList.remove('playing');});
   audio.addEventListener('ended',function(){if(btn)btn.classList.remove('playing');});
-  function play(){try{audio.currentTime=0;}catch(e){}audio.muted=false;var p=audio.play();if(p&&p.catch)p.catch(function(){});}
+  var evs=['pointerdown','pointerup','touchstart','keydown','scroll','mousemove','wheel'];
+  function cleanup(){evs.forEach(function(e){window.removeEventListener(e,attempt,true);});}
+  function attempt(){var p=audio.play();if(p&&p.then){p.then(function(){sessionStorage.setItem('omnisVoicePlayed','1');cleanup();}).catch(function(){});}}
   if(!sessionStorage.getItem('omnisVoicePlayed')){
-    var evs=['pointerdown','keydown','touchstart'],done=false;
-    function fire(){if(done)return;done=true;sessionStorage.setItem('omnisVoicePlayed','1');play();evs.forEach(function(e){window.removeEventListener(e,fire);});}
-    evs.forEach(function(e){window.addEventListener(e,fire,{passive:true});});
-    var p=audio.play();if(p&&p.then)p.then(function(){fire();}).catch(function(){});
+    evs.forEach(function(e){window.addEventListener(e,attempt,true);});
+    attempt();
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)attempt();});
   }
-  if(btn)btn.addEventListener('click',function(){play();});
+  if(btn)btn.addEventListener('click',function(e){e.stopPropagation();try{audio.currentTime=0;}catch(_){}audio.muted=false;audio.play();});
 })();
 
 // ── MOBILE NAV ───────────────────────────────────────────────

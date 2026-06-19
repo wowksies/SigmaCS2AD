@@ -431,6 +431,22 @@ footer{border-top:1px solid var(--border);padding:30px 20px;position:relative;z-
 
 /* ══ ACCESSIBILITY / POLISH ══════════════════════════════════ */
 a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visible{outline:2px solid var(--p2);outline-offset:3px;border-radius:6px;}
+/* ══ OMNIS VOICE ═════════════════════════════════════════════ */
+.voice-btn{position:fixed;bottom:20px;right:20px;z-index:840;display:flex;align-items:center;gap:9px;height:46px;padding:0 18px;border-radius:26px;background:rgba(7,4,20,.88);backdrop-filter:blur(16px);border:1px solid var(--borderM);color:var(--p2);font-family:var(--display);font-weight:800;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;cursor:none;box-shadow:0 12px 34px rgba(0,0,0,.55);transition:transform .2s,border-color .2s,color .2s;}
+.voice-btn:hover{border-color:var(--borderH);color:var(--text);transform:translateY(-2px);}
+.voice-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
+.voice-btn .vb-bars{display:none;align-items:flex-end;gap:2px;height:15px;}
+.voice-btn .vb-bars i{width:3px;background:currentColor;border-radius:2px;transform-origin:bottom;animation:vbar 1s ease-in-out infinite;}
+.voice-btn .vb-bars i:nth-child(1){height:6px;animation-delay:0s;}
+.voice-btn .vb-bars i:nth-child(2){height:14px;animation-delay:.2s;}
+.voice-btn .vb-bars i:nth-child(3){height:9px;animation-delay:.4s;}
+.voice-btn.playing .vb-bars{display:flex;}
+.voice-btn.playing .vb-ico{display:none;}
+@keyframes vbar{0%,100%{transform:scaleY(.35);}50%{transform:scaleY(1);}}
+@media(max-width:560px){.voice-btn{bottom:14px;right:14px;height:42px;padding:0 14px;font-size:10px;}}
+.h-slogan{font-family:var(--display);font-weight:600;font-style:italic;font-size:clamp(.95rem,2vw,1.35rem);color:var(--muted2);margin:0 0 30px;line-height:1.55;max-width:620px;animation:fu .9s .34s cubic-bezier(.22,1,.36,1) both;}
+.h-slogan span{color:#c4b5fd;font-style:normal;}
+.h-slogan em{font-style:normal;font-weight:800;background:linear-gradient(135deg,var(--p2),#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}}
 @media(hover:none){*{cursor:auto!important;}#cur,#cur-ring{display:none!important;}}
 
@@ -529,6 +545,12 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
 <body>
 <div id="cur"></div>
 <div id="cur-ring"></div>
+<audio id="omnisVoice" src="/Omnisvoice.mp3" preload="auto"></audio>
+<button class="voice-btn" id="voiceBtn" aria-label="Play Omnis slogan">
+  <svg class="vb-ico" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+  <span class="vb-bars"><i></i><i></i><i></i></span>
+  <span class="vb-label">Slogan</span>
+</button>
 
 <!-- ══ CHECKOUT MODAL ═════════════════════════════════════════ -->
 <div class="co-bd" id="coBd">
@@ -1372,6 +1394,23 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
 
 <script>
 'use strict';
+
+// ── OMNIS VOICE ───────────────────────────
+(function(){
+  var audio=document.getElementById('omnisVoice'),btn=document.getElementById('voiceBtn');
+  if(!audio)return;
+  audio.addEventListener('play',function(){if(btn)btn.classList.add('playing');});
+  audio.addEventListener('pause',function(){if(btn)btn.classList.remove('playing');});
+  audio.addEventListener('ended',function(){if(btn)btn.classList.remove('playing');});
+  function play(){try{audio.currentTime=0;}catch(e){}audio.muted=false;var p=audio.play();if(p&&p.catch)p.catch(function(){});}
+  if(!sessionStorage.getItem('omnisVoicePlayed')){
+    var evs=['pointerdown','keydown','touchstart'],done=false;
+    function fire(){if(done)return;done=true;sessionStorage.setItem('omnisVoicePlayed','1');play();evs.forEach(function(e){window.removeEventListener(e,fire);});}
+    evs.forEach(function(e){window.addEventListener(e,fire,{passive:true});});
+    var p=audio.play();if(p&&p.then)p.then(function(){fire();}).catch(function(){});
+  }
+  if(btn)btn.addEventListener('click',function(){play();});
+})();
 
 // ── MOBILE NAV ───────────────────────────────────────────────
 (function(){

@@ -443,6 +443,20 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
 .voice-btn.playing .vb-bars{display:flex;}
 .voice-btn.playing .vb-ico{display:none;}
 @keyframes vbar{0%,100%{transform:scaleY(.35);}50%{transform:scaleY(1);}}
+/* ══ ENTER SPLASH ════════════════════════════════════════════ */
+.enter-splash{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(ellipse 70% 70% at 50% 38%,rgba(22,13,48,.95),rgba(3,2,10,.99));backdrop-filter:blur(8px);transition:opacity .55s ease,visibility .55s ease;}
+.enter-splash.gone{opacity:0;visibility:hidden;pointer-events:none;}
+.es-inner{display:flex;flex-direction:column;align-items:center;gap:16px;max-width:560px;animation:fu .8s cubic-bezier(.22,1,.36,1) both;}
+.es-logo{width:78px;height:78px;object-fit:contain;filter:drop-shadow(0 0 34px rgba(167,139,250,.6));}
+.es-brand{font-family:var(--bebas);font-size:clamp(2.4rem,7vw,4rem);letter-spacing:.08em;color:#fff;line-height:1;}
+.es-brand em{font-style:normal;background:linear-gradient(135deg,var(--p2),#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.es-slogan{font-family:var(--display);font-style:italic;font-weight:600;font-size:clamp(.95rem,2vw,1.25rem);color:var(--muted2);line-height:1.55;}
+.es-slogan span{color:#c4b5fd;font-style:normal;}
+.es-slogan em{font-style:normal;font-weight:800;background:linear-gradient(135deg,var(--p2),#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.es-btn{margin-top:10px;display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 34px;border-radius:10px;background:var(--p3);color:#fff;font-family:var(--display);font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:none;box-shadow:0 0 30px rgba(124,58,237,.5);transition:transform .2s,background .2s,box-shadow .2s;}
+.es-btn:hover{background:var(--p);transform:translateY(-2px);box-shadow:0 8px 40px rgba(139,92,246,.6);}
+.es-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;}
+.es-hint{font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
 @media(max-width:560px){.voice-btn{bottom:14px;right:14px;height:42px;padding:0 14px;font-size:10px;}}
 .h-slogan{font-family:var(--display);font-weight:600;font-style:italic;font-size:clamp(.95rem,2vw,1.35rem);color:var(--muted2);margin:0 0 30px;line-height:1.55;max-width:620px;animation:fu .9s .34s cubic-bezier(.22,1,.36,1) both;}
 .h-slogan span{color:#c4b5fd;font-style:normal;}
@@ -615,6 +629,21 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
   <span class="vb-label">Slogan</span>
 </button>
 
+<!-- ══ ENTER SPLASH ═══════════════════════════════════════════ -->
+<div class="enter-splash" id="enterSplash">
+  <div class="es-inner">
+    <img class="es-logo" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png" alt="Omnis Services">
+    <div class="es-brand"><em>OMNIS</em> SERVICES</div>
+    <p class="es-slogan">They think they’re hidden, they aren’t. <span>See everyone.</span> Be <em>Omnymous.</em></p>
+    <button class="es-btn" id="enterBtn">
+      <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+      Enter Site
+    </button>
+    <div class="es-hint">Click to enter with sound</div>
+  </div>
+</div>
+<noscript><style>.enter-splash{display:none!important;}</style></noscript>
+
 <!-- ══ NAV ═══════════════════════════════════════════════════ -->
 <div class="nav-wrap">
   <nav class="navbar" id="navbar">
@@ -626,7 +655,6 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
       <a href="/cs2" class="nav-link">CS2</a>
       <a href="/r6" class="nav-link">R6</a>
       <a href="#pricing" class="nav-link">Pricing</a>
-      <a href="/key" class="nav-link" style="color:#c084fc;">Free Key</a>
       <div class="nav-dd">
         <button class="nav-link nav-dd-btn">More <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
         <div class="nav-dd-menu">
@@ -660,7 +688,6 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
   <a class="mm-link" href="#products">Products</a>
   <a class="mm-link" href="/cs2">Omnis CS2</a>
   <a class="mm-link" href="/r6">Omnis R6</a>
-  <a class="mm-link" href="/key">Free Key</a>
   <a class="mm-link" href="#faq">FAQ</a>
   <a class="mm-link" href="#reseller-portal">Resellers</a>
   <a class="mm-link" href="https://discord.gg/5qZ4PN5FTx" target="_blank" rel="noopener">Discord</a>
@@ -694,22 +721,6 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
     </div>
   </div>
   <div class="h-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
-</section>
-
-<!-- ══ FREE KEY BANNER ════════════════════════════════════════════ -->
-<section id="free-key-banner" style="padding:48px 24px 16px;">
-  <div style="max-width:1080px;margin:0 auto;background:linear-gradient(135deg,rgba(168,85,247,0.14),rgba(80,30,160,0.06));border:1px solid rgba(168,85,247,0.35);border-radius:18px;padding:32px 36px;display:flex;align-items:center;gap:32px;flex-wrap:wrap;backdrop-filter:blur(10px);box-shadow:0 12px 40px rgba(0,0,0,0.4);">
-    <div style="flex:1;min-width:260px;">
-      <div style="display:inline-block;background:rgba(168,85,247,0.18);color:#c084fc;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:5px 12px;border-radius:6px;margin-bottom:14px;">Free Tier</div>
-      <h2 style="font-size:28px;font-weight:700;margin:0 0 8px 0;color:#fff;">Try <span style="color:#a855f7;">Omnis CS2 Free</span> — no payment.</h2>
-      <p style="margin:0 0 6px 0;color:#b1a8c8;font-size:15px;">ESP, Aimbot &amp; Triggerbot — 24-hour keys via a short ad on work.ink.</p>
-      <p style="margin:0;color:#7a7090;font-size:13px;">1. Download launcher  2. Get key  3. Paste in launcher.</p>
-    </div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;">
-      <a href="https://github.com/wowksies/FreeOmnisLauncher/releases/download/lauxcher/OmnisFreeLauncher.exe" style="background:linear-gradient(135deg,#a855f7,#c084fc);color:#fff;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;font-size:14px;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 8px 24px rgba(168,85,247,0.35);transition:transform 0.15s;display:inline-block;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">Download Launcher</a>
-      <a href="/key" style="background:transparent;border:1px solid rgba(168,85,247,0.45);color:#c084fc;font-weight:700;padding:13px 28px;border-radius:10px;text-decoration:none;font-size:14px;letter-spacing:0.04em;text-transform:uppercase;display:inline-block;">Get Free Key</a>
-    </div>
-  </div>
 </section>
 
 <!-- STAT BAR -->
@@ -808,7 +819,7 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
         <a href="#products" class="price-go">Choose Game</a>
       </div>
     </div>
-    <p class="reveal" style="text-align:center;color:var(--muted);font-size:12px;margin-top:22px;">Card, PayPal &amp; crypto accepted &middot; Instant delivery &middot; Or try the CS2 free tier first.</p>
+    <p class="reveal" style="text-align:center;color:var(--muted);font-size:12px;margin-top:22px;">Card, PayPal &amp; crypto accepted &middot; Instant delivery.</p>
   </div>
 </section>
 
@@ -933,11 +944,6 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
         <div class="cmp-feature">Instant key delivery</div>
         <div class="cmp-c cmp-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
         <div class="cmp-c cmp-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      </div>
-      <div class="cmp-row">
-        <div class="cmp-feature">Free tier available</div>
-        <div class="cmp-c cmp-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-        <div class="cmp-c cmp-no"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
       </div>
       <div class="cmp-row">
         <div class="cmp-feature">Active support &amp; resellers</div>
@@ -1119,7 +1125,6 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
       <h4>Products</h4>
       <a href="/cs2">Omnis CS2</a>
       <a href="/r6">Omnis R6</a>
-      <a href="/key">Free Key</a>
       <a href="#status">Live Status</a>
     </div>
     <div class="foot-col">
@@ -1162,6 +1167,20 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
     document.addEventListener('visibilitychange',function(){if(!document.hidden)attempt();});
   }
   if(btn)btn.addEventListener('click',function(e){e.stopPropagation();try{audio.currentTime=0;}catch(_){}audio.muted=false;audio.play();});
+})();
+
+// ── ENTER SPLASH ─────────────────────────────
+(function(){
+  var splash=document.getElementById('enterSplash'),btn=document.getElementById('enterBtn'),audio=document.getElementById('omnisVoice');
+  if(!splash)return;
+  if(sessionStorage.getItem('omnisEntered')){splash.classList.add('gone');return;}
+  document.body.style.overflow='hidden';
+  function enter(){
+    sessionStorage.setItem('omnisEntered','1');sessionStorage.setItem('omnisVoicePlayed','1');
+    if(audio){try{audio.currentTime=0;}catch(e){}audio.muted=false;var p=audio.play();if(p&&p.catch)p.catch(function(){});}
+    splash.classList.add('gone');document.body.style.overflow='';
+  }
+  if(btn)btn.addEventListener('click',enter);
 })();
 
 // ── MOBILE NAV ───────────────────────────────────────────────

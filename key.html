@@ -142,7 +142,6 @@
     setTimeout(() => (copyBtn.textContent = 'Copy Key'), 1500);
   });
 
-  // If we came back from work.ink with a token, auto-claim.
   const qs = new URLSearchParams(window.location.search);
   const token = qs.get('token');
 

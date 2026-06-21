@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 
-// Brand role IDs — maps Discord role to brand access
 const BRAND_ROLES = {
     '1488233437985898718': 'voltaris',
     '1488233505031848158': 'projectservices',
@@ -38,7 +37,7 @@ module.exports = async function handler(req, res) {
     const REDIRECT_URI = `${BASE_URL}/api/discord-auth`;
 
     const url = new URL(req.url, BASE_URL);
-    
+
     const code = (req.query && req.query.code) || url.searchParams.get('code');
     const login = (req.query && req.query.login) || url.searchParams.get('login');
     const discordError = (req.query && req.query.error) || url.searchParams.get('error');
@@ -92,8 +91,6 @@ module.exports = async function handler(req, res) {
 
         const userRoles = memberData.roles || [];
 
-        // Detect admin — if ADMIN_ALLOWLIST is set, REQUIRES both Discord role + allowlist
-        // If ADMIN_ALLOWLIST is NOT set, falls back to just the Discord role
         const adminRoleId = (process.env.DISCORD_ADMIN_ROLE_ID || '').trim();
         const hasAdminRole = userRoles.includes(adminRoleId);
         const rawAllowlist = (process.env.ADMIN_ALLOWLIST || '').trim();
@@ -102,10 +99,8 @@ module.exports = async function handler(req, res) {
         const isInAllowlist = !allowlistConfigured || adminAllowlist.includes(userData.id);
         const isAdmin = hasAdminRole && isInAllowlist;
 
-        // SECURITY ALERT: Someone has admin role but is NOT in the allowlist
         if (hasAdminRole && !isInAllowlist) {
             console.error(`🚨 SECURITY ALERT: User ${userData.id} (${userData.username}) has admin role but is NOT in ADMIN_ALLOWLIST!`);
-            // Send Discord webhook alert if configured
             try {
                 const alertWebhook = process.env.SECURITY_WEBHOOK_URL;
                 if (alertWebhook) {
@@ -127,10 +122,9 @@ module.exports = async function handler(req, res) {
                         }),
                     });
                 }
-            } catch (e) { /* don't block on webhook failure */ }
+            } catch (e) {  }
         }
 
-        // Detect which brand roles the user has
         const userBrands = [];
         for (const [roleId, brandId] of Object.entries(BRAND_ROLES)) {
             if (userRoles.includes(roleId)) {
@@ -138,14 +132,10 @@ module.exports = async function handler(req, res) {
             }
         }
 
-        // Also check generic reseller roles
         const allowedRoleIds = process.env.DISCORD_RESELLER_ROLE_IDS
             ? process.env.DISCORD_RESELLER_ROLE_IDS.split(',').map(id => id.trim())
             : [];
 
-        // Authorization gate also honors admin-panel manual grants: a user
-        // who was added by an admin (existing record with brands) is still
-        // a reseller even if they lack the Discord roles.
         let existingProfile = null;
         try { existingProfile = await fbGet(`/resellers/${userData.id}`); } catch (_) {}
         const hasManualBrands = !!(existingProfile && Array.isArray(existingProfile.brands) && existingProfile.brands.length > 0);
@@ -160,18 +150,13 @@ module.exports = async function handler(req, res) {
             return res.end();
         }
 
-        // Admin gets all brands; non-admin gets whatever their Discord roles imply.
         const discordBrands = isAdmin ? ['voltaris', 'projectservices', 'corvus', 'omnis'] : userBrands;
 
-        // Merge Discord-derived brands with any brands an admin granted manually
-        // via the panel (so /api/admin-action?action=updateResellerBrands grants
-        // don't get wiped on the next Discord login).
         let finalBrands = discordBrands;
         if (existingProfile && Array.isArray(existingProfile.brands)) {
             finalBrands = Array.from(new Set([...existingProfile.brands, ...discordBrands]));
         }
 
-        // JWT only contains user ID + expiry — NEVER store roles in the token
         const payload = {
             sub: userData.id,
             exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour
@@ -179,7 +164,6 @@ module.exports = async function handler(req, res) {
 
         const token = signJWT(payload, process.env.JWT_SECRET);
 
-        // Store role data in Firebase (source of truth for permissions)
         try {
             await fbPatch(`/resellers/${userData.id}`, {
                 username: memberData.nick || userData.global_name || userData.username,
@@ -193,9 +177,8 @@ module.exports = async function handler(req, res) {
             });
         } catch (e) { console.error('Firebase profile save error:', e); }
 
-        // SameSite=Strict, HttpOnly, Secure, 1-hour lifetime
         res.setHeader('Set-Cookie', `omnis_reseller=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`);
-        
+
         if (isAdmin) {
             res.writeHead(302, { Location: '/admin.html' });
         } else {

@@ -8,10 +8,6 @@ const {
   normalizeMoney,
 } = require('../lib/pricing-helper');
 
-// Firebase-backed rate limit. Survives serverless cold starts and is shared
-// across all Vercel function instances. Entry shape:
-//   /rate_limits/key_gen/{userId}: { bucket, count, updatedAt }
-// Window is bucketed into 5-minute slots; each slot allows RATE_LIMIT_MAX calls.
 const RATE_LIMIT_WINDOW_SEC = 5 * 60;
 const RATE_LIMIT_MAX = 10;
 
@@ -28,10 +24,6 @@ async function _fbWriteRateLimit(path, data) {
   });
 }
 
-// Returns true if the call is allowed and increments the counter.
-// Read-modify-write — race-tolerant; under heavy contention an attacker
-// might gain a couple of extra calls per bucket, which is acceptable for
-// a key-gen throttle (the actual key-gen is also gated by reseller role).
 async function checkRateLimit(userId) {
   const bucket = rateLimitBucket();
   const path = `/rate_limits/key_gen/${userId}`;
@@ -48,7 +40,6 @@ async function checkRateLimit(userId) {
   try {
     await _fbWriteRateLimit(path, { bucket, count, updatedAt: Math.floor(Date.now() / 1000) });
   } catch (e) {
-    // Don't block legitimate key-gen on a transient counter write failure.
     console.warn(`[generate-key checkRateLimit] write failed for ${userId}:`, e.message);
   }
   return true;
@@ -171,7 +162,6 @@ module.exports = async function handler(req, res) {
         cut_rate: cutRate,
       });
     } catch (error) {
-      // Audit logging should not block key generation.
     }
 
     try {
@@ -200,7 +190,6 @@ module.exports = async function handler(req, res) {
         });
       }
     } catch (error) {
-      // Webhook alerts should not block key generation.
     }
 
     return res.status(200).json({

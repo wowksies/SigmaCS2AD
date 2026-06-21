@@ -100,14 +100,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .empty-t{font-family:var(--display);font-size:.82rem;font-weight:700;color:var(--muted2);margin-bottom:4px;}
 .toast{position:fixed;bottom:20px;right:20px;background:#07041a;border:1px solid rgba(52,211,153,.3);border-radius:8px;padding:10px 16px;font-family:var(--display);font-size:.76rem;font-weight:700;color:var(--green);box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:2000;transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.22,1,.36,1);}
 .toast.show{transform:none;opacity:1;}
-/* Warning banner */
+
 .warn-banner{padding:12px 18px;border-radius:8px;font-family:var(--display);font-size:.78rem;font-weight:700;display:flex;align-items:center;gap:10px;}
 .warn-banner svg{width:16px;height:16px;flex-shrink:0;}
 .warn-red{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.22);color:#fca5a5;}
 .warn-red svg{stroke:var(--red);fill:none;stroke-width:2;}
 .warn-amber{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.18);color:#fde68a;}
 .warn-amber svg{stroke:var(--amber);fill:none;stroke-width:2;}
-/* Payment cards */
+
 .pay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
 .pay-card{border:1px solid var(--border);border-radius:10px;padding:16px;background:rgba(7,4,26,0.65);text-align:center;}
 .pay-method{font-family:var(--display);font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:8px;}
@@ -115,7 +115,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .pay-addr:hover{background:rgba(139,92,246,.14);}
 .pay-copy{font-family:var(--display);font-size:.6rem;font-weight:700;color:var(--muted);cursor:pointer;transition:color .15s;}
 .pay-copy:hover{color:var(--green);}
-/* Forms */
+
 .form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
 .form-label{font-family:var(--display);font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);}
 .form-select,.form-input{width:100%;height:40px;padding:0 12px;background:rgba(7,4,26,.8);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--body);font-size:.84rem;outline:none;transition:border-color .18s;appearance:none;}
@@ -186,7 +186,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
     </div>
   </div>
   <div class="content">
-    <!-- OVERVIEW -->
+
     <div class="panel active" id="panel-overview">
       <div id="warningArea"></div>
       <div class="stat-grid">
@@ -196,12 +196,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
         <div class="stat-card red"><div class="stat-label">Balance Owed</div><div class="stat-val" id="s-balance">-</div><div class="stat-delta" id="s-balance-note">Configured cut on activated keys</div></div>
         <div class="stat-card green"><div class="stat-label">Total Paid</div><div class="stat-val" id="s-paid">—</div><div class="stat-delta">Confirmed</div></div>
       </div>
-      <!-- Payment methods -->
+
       <div class="sec-hdr"><div><div class="sec-title">Payment Methods</div><div class="sec-sub">Send payment with your Discord username as note</div></div></div>
       <div class="pay-grid" id="payGrid"></div>
     </div>
 
-    <!-- GENERATE KEYS -->
     <div class="panel" id="panel-keys">
       <div class="sec-hdr"><div><div class="sec-title">Generate Keys</div><div class="sec-sub">Create license keys for your customers</div></div></div>
       <div style="display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start;">
@@ -239,7 +238,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
       </div>
     </div>
 
-    <!-- MY KEYS -->
     <div class="panel" id="panel-mykeys">
       <div class="sec-hdr"><div><div class="sec-title">All Keys</div><div class="sec-sub">Keys across your assigned brands</div></div></div>
       <div class="table-wrap">
@@ -250,10 +248,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
       </div>
     </div>
 
-    <!-- PAYMENTS -->
     <div class="panel" id="panel-payments">
       <div class="sec-hdr"><div><div class="sec-title">Payment History</div><div class="sec-sub">Submit and track your payments</div></div></div>
-      <!-- Submit payment -->
+
       <div style="border:1px solid var(--border);border-radius:10px;padding:22px;background:rgba(7,4,26,0.65);">
         <div style="font-family:var(--display);font-size:.84rem;font-weight:700;margin-bottom:14px;">Submit Payment</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;">
@@ -277,7 +274,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
         </div>
         <div id="payError" style="font-size:.75rem;color:var(--red);margin-top:8px;display:none;"></div>
       </div>
-      <!-- Payment history table -->
+
       <div class="table-wrap">
         <table class="tbl">
           <thead><tr><th>Amount</th><th>Method</th><th>Note</th><th>Status</th><th>Date</th></tr></thead>

@@ -1,14 +1,3 @@
-// api/auth-check.js
-// Combined endpoint:
-//   - Default (no action): GET-only session probe used by dashboard.html
-//     and admin.html on load. Reads the omnis_reseller cookie, validates
-//     it through resolveUser, returns the role flags.
-//   - ?action=logout: clears the omnis_reseller cookie and 302s to '/'.
-//     Triggered by the Log Out button via /api/reseller-logout, which is
-//     rewritten in vercel.json to /api/auth-check?action=logout.
-//
-// Two routes share one serverless function file to stay under the
-// Hobby-plan 12-function cap.
 
 const { resolveUser } = require('../lib/auth-helper');
 

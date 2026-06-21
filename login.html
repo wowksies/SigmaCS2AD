@@ -27,7 +27,6 @@ html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;display:flex;flex-direction:column;}
 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.15;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");}
 
-/* Nav */
 .nav-wrap{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;justify-content:center;pointer-events:none;}
 .navbar{pointer-events:auto;display:flex;align-items:center;justify-content:space-between;padding:0 52px;width:100%;max-width:1920px;height:76px;background:transparent;font-family:var(--display);border:1px solid transparent;transition:all .4s cubic-bezier(.4,0,.2,1);}
 .navbar.sc{height:56px;width:1020px;max-width:96%;padding:0 22px;background:rgba(3,2,10,0.94);backdrop-filter:blur(32px);border-color:var(--border);border-radius:12px;margin-top:12px;box-shadow:0 20px 50px rgba(0,0,0,0.6),0 0 0 1px rgba(139,92,246,0.04) inset;}
@@ -40,7 +39,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .nav-link:hover{color:var(--text);background:rgba(139,92,246,0.08);}
 .nav-right{display:flex;align-items:center;gap:6px;}
 
-/* Main */
 main{flex:1;display:flex;align-items:center;justify-content:center;padding:120px 24px 60px;position:relative;z-index:1;}
 .card{width:100%;max-width:420px;border:1px solid var(--border);border-radius:16px;background:rgba(7,4,26,0.85);backdrop-filter:blur(24px);padding:40px 36px;box-shadow:0 30px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(139,92,246,0.06) inset;}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--p2),transparent);opacity:.6;}
@@ -51,7 +49,6 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:120px
 h1{text-align:center;font-family:var(--display);font-size:1.3rem;font-weight:800;letter-spacing:.02em;margin-bottom:8px;}
 .subtitle{text-align:center;font-size:.85rem;color:var(--muted2);margin-bottom:32px;}
 
-/* Form */
 .form-group{margin-bottom:20px;}
 label{display:block;font-family:var(--display);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:8px;}
 input{width:100%;height:48px;border:1px solid var(--border);border-radius:10px;background:var(--bg3);padding:0 16px;color:var(--text);font-family:var(--body);font-size:.95rem;transition:all .18s;}
@@ -61,20 +58,16 @@ input::placeholder{color:var(--muted);}
 .btn:hover{background:var(--p);box-shadow:0 0 30px rgba(139,92,246,0.5);}
 .btn:disabled{opacity:.6;cursor:not-allowed;}
 
-/* Messages */
 .error{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);border-radius:8px;padding:12px 16px;color:var(--red);font-size:.85rem;margin-bottom:20px;display:none;}
 .success{background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:12px 16px;color:var(--green);font-size:.85rem;margin-bottom:20px;display:none;}
 
-/* Footer links */
 .footer{text-align:center;margin-top:24px;font-size:.8rem;color:var(--muted2);}
 .footer a{color:var(--p2);text-decoration:none;font-weight:600;}
 .footer a:hover{text-decoration:underline;}
 
-/* Loading */
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;margin-right:8px;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* Responsive */
 @media(max-width:640px){
   .navbar{padding:0 16px;height:64px;}
   .nav-links{display:none;}
@@ -128,20 +121,17 @@ input::placeholder{color:var(--muted);}
 </main>
 
 <script>
-// Navbar scroll effect
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
   if (window.scrollY > 20) navbar.classList.add('sc');
   else navbar.classList.remove('sc');
 }, { passive: true });
 
-// Initialize Supabase client
 const supaClient = window.supabase.createClient(
   'https://euxtyzhcijdpueajvsvd.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1eHR5emhjaWpkcHVlYWp2c3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDkwNTcsImV4cCI6MjA5Mjg4NTA1N30._rARSmYe7Sp40dvccuL-A9ZSnD_BcdFTHX4SXtxxp88'
 );
 
-// Form submission
 const form = document.getElementById('loginForm');
 const submitBtn = document.getElementById('submitBtn');
 const errorMsg = document.getElementById('errorMsg');
@@ -161,32 +151,31 @@ function showSuccess(msg) {
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  
+
   const email = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
-  
+
   if (!email || !password) {
     showError('Please enter email and password');
     return;
   }
-  
+
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<span class="spinner"></span>Logging in...';
-  
+
   try {
-    // Sign in with Supabase Auth
     const { data, error } = await supaClient.auth.signInWithPassword({
       email: email,
       password: password,
     });
-    
+
     if (error) {
       showError(error.message || 'Login failed. Check your credentials.');
       submitBtn.disabled = false;
       submitBtn.textContent = 'Log In';
       return;
     }
-    
+
     showSuccess('Login successful! Redirecting...');
     localStorage.setItem('omnis_user', JSON.stringify({
       email: data.user.email,
@@ -195,11 +184,10 @@ form.addEventListener('submit', async (e) => {
       refresh_token: data.session.refresh_token,
       expires_at: data.session.expires_at,
     }));
-    // Redirect to user dashboard after 500ms
     setTimeout(() => {
       window.location.href = '/user-dashboard.html';
     }, 500);
-    
+
   } catch (err) {
     showError('Cannot connect to server. Please check your internet or try again later.');
     console.error('Login error:', err);

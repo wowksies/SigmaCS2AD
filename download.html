@@ -20,20 +20,16 @@
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:var(--body);overflow-x:hidden;line-height:1.6;cursor:none;min-height:100vh;}
 
-/* CURSOR */
 #cur{position:fixed;top:0;left:0;width:9px;height:9px;background:var(--p2);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:0 0 14px var(--pglow);transition:width .18s,height .18s;}
 #cur-ring{position:fixed;top:0;left:0;width:34px;height:34px;border:1.5px solid rgba(168,85,247,0.3);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s,border-color .3s;}
 
-/* BLOBS */
 .blob{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0;}
 .b1{width:800px;height:800px;top:-200px;left:-200px;background:radial-gradient(circle,rgba(124,58,237,0.15),transparent 70%);animation:bd 24s ease-in-out infinite alternate;}
 .b2{width:600px;height:600px;bottom:-150px;right:-150px;background:radial-gradient(circle,rgba(168,85,247,0.1),transparent 70%);animation:bd 20s ease-in-out infinite alternate-reverse;}
 @keyframes bd{0%{transform:translate(0,0);}50%{transform:translate(60px,-50px);}100%{transform:translate(-40px,60px);}}
 
-/* GRAIN */
 body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.28;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");}
 
-/* NAV */
 .nav-wrap{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;justify-content:center;pointer-events:none;}
 .navbar{pointer-events:auto;display:flex;align-items:center;justify-content:space-between;padding:0 56px;width:100%;max-width:1920px;height:84px;background:transparent;font-family:var(--display);transition:height .4s cubic-bezier(.4,0,.2,1),width .4s,padding .4s,background .4s,border-radius .4s,border-color .4s,margin-top .4s,box-shadow .4s;border:1px solid transparent;}
 .navbar.scrolled{height:62px;width:900px;max-width:96%;padding:0 28px;background:rgba(6,4,10,0.82);backdrop-filter:blur(24px);border-color:var(--border);border-radius:40px;margin-top:18px;box-shadow:0 8px 40px rgba(0,0,0,0.55);}
@@ -48,11 +44,9 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .back-btn{display:flex;align-items:center;gap:8px;padding:0 20px;height:40px;border-radius:100px;background:rgba(147,51,234,0.08);color:var(--muted2);font-size:13px;font-weight:600;letter-spacing:.03em;border:1px solid var(--border);cursor:none;transition:all .25s;text-decoration:none;font-family:var(--display);}
 .back-btn:hover{background:rgba(147,51,234,0.15);border-color:var(--borderH);color:#fff;}
 
-/* PAGE */
 .page{position:relative;z-index:2;padding:140px 24px 80px;display:flex;flex-direction:column;align-items:center;}
 .inner{max-width:900px;width:100%;}
 
-/* HERO */
 .dl-hero{text-align:center;margin-bottom:56px;animation:fadeUp .8s cubic-bezier(.22,1,.36,1) both;}
 .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(147,51,234,0.1);border:1px solid rgba(147,51,234,0.22);padding:5px 16px;border-radius:100px;font-size:11px;font-weight:700;color:#c084fc;text-transform:uppercase;letter-spacing:.12em;margin-bottom:24px;font-family:var(--display);backdrop-filter:blur(8px);overflow:hidden;position:relative;}
 .badge::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(192,132,252,0.18) 50%,transparent 60%);animation:shimmerBadge 3s 1s ease-in-out infinite;}
@@ -60,7 +54,6 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .bdot{width:5px;height:5px;background:var(--p2);border-radius:50%;box-shadow:0 0 10px var(--p2);animation:pulse 2s infinite;flex-shrink:0;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.2;}}
 
-/* hero logo */
 .dl-hero-logo{width:80px;height:80px;object-fit:contain;margin-bottom:20px;filter:drop-shadow(0 0 28px rgba(168,85,247,0.55));display:block;margin-left:auto;margin-right:auto;}
 .dl-title{font-family:var(--display);font-size:clamp(2.8rem,6vw,4.5rem);font-weight:800;line-height:.95;letter-spacing:-.04em;margin-bottom:16px;}
 .dl-title span{background:linear-gradient(135deg,#a855f7 0%,#c084fc 45%,#7c3aed 90%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 40px rgba(168,85,247,.4));}
@@ -68,11 +61,9 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:none;}}
 
-/* MAIN CARD */
 .dl-card{border:1px solid var(--borderH);border-radius:26px;overflow:hidden;background:rgba(11,8,16,0.65);backdrop-filter:blur(24px);position:relative;box-shadow:0 0 80px rgba(124,58,237,0.1),0 30px 60px rgba(0,0,0,0.5);animation:fadeUp .8s .1s cubic-bezier(.22,1,.36,1) both;}
 .dl-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,0.07),transparent 55%,rgba(168,85,247,0.03));pointer-events:none;border-radius:26px;}
 
-/* card top */
 .card-top{padding:44px 48px 36px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;position:relative;z-index:1;}
 .dl-info{display:flex;align-items:center;gap:18px;}
 .dl-icon-wrap{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,rgba(124,58,237,0.22),rgba(168,85,247,0.1));border:1px solid rgba(147,51,234,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -85,13 +76,11 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .chip-status{display:flex;align-items:center;gap:5px;color:#86efac;}
 .chip-status-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:pulse 2s infinite;}
 
-/* big download button */
 .dl-btn{display:flex;align-items:center;gap:12px;padding:0 40px;height:56px;border-radius:100px;background:linear-gradient(135deg,var(--p3),var(--p2));color:#fff;font-size:15px;font-weight:700;letter-spacing:.03em;border:none;cursor:none;text-decoration:none;font-family:var(--display);flex-shrink:0;transition:all .3s;box-shadow:0 0 30px rgba(147,51,234,0.4),0 0 0 1px rgba(168,85,247,0.2) inset;}
 .dl-btn:hover{transform:translateY(-2px);box-shadow:0 10px 50px rgba(168,85,247,0.6),0 0 0 1px rgba(168,85,247,0.35) inset;}
 .dl-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2;transition:transform .3s;}
 .dl-btn:hover svg{transform:translateY(2px);}
 
-/* progress */
 .card-progress{padding:28px 48px;border-bottom:1px solid var(--border);position:relative;z-index:1;}
 .prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .prog-label{font-family:var(--display);font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
@@ -103,7 +92,6 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .prog-state{font-size:.82rem;color:var(--muted);margin-top:10px;}
 .prog-state span{color:var(--p2);font-weight:600;}
 
-/* specs */
 .card-specs{padding:28px 48px;display:grid;grid-template-columns:repeat(4,1fr);position:relative;z-index:1;}
 .spec-item{padding:16px 0;border-right:1px solid var(--border);text-align:center;transition:background .2s;}
 .spec-item:last-child{border-right:none;}
@@ -111,7 +99,6 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .spec-val{font-family:var(--display);font-size:1rem;font-weight:700;background:linear-gradient(135deg,#a855f7,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:3px;}
 .spec-lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;}
 
-/* two col */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;animation:fadeUp .8s .25s cubic-bezier(.22,1,.36,1) both;}
 .info-card{border:1px solid var(--border);border-radius:20px;background:rgba(11,8,16,0.5);backdrop-filter:blur(16px);padding:34px;position:relative;overflow:hidden;transition:border-color .3s;}
 .info-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,0.05),transparent 60%);pointer-events:none;}
@@ -130,13 +117,11 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .istep-text{font-size:.85rem;color:var(--muted2);line-height:1.65;}
 .istep-text strong{color:#fff;font-weight:600;}
 
-/* warning */
 .warn-banner{margin-top:18px;border:1px solid rgba(251,191,36,0.2);border-radius:16px;background:rgba(251,191,36,0.04);padding:18px 22px;display:flex;align-items:flex-start;gap:12px;animation:fadeUp .8s .35s cubic-bezier(.22,1,.36,1) both;}
 .warn-icon{width:18px;height:18px;stroke:#fbbf24;fill:none;stroke-width:2;flex-shrink:0;margin-top:2px;}
 .warn-text{font-size:.82rem;color:rgba(251,191,36,0.7);line-height:1.65;}
 .warn-text strong{color:#fbbf24;}
 
-/* footer */
 footer{border-top:1px solid var(--border);padding:34px 24px;position:relative;z-index:2;margin-top:80px;}
 .footer-inner{max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
 .footer-logo{font-family:var(--display);font-size:.9rem;font-weight:800;letter-spacing:.07em;color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px;}
@@ -170,7 +155,6 @@ footer{border-top:1px solid var(--border);padding:34px 24px;position:relative;z-
 <div class="blob b1"></div>
 <div class="blob b2"></div>
 
-<!-- NAV -->
 <div class="nav-wrap">
   <nav class="navbar" id="navbar">
     <a href="index.html" class="nav-logo">
@@ -197,7 +181,6 @@ footer{border-top:1px solid var(--border);padding:34px 24px;position:relative;z-
 <div class="page">
   <div class="inner">
 
-    <!-- HERO -->
     <div class="dl-hero">
       <div class="badge"><span class="bdot"></span>Undetected — Updated Today</div>
       <img class="dl-hero-logo" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png" alt="Omnis Logo">
@@ -205,10 +188,8 @@ footer{border-top:1px solid var(--border);padding:34px 24px;position:relative;z-
       <p class="dl-sub">The latest build, always free. Grab the launcher below and follow the install steps.</p>
     </div>
 
-    <!-- DOWNLOAD CARD -->
     <div class="dl-card">
 
-      <!-- top row -->
       <div class="card-top">
         <div class="dl-info">
           <div class="dl-icon-wrap">
@@ -234,7 +215,6 @@ footer{border-top:1px solid var(--border);padding:34px 24px;position:relative;z-
         </a>
       </div>
 
-      <!-- progress bar -->
       <div class="card-progress">
         <div class="prog-row">
           <span class="prog-label">Download Progress</span>
@@ -247,7 +227,6 @@ footer{border-top:1px solid var(--border);padding:34px 24px;position:relative;z-
         <div class="prog-state" id="progState">Click <span>Download Launcher</span> above to begin.</div>
       </div>
 
-      <!-- specs -->
       <div class="card-specs">
         <div class="spec-item"><div class="spec-val">~5 MB</div><div class="spec-lbl">File Size</div></div>
         <div class="spec-item"><div class="spec-val">Win 10/11</div><div class="spec-lbl">Platform</div></div>
@@ -256,7 +235,6 @@ footer{border-top:1px solid var(--border);padding:34px 24px;position:relative;z-
       </div>
     </div>
 
-    <!-- TWO COL: requirements + steps -->
     <div class="two-col">
       <div class="info-card">
         <div class="card-label">System Requirements</div>
@@ -281,7 +259,6 @@ footer{border-top:1px solid var(--border);padding:34px 24px;position:relative;z-
       </div>
     </div>
 
-    <!-- WARNING -->
     <div class="warn-banner">
       <svg class="warn-icon" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       <div class="warn-text"><strong>Use responsibly.</strong> Omnis is provided for educational purposes. We recommend using a secondary Steam account. Currently undetected — check our Discord for daily status updates before each session. Need help? Open a support ticket in our <a href="https://discord.gg/3bX8qSDd85" target="_blank" rel="noopener" style="color:#fbbf24;text-decoration:underline;text-underline-offset:3px;">Discord server</a>.</div>
@@ -290,7 +267,6 @@ footer{border-top:1px solid var(--border);padding:34px 24px;position:relative;z-
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-inner">
     <a href="index.html" class="footer-logo">
@@ -308,7 +284,6 @@ footer{border-top:1px solid var(--border);padding:34px 24px;position:relative;z-
 
 <script>
 'use strict';
-// CURSOR
 const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
 let mx=0,my=0,rx=0,ry=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`;});
@@ -318,11 +293,9 @@ document.querySelectorAll('a,button').forEach(el=>{
   el.addEventListener('mouseleave',()=>{cur.style.width='9px';cur.style.height='9px';ring.style.width='34px';ring.style.height='34px';ring.style.borderColor='rgba(168,85,247,0.3)';});
 });
 
-// NAVBAR
 const navbar=document.getElementById('navbar');
 window.addEventListener('scroll',()=>navbar.classList.toggle('scrolled',scrollY>80),{passive:true});
 
-// DOWNLOAD PROGRESS ANIMATION
 const btn=document.getElementById('dlBtn'),fill=document.getElementById('progFill'),pct=document.getElementById('progPct'),state=document.getElementById('progState'),shimmer=document.getElementById('progShimmer');
 btn.addEventListener('click',()=>{
   let p=0;shimmer.style.display='block';

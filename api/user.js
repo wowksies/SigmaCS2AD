@@ -1,4 +1,3 @@
-// api/user.js — Combined user endpoint (status in one)
 const {
   resolveClientUser, fbGet,
 } = require('../lib/user-auth-helper');

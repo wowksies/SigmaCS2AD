@@ -1,10 +1,3 @@
-// api/verify.js
-// Multi-purpose verification endpoint (merged to stay within Hobby plan's 12-function limit).
-//
-// Default mode (no ?action):  verify SellAuth order → set signed cookie → redirect.
-// ?action=free-init   POST: returns the work.ink URL to start free-key flow.
-// ?action=free-claim  POST { token }: validates work.ink token, mints 24h FREE-XXXX key.
-// ?action=free-validate GET ?key=&hwid=: cheat client check (HWID-locks first use).
 
 const crypto = require('crypto');
 const { fetchSellAuthJson, invoiceMatchesConfiguredProduct } = require('../lib/sellauth-helper');
@@ -22,7 +15,6 @@ const REQUIRE_IP_MATCH       = true;
 const RATE_LIMIT_WINDOW      = 60 * 60;      // 1h
 const RATE_LIMIT_MAX_PER_IP  = 10;
 
-// ── original SellAuth verify ───────────────────────────────────────
 function sign(orderId) {
     return crypto.createHmac('sha256', COOKIE_SECRET).update(orderId).digest('hex');
 }
@@ -46,7 +38,6 @@ async function handleSellAuthVerify(req, res) {
     }
 }
 
-// ── Firebase ───────────────────────────────────────────────────────
 async function fbPut(path, data) {
     const r = await fetch(`${FB_URL}${path}.json?auth=${FB_KEY}`, {
         method: 'PUT',
@@ -70,7 +61,6 @@ async function fbGet(path) {
     return r.json();
 }
 
-// ── free-key helpers ───────────────────────────────────────────────
 function realClientIp(req) {
     const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
     return (ip + '').split(',')[0].trim();
@@ -92,14 +82,12 @@ async function checkIpLimit(ip) {
     return true;
 }
 
-// ── action: free-init ──────────────────────────────────────────────
 async function actionFreeInit(req, res) {
     const ip = realClientIp(req);
     if (!(await checkIpLimit(ip))) return res.status(429).json({ error: 'too many requests, try later' });
     return res.status(200).json({ workInkUrl: WORK_INK_URL });
 }
 
-// ── action: free-claim ─────────────────────────────────────────────
 async function actionFreeClaim(req, res) {
     const { token } = req.body || {};
     if (!token || typeof token !== 'string') return res.status(400).json({ error: 'missing token' });
@@ -169,7 +157,6 @@ async function actionFreeClaim(req, res) {
     return res.status(200).json({ key: keyId, expiresAt });
 }
 
-// ── action: free-validate ──────────────────────────────────────────
 async function actionFreeValidate(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     const key  = (req.query.key  || '').toUpperCase().trim();
@@ -186,7 +173,6 @@ async function actionFreeValidate(req, res) {
 
     const now = Math.floor(Date.now() / 1000);
     if (k.expires_at && k.expires_at > 0 && now > k.expires_at) {
-        // Hard kill — flip active false so future calls short-circuit + audit shows it died.
         try { await fbPatch(path, { active: false, expired_at: now }); } catch (_) {}
         return res.status(403).json({ valid: false, error: 'expired' });
     }
@@ -206,11 +192,9 @@ async function actionFreeValidate(req, res) {
     });
 }
 
-// ── router ─────────────────────────────────────────────────────────
 module.exports = async function handler(req, res) {
     const action = (req.query.action || '').toLowerCase();
 
-    // Free-key actions return JSON.
     if (action === 'free-init' || action === 'free-claim' || action === 'free-validate') {
         res.setHeader('Content-Type', 'application/json');
         try {
@@ -232,6 +216,5 @@ module.exports = async function handler(req, res) {
         }
     }
 
-    // Default: original SellAuth verify flow.
     return handleSellAuthVerify(req, res);
 };

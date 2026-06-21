@@ -95,7 +95,6 @@ async function auditLog(action, user, details, req) {
       timestamp: Math.floor(Date.now() / 1000),
     });
   } catch (error) {
-    // Audit logging should never block an admin action.
   }
 }
 
@@ -263,10 +262,6 @@ module.exports = async function handler(req, res) {
           return res.status(400).json({ error: 'Must select at least one valid brand' });
         }
 
-        // If the reseller already exists (e.g. they logged in via Discord
-        // before being formally added), MERGE the brands and update the
-        // username/role flags rather than overwriting their pricing,
-        // payment history pointers, lastLogin, avatar, etc.
         const existing = await fbGet(`/resellers/${discordId}`);
         if (existing) {
           const mergedBrands = Array.from(new Set([...(existing.brands || []), ...validBrands]));
@@ -304,9 +299,6 @@ module.exports = async function handler(req, res) {
       }
 
       case 'updateResellerBrands': {
-        // Replace the brands array on an existing reseller. Use this from
-        // the admin UI to grant or revoke brand access without touching
-        // pricing, payments, or login state.
         const { resellerId, brands } = req.body;
         if (!isValidDiscordId(resellerId)) return res.status(400).json({ error: 'Invalid resellerId' });
         const validBrands = (brands || []).filter((brandId) => isValidBrandId(brandId));
@@ -415,7 +407,6 @@ module.exports = async function handler(req, res) {
             });
           }
         } catch (error) {
-          // Webhook failure should not block admin actions.
         }
         return res.json({ success: true, keys, message: qty + ' key(s) generated' });
       }

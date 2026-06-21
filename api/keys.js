@@ -1,4 +1,3 @@
-// api/keys.js — Combined keys endpoint (activate/purchase in one)
 const {
   resolveClientUser, fbGet, fbPut, fbPatch, fbPost,
   sanitize,
@@ -14,9 +13,7 @@ function generateKeyChunk() {
   return Array.from(bytes).map((b) => KEY_CHARSET[b % KEY_CHARSET.length]).join('');
 }
 
-// Detect brand from key prefix. Returns { id, config } or null.
 function detectBrandFromKey(keyValue) {
-  // Sort prefixes longest-first so PROJECTSERVICES- wins over PS- if any overlap.
   const entries = Object.entries(BRANDS).sort((a, b) => b[1].prefix.length - a[1].prefix.length);
   for (const [id, cfg] of entries) {
     if (keyValue.startsWith(cfg.prefix)) return { id, config: cfg };
@@ -44,8 +41,6 @@ async function parseJsonBody(req) {
 
 const VALID_DURATIONS = [1, 3, 7, 14, 30, 90, 365, 99999];
 
-// Activation rate limits — Firebase-backed so they survive cold starts.
-// Window is 24h; counters live at /rate_limits/activations/{bucket}.
 const ACTIVATE_PER_IP_PER_DAY = 5;
 const ACTIVATE_PER_USER_PER_DAY = 5;
 const RATE_WINDOW_SEC = 24 * 60 * 60;
@@ -55,13 +50,9 @@ function dayBucket() {
 }
 
 function safeBucketKey(s) {
-  // Firebase keys can't contain . # $ [ ] /
   return String(s).replace(/[.#$\[\]\/]/g, '_').substring(0, 64);
 }
 
-// Read-modify-write counter. Race-tolerant: worst case a couple of
-// extra activations per IP under heavy concurrency, which is fine
-// since the underlying key-bind logic still rejects re-binds.
 async function bumpRateCounter(scope, id, limit) {
   const bucket = dayBucket();
   const path = `/rate_limits/activations/${scope}/${safeBucketKey(id)}`;
@@ -78,23 +69,17 @@ async function bumpRateCounter(scope, id, limit) {
   try {
     await fbPut(path, { bucket, count, updatedAt: Math.floor(Date.now() / 1000) });
   } catch (e) {
-    // Counter write failure should NOT block activation (availability > strict counting).
     console.warn(`[bumpRateCounter] write failed for ${scope}/${id}:`, e.message);
   }
   return { allowed: true, count };
 }
 
-// ─── ACTIVATE KEY ──────────────────────────────────────────────
 async function handleActivate(req, res) {
   const user = await resolveClientUser(req);
   if (!user) {
     return res.status(401).json({ error: 'Not logged in' });
   }
 
-  // Require a confirmed email before any activation is allowed.
-  // Open Supabase signup means anyone can create an account; gating
-  // activation on a real, confirmable email significantly raises the
-  // cost of mass-account abuse.
   if (user._supabase && user.emailConfirmed === false) {
     return res.status(403).json({
       error: 'Please confirm your email before activating a key.',
@@ -104,7 +89,6 @@ async function handleActivate(req, res) {
 
   const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
 
-  // Per-IP daily cap
   const ipCheck = await bumpRateCounter('ip', ip, ACTIVATE_PER_IP_PER_DAY);
   if (!ipCheck.allowed) {
     return res.status(429).json({
@@ -112,7 +96,6 @@ async function handleActivate(req, res) {
       code: 'rate_limited',
     });
   }
-  // Per-account daily cap
   const userCheck = await bumpRateCounter('user', user.id, ACTIVATE_PER_USER_PER_DAY);
   if (!userCheck.allowed) {
     return res.status(429).json({
@@ -209,7 +192,6 @@ async function handleActivate(req, res) {
       },
     });
 
-    // Audit trail — best-effort, never blocks activation
     try {
       await fbPost('/audit_logs/key_activations', {
         userId: user.id,
@@ -220,7 +202,7 @@ async function handleActivate(req, res) {
         userAgent: (req.headers['user-agent'] || '').substring(0, 200),
         timestamp: now,
       });
-    } catch (_) { /* audit failure is non-fatal */ }
+    } catch (_) {  }
 
     return res.status(200).json({
       success: true,
@@ -239,7 +221,6 @@ async function handleActivate(req, res) {
   }
 }
 
-// ─── REMOVE KEY FROM ACCOUNT ───────────────────────────────────
 async function handleRemove(req, res) {
   const user = await resolveClientUser(req);
   if (!user) {
@@ -278,7 +259,6 @@ async function handleRemove(req, res) {
   }
 }
 
-// ─── PURCHASE/GENERATE KEY ─────────────────────────────────────
 async function handlePurchase(req, res) {
   const resellerUser = await resolveUser(req);
   if (resellerUser && (resellerUser.isReseller || resellerUser.isAdmin)) {
@@ -407,7 +387,6 @@ async function handleUserPurchase(req, res, clientUser) {
   }
 }
 
-// ─── MAIN HANDLER ──────────────────────────────────────────────
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Cache-Control', 'no-store');

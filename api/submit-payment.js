@@ -1,4 +1,3 @@
-// api/submit-payment.js — SECURED: uses DB-based role lookup
 const { resolveUser } = require('../lib/auth-helper');
 
 async function fbPost(path, data) {
@@ -17,7 +16,6 @@ module.exports = async function handler(req, res) {
 
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // DB-based role check — roles are NEVER trusted from the JWT
   const user = await resolveUser(req);
   if (!user || (!user.isReseller && !user.isAdmin)) {
     return res.status(401).json({ error: 'Not authenticated' });
@@ -39,7 +37,6 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid payment method' });
   }
 
-  // Sanitize note — strip HTML
   const safeNote = (note || '').replace(/<[^>]*>/g, '').substring(0, 500);
 
   try {

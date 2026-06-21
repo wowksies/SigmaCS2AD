@@ -1,5 +1,3 @@
-// api/auth.js — Combined auth endpoint (register/login/validate-client in one)
-// Routes based on ?action= parameter to reduce serverless function count
 
 const {
   fbPut, fbPost,
@@ -16,7 +14,6 @@ const {
 const { resolveUser } = require('../lib/auth-helper');
 const cookie = require('cookie');
 
-// Rate limit maps
 const registerRateLimit = new Map();
 const loginRateLimit = new Map();
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
@@ -47,7 +44,6 @@ async function parseJsonBody(req) {
   });
 }
 
-// ─── REGISTER ────────────────────────────────────────────────
 async function handleRegister(req, res) {
   const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
   if (!checkRateLimit(registerRateLimit, ip)) {
@@ -60,7 +56,6 @@ async function handleRegister(req, res) {
     const email = sanitize((body.email || '').trim().toLowerCase(), 64);
     const password = body.password || '';
 
-    // Validation
     const usernameError = validateUsername(username);
     if (usernameError) {
       return res.status(400).json({ error: usernameError });
@@ -74,7 +69,6 @@ async function handleRegister(req, res) {
       return res.status(400).json({ error: passwordError });
     }
 
-    // Check duplicates
     const existingUserByUsername = await findUserByUsername(username);
     if (existingUserByUsername) {
       return res.status(409).json({ error: 'Username already taken' });
@@ -85,12 +79,10 @@ async function handleRegister(req, res) {
       return res.status(409).json({ error: 'Email already registered' });
     }
 
-    // Hash password
     const passwordHash = await hashPassword(password);
     const userId = generateUserId();
     const now = Math.floor(Date.now() / 1000);
 
-    // Create user
     await fbPut(`/users/${userId}`, {
       id: userId,
       username: username,
@@ -102,7 +94,6 @@ async function handleRegister(req, res) {
       role: 'user',
     });
 
-    // Audit log
     await fbPost('/audit_logs/user_registration', {
       userId: userId,
       username: username,
@@ -119,7 +110,6 @@ async function handleRegister(req, res) {
   }
 }
 
-// ─── LOGIN ─────────────────────────────────────────────────────
 async function handleLogin(req, res) {
   const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
   if (!checkRateLimit(loginRateLimit, ip)) {
@@ -136,19 +126,16 @@ async function handleLogin(req, res) {
       return res.status(400).json({ error: 'Username and password required' });
     }
 
-    // Brute force check per user
     if (isUserLockedOut(username)) {
       return res.status(429).json({ error: 'Account temporarily locked. Try again later.' });
     }
 
-    // Find user
     const user = await findUserByUsername(username);
     if (!user) {
       recordUserFailedAuth(username);
       return res.status(401).json({ error: 'invalid_credentials', message: 'Invalid username or password' });
     }
 
-    // Verify password
     const valid = await verifyPassword(password, user.passwordHash);
     if (!valid) {
       recordUserFailedAuth(username);
@@ -161,7 +148,6 @@ async function handleLogin(req, res) {
     let keyData = null;
     let hasValidKey = false;
 
-    // Check if user has active key
     if (user.activeKey && user.activeKey.keyId) {
       keyData = await fbGet(`/keys/omnis/${user.activeKey.keyId}`);
       if (keyData && keyData.active !== false) {
@@ -173,7 +159,6 @@ async function handleLogin(req, res) {
       }
     }
 
-    // For C++ client, a valid key is required
     if (source === 'client' && !hasValidKey) {
       if (!user.activeKey || !user.activeKey.keyId) {
         return res.status(403).json({ error: 'no_key', message: 'No active key on account' });
@@ -190,7 +175,6 @@ async function handleLogin(req, res) {
       }
     }
 
-    // Issue token
     const token = signClientJWT({
       sub: user.id,
       exp: now + 3600,
@@ -198,7 +182,6 @@ async function handleLogin(req, res) {
       key: hasValidKey ? user.activeKey.keyId : null,
     });
 
-    // Website gets cookie, client gets body
     if (source === 'website') {
       setCookie(res, 'omnis_user', token, { maxAge: 7 * 24 * 60 * 60 });
     }
@@ -228,7 +211,6 @@ async function handleLogin(req, res) {
   }
 }
 
-// ─── VALIDATE CLIENT ───────────────────────────────────────────
 async function handleValidateClient(req, res) {
   const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
   if (!checkRateLimit(loginRateLimit, ip)) {
@@ -245,30 +227,25 @@ async function handleValidateClient(req, res) {
       return res.status(400).json({ error: 'Username and password required' });
     }
 
-    // Find user
     const user = await findUserByUsername(username);
     if (!user) {
       return res.status(401).json({ error: 'invalid_credentials', message: 'Invalid username or password' });
     }
 
-    // Verify password
     const valid = await verifyPassword(password, user.passwordHash);
     if (!valid) {
       return res.status(401).json({ error: 'invalid_credentials', message: 'Invalid username or password' });
     }
 
-    // Check active key
     if (!user.activeKey || !user.activeKey.keyId) {
       return res.status(403).json({ error: 'no_key', message: 'No active key on account' });
     }
 
-    // Fetch key data
     const keyData = await fbGet(`/keys/omnis/${user.activeKey.keyId}`);
     if (!keyData) {
       return res.status(403).json({ error: 'key_not_found', message: 'Active key not found in database' });
     }
 
-    // Check key status
     if (keyData.active === false) {
       return res.status(403).json({ error: 'key_disabled', message: 'Key has been disabled by admin' });
     }
@@ -279,16 +256,13 @@ async function handleValidateClient(req, res) {
       return res.status(403).json({ error: 'key_expired', message: 'Key has expired' });
     }
 
-    // HWID check
     if (!keyData.hwid || keyData.hwid === '') {
-      // First activation - bind HWID
       await fbPatch(`/keys/omnis/${user.activeKey.keyId}`, { hwid: hwid });
       keyData.hwid = hwid;
     } else if (keyData.hwid !== hwid) {
       return res.status(403).json({ error: 'hwid_mismatch', message: 'Key bound to different machine' });
     }
 
-    // Issue token
     const token = signClientJWT({
       sub: user.id,
       exp: now + 3600,
@@ -311,15 +285,6 @@ async function handleValidateClient(req, res) {
   }
 }
 
-// ─── MAIN HANDLER ──────────────────────────────────────────────
-//
-// SECURITY: legacy username/password auth is disabled by default.
-// Website + C++ loader now authenticate via Supabase. The handlers
-// in this file (handleRegister/handleLogin/handleValidateClient) issue
-// custom JWTs against the Firebase /users tree which uses the legacy
-// password-hash store — a parallel auth surface that must not be
-// callable in production. To temporarily re-enable (e.g. migration),
-// set ENABLE_LEGACY_AUTH=true in Vercel env.
 const LEGACY_AUTH_ENABLED = (process.env.ENABLE_LEGACY_AUTH || '').toLowerCase() === 'true';
 
 module.exports = async function handler(req, res) {

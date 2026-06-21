@@ -117,9 +117,6 @@ module.exports = async function handler(req, res) {
       const pendingPayments = resellerPayments.filter((payment) => !payment.confirmedByAdmin);
       const pricingProfile = getResellerPricingProfile(reseller);
 
-      // Reseller owes for keys THEY generated. Filter on created_by so each
-      // reseller is responsible only for their own output, not every key in
-      // a brand they happen to have access to.
       const myKeys = allKeys.filter((key) => (
         key.createdBy === reseller.id &&
         key.activated &&
@@ -130,8 +127,6 @@ module.exports = async function handler(req, res) {
         sum + getKeyFinancials(key, reseller, key.brandId, { useStoredPricing: false }).owedAmount
       ), 0);
 
-      // Breakdown of activated owed keys grouped by brand — lets the admin
-      // panel show "Omnis: 12 ($60), Voltaris: 5 ($25)" per reseller.
       const ownedByBrand = {};
       myKeys.forEach((key) => {
         const entry = ownedByBrand[key.brandId] || {
@@ -204,7 +199,6 @@ module.exports = async function handler(req, res) {
         });
       }
     } catch (error) {
-      // Protection logs are optional.
     }
 
     recentLogs.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));

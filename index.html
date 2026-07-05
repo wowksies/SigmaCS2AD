@@ -597,7 +597,28 @@ a:focus-visible,button:focus-visible,.nav-toggle:focus-visible,.faq-q:focus-visi
 </script>
 </head>
 <body>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<audio id="omnisVoice" src="/Omnisvoice.mp3" preload="auto"></audio>
+<button class="voice-btn" id="voiceBtn" aria-label="Play Omnis slogan">
+  <svg class="vb-ico" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+  <span class="vb-bars"><i></i><i></i><i></i></span>
+  <span class="vb-label">Hello</span>
+</button>
 
+<div class="enter-splash" id="enterSplash">
+  <div class="es-inner">
+    <img class="es-logo" src="https://raw.githubusercontent.com/wowksies/SigmaCS2AD/main/omnislogo.png" alt="Omnis Services">
+    <div class="es-brand"><em>OMNIS</em> SERVICES</div>
+    <p class="es-slogan">They think they’re hidden, they aren’t. <span>See everyone.</span> Be <em>Omnymous.</em></p>
+    <button class="es-btn" id="enterBtn">
+      <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+      Enter Site
+    </button>
+    <div class="es-hint">Enter el site <3</div>
+  </div>
+</div>
+<noscript><style>.enter-splash{display:none!important;}</style></noscript>
 
 <div class="nav-wrap">
   <nav class="navbar" id="navbar">
